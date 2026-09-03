@@ -1,0 +1,48 @@
+.reading-timer-section {
+	max-width: 760px;
+	width: min(100%, var(--content-max-width));
+	margin: 0 auto;
+}
+
+.reading-timer-display {
+	margin-top: 15px;
+	text-align: center;
+	font-size: 40px;
+	font-weight: 800;
+	letter-spacing: 1px;
+	color: #7c3aed;
+}
+
+.reading-timer-actions {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 10px;
+	margin: 10px 0 8px;
+}
+
+.reading-timer-actions .login-button,
+.reading-timer-actions .reading-progress-submit {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-height: 46px;
+	margin: 0;
+	padding: 11px 14px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.reading-timer-actions .reading-progress-submit {
+	background: #ffffff;
+}
+
+html.dark .reading-timer-display {
+	color: #c4b5fd;
+}
+
+html.dark .reading-timer-actions .reading-progress-submit {
+	background: #111827;
+	border-color: #4b5563;
+	color: #e5e7eb;
+}

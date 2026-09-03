@@ -1,0 +1,52 @@
+.reading-challenges-page {
+	max-width: var(--content-max-width);
+	width: min(100%, var(--content-max-width));
+	margin: 40px auto;
+	font-family: Arial, sans-serif;
+}
+
+.reading-challenges-layout {
+	display: grid;
+	grid-template-columns: 1.1fr 1fr;
+	gap: 20px;
+	align-items: start;
+}
+
+.reading-challenges-cards {
+	display: grid;
+	gap: 12px;
+}
+
+.reading-challenge-card {
+	padding: 14px;
+	border-radius: 14px;
+	border: 1px solid #dbe4ef;
+	background: #ffffff;
+}
+
+.reading-challenge-card h3 {
+	margin: 0 0 8px;
+}
+
+.reading-challenge-card p {
+	margin: 4px 0;
+}
+
+.reading-challenge-notes {
+	margin-top: 8px;
+	color: #4b5563;
+}
+
+.reading-challenges-list,
+.reading-challenges-editor {
+	min-width: 0;
+}
+
+html.dark .reading-challenge-card {
+	background: #111827;
+	border-color: #374151;
+}
+
+html.dark .reading-challenge-notes {
+	color: #9ca3af;
+}

@@ -1,0 +1,123 @@
+@media (min-width: 992px) {
+	.reading-progress-layout {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 1024px) {
+	.bookish-main {
+		padding: 12px;
+		padding-top: 80px;
+	}
+
+	.welcome-container,
+	.reading-progress-page,
+	.reading-challenges-page {
+		margin: 20px auto;
+	}
+
+	.uiverse-container {
+		padding: 20px 18px;
+		border-radius: 20px;
+	}
+}
+
+@media (max-width: 900px) {
+	.reading-challenges-layout {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 768px) {
+	.welcome-container,
+	.reading-progress-page,
+	.reading-challenges-page,
+	.reading-timer-section {
+		max-width: 100%;
+		margin: 12px auto;
+	}
+
+	.weekly-top-controls {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.weekly-month-select,
+	.weekly-year-input,
+	.weekly-genre-select {
+		max-width: none;
+		flex: 1 1 auto;
+		width: 100%;
+	}
+
+	.weekly-top-item {
+		grid-template-columns: 56px 1fr;
+	}
+
+	.weekly-top-cover {
+		width: 56px;
+		height: 84px;
+	}
+
+	.reading-progress-layout {
+		gap: 16px;
+	}
+
+	.rp-actions-row,
+	.rp-datetime-row,
+	.live-progress-stats {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.reading-progress-submit {
+		justify-self: stretch;
+		width: 100%;
+	}
+
+	.reading-progress-table {
+		min-width: 700px;
+	}
+
+	.highlight-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.reading-timer-actions {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 640px) {
+	h1,
+	.uiverse-heading {
+		line-height: 1.2;
+	}
+
+	.reading-progress-submit,
+	.uiverse-container .form .login-button,
+	.reading-timer-actions .reading-progress-submit {
+		width: 100%;
+	}
+
+	#drawer-navigation {
+		width: min(88vw, 320px);
+	}
+}
+
+@media (max-width: 480px) {
+	.bookish-main {
+		padding: 10px;
+		padding-top: 76px;
+	}
+
+	.uiverse-container {
+		padding: 14px 12px;
+		border-width: 2px;
+		border-radius: 14px;
+	}
+
+	.reading-timer-display {
+		font-size: 32px;
+	}
+}

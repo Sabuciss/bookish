@@ -1,0 +1,68 @@
+.highlight-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 14px;
+	margin-top: 4px;
+}
+
+.highlight-card {
+	border: 1px solid #e5e7eb;
+	border-radius: 12px;
+	padding: 14px 16px;
+	background: #fff;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+	transition: box-shadow 0.18s;
+}
+
+.highlight-card:hover {
+	box-shadow: 0 4px 16px rgba(142, 45, 226, 0.12);
+}
+
+.highlight-quote {
+	margin: 0;
+	padding: 0;
+	font-size: 0.95rem;
+	line-height: 1.55;
+	font-style: italic;
+	color: #1f2937;
+	border-left: 3px solid #8E2DE2;
+	padding-left: 10px;
+}
+
+.highlight-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.highlight-book {
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #4b5563;
+}
+
+.highlight-character {
+	font-size: 0.8rem;
+	color: #6b7280;
+}
+
+html.dark .highlight-card {
+	background: #111827;
+	border-color: #374151;
+}
+
+html.dark .highlight-quote {
+	color: #e5e7eb;
+	border-left-color: #8E2DE2;
+}
+
+html.dark .highlight-book {
+	color: #cbd5e1;
+}
+
+html.dark .highlight-character {
+	color: #9ca3af;
+}

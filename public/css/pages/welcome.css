@@ -1,0 +1,201 @@
+.welcome-container {
+	max-width: var(--content-max-width);
+	width: min(100%, var(--content-max-width));
+	margin: 24px auto;
+	font-family: Arial, sans-serif;
+}
+
+.welcome-title {
+	margin-top: 0;
+}
+
+.welcome-grid {
+	margin-top: 24px;
+	display: grid;
+	gap: 16px;
+}
+
+.welcome-card {
+	padding: 16px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.welcome-card-title {
+	margin: 0 0 8px;
+}
+
+.welcome-card-text {
+	margin: 0;
+}
+
+.weekly-top-books {
+	margin-top: 12px;
+	display: grid;
+	gap: 8px;
+}
+
+.weekly-top-controls {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	margin-top: 12px;
+	flex-wrap: wrap;
+}
+
+.weekly-genre-select {
+	flex: 1;
+	padding: 10px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 10px;
+	background: #ffffff;
+}
+
+.weekly-month-select {
+	max-width: 170px;
+	flex: 0 0 170px;
+}
+
+.weekly-year-input {
+	max-width: 170px;
+	flex: 0 0 170px;
+	padding: 10px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 10px;
+	background: #ffffff;
+}
+
+.weekly-top-item {
+	padding: 10px 12px;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	background: #ffffff;
+	display: grid;
+	grid-template-columns: 72px 1fr;
+	gap: 0.85rem;
+	align-items: start;
+}
+
+.weekly-top-cover {
+	width: 72px;
+	height: 108px;
+	border-radius: 8px;
+	object-fit: cover;
+	background: rgba(148, 163, 184, 0.18);
+	border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.weekly-top-cover--empty {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px;
+	font-size: 0.72rem;
+	line-height: 1.2;
+	text-align: center;
+	color: #64748b;
+}
+
+.weekly-top-content {
+	min-width: 0;
+}
+
+.weekly-top-meta {
+	margin-top: 4px;
+	font-size: 0.82rem;
+	color: #475569;
+}
+
+.weekly-top-description {
+	margin-top: 6px;
+	font-size: 0.86rem;
+	line-height: 1.45;
+	color: #334155;
+}
+
+.weekly-top-title-link {
+	color: #1d4ed8;
+	text-decoration: none;
+}
+
+.weekly-top-title-link:hover {
+	text-decoration: underline;
+}
+
+.weekly-top-details {
+	margin-top: 8px;
+}
+
+.weekly-top-details summary {
+	cursor: pointer;
+	font-size: 0.82rem;
+	color: #475569;
+}
+
+.weekly-top-details-list {
+	margin: 6px 0 0;
+	padding-left: 18px;
+	font-size: 0.82rem;
+	color: #334155;
+}
+
+.weekly-top-action {
+	display: inline-block;
+	margin-top: 8px;
+	font-size: 0.82rem;
+	font-weight: 600;
+	color: #2563eb;
+	text-decoration: none;
+}
+
+.weekly-top-action:hover {
+	text-decoration: underline;
+}
+
+html.dark .welcome-card {
+	background: #111827;
+	border-color: #374151;
+}
+
+html.dark .weekly-top-item {
+	background: #0f172a;
+	border-color: #374151;
+}
+
+html.dark .weekly-top-meta {
+	color: #cbd5e1;
+}
+
+html.dark .weekly-top-description {
+	color: #e2e8f0;
+}
+
+html.dark .weekly-top-title-link {
+	color: #93c5fd;
+}
+
+html.dark .weekly-top-details summary,
+html.dark .weekly-top-details-list {
+	color: #cbd5e1;
+}
+
+html.dark .weekly-top-action {
+	color: #93c5fd;
+}
+
+html.dark .weekly-top-cover {
+	background: rgba(148, 163, 184, 0.18);
+	border-color: rgba(148, 163, 184, 0.4);
+}
+
+html.dark .weekly-top-cover--empty {
+	color: #94a3b8;
+}
+
+html.dark .weekly-genre-select,
+html.dark .weekly-year-input {
+	background: #111827;
+	border-color: #4b5563;
+	color: #e5e7eb;
+}
