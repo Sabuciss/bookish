@@ -16,6 +16,9 @@ class BooktokTopController extends Controller
         $selectedYear = $request->filled('published_year')
             ? $request->integer('published_year')
             : null;
+        $selectedGenre = $request->filled('genre')
+            ? trim($request->string('genre')->toString())
+            : null;
 
         $booksQuery = BooktokTopBook::query()
             ->orderBy('rank_position')
@@ -32,9 +35,30 @@ class BooktokTopController extends Controller
             $book->google_thumbnail = $googleBook['thumbnail'] ?? null;
             $book->google_volume_id = $googleBook['volume_id'] ?? null;
             $book->google_page_count = $googleBook['page_count'] ?? null;
+            $book->google_categories = $googleBook['categories'] ?? null;
 
             return $book;
         });
+
+        $availableGenres = $books
+            ->flatMap(function (BooktokTopBook $book) {
+                return preg_split('/\s*,\s*/', (string) $book->google_categories, -1, PREG_SPLIT_NO_EMPTY);
+            })
+            ->map(fn (string $genre) => trim($genre))
+            ->filter()
+            ->unique(fn (string $genre) => mb_strtolower($genre))
+            ->sort(fn (string $first, string $second) => strcasecmp($first, $second))
+            ->values();
+
+        if ($selectedGenre !== null) {
+            $books = $books->filter(function (BooktokTopBook $book) use ($selectedGenre) {
+                $genres = preg_split('/\s*,\s*/', (string) $book->google_categories, -1, PREG_SPLIT_NO_EMPTY);
+
+                return collect($genres)->contains(
+                    fn (string $genre) => mb_strtolower(trim($genre)) === mb_strtolower($selectedGenre)
+                );
+            })->values();
+        }
 
         $userBookStatuses = [];
         if ($request->user()) {
@@ -59,6 +83,8 @@ class BooktokTopController extends Controller
             'books' => $books,
             'availableYears' => $availableYears,
             'selectedYear' => $selectedYear,
+            'availableGenres' => $availableGenres,
+            'selectedGenre' => $selectedGenre,
             'userBookStatuses' => $userBookStatuses,
         ]);
     }

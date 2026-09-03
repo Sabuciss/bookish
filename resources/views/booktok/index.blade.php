@@ -11,7 +11,7 @@
 
         <section class="uiverse-container" style="margin-bottom: 16px;">
             <form method="GET" action="{{ route('booktok.index') }}">
-                <p class="welcome-card-text">Filtrē BookTok topu pēc publicēšanas gada.</p>
+                <p class="welcome-card-text">Filtrē BookTok topu pēc publicēšanas gada un žanra.</p>
                 <div class="weekly-top-controls">
                     <select id="published_year" name="published_year" class="weekly-genre-select weekly-year-input">
                         <option value="">Visi gadi</option>
@@ -20,9 +20,16 @@
                         @endforeach
                     </select>
 
+                    <select id="genre" name="genre" class="weekly-genre-select">
+                        <option value="">Visi žanri</option>
+                        @foreach ($availableGenres as $genre)
+                            <option value="{{ $genre }}" @selected($selectedGenre === $genre)>{{ $genre }}</option>
+                        @endforeach
+                    </select>
+
                     <button type="submit" class="reading-progress-submit">Pielietot filtru</button>
 
-                    @if ($selectedYear)
+                    @if ($selectedYear || $selectedGenre)
                         <a href="{{ route('booktok.index') }}" class="reading-progress-submit">Notīrīt filtru</a>
                     @endif
                 </div>
@@ -31,8 +38,8 @@
 
         <section class="reading-progress-history uiverse-container">
             @if ($books->isEmpty())
-                @if ($selectedYear)
-                    <p>Šim gadam nav atrastas top grāmatas.</p>
+                @if ($selectedYear || $selectedGenre)
+                    <p>Izvēlētajiem filtriem nav atrastas top grāmatas.</p>
                 @else
                     <p>BookTok top dati vēl nav pieejami. Palaiž `php artisan migrate --seed`.</p>
                 @endif
