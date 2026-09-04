@@ -1,6 +1,7 @@
-@media (min-width: 992px) {
+@media (min-width: 680px) {
 	.reading-progress-layout {
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		grid-template-columns: minmax(0, 1fr) minmax(300px, 0.95fr);
+		align-items: start;
 	}
 }
 
@@ -20,9 +21,14 @@
 		padding: 20px 18px;
 		border-radius: 20px;
 	}
+
 }
 
-@media (max-width: 900px) {
+@media (max-width: 767px) {
+	.reading-progress-layout {
+		grid-template-columns: 1fr;
+	}
+
 	.reading-challenges-layout {
 		grid-template-columns: 1fr;
 	}
@@ -42,16 +48,21 @@
 		align-items: stretch;
 	}
 
-	.weekly-month-select,
-	.weekly-year-input,
-	.weekly-genre-select {
-		max-width: none;
-		flex: 1 1 auto;
-		width: 100%;
+	.book-recommendation-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
 	.weekly-top-item {
 		grid-template-columns: 56px 1fr;
+	}
+
+	.book-detail-hero {
+		grid-template-columns: 150px minmax(0, 1fr);
+		gap: 24px;
+	}
+
+	.book-detail-cover {
+		width: 150px;
 	}
 
 	.weekly-top-cover {
@@ -59,8 +70,8 @@
 		height: 84px;
 	}
 
-	.reading-progress-layout {
-		gap: 16px;
+	.reading-progress-form {
+		grid-template-columns: 1fr;
 	}
 
 	.rp-actions-row,
@@ -68,6 +79,24 @@
 	.live-progress-stats {
 		flex-direction: column;
 		align-items: stretch;
+	}
+
+	.rp-datetime-row label {
+		min-width: 0;
+	}
+
+	.rp-datetime-row {
+		grid-template-columns: 1fr;
+	}
+
+	.rp-form-footer {
+		flex-direction: column-reverse;
+		align-items: stretch;
+	}
+
+	.rp-back-button,
+	.rp-form-footer .login-button {
+		width: 100%;
 	}
 
 	.reading-progress-submit {
@@ -88,6 +117,42 @@
 	}
 }
 
+@media (max-width: 560px) {
+	.book-detail-hero {
+		grid-template-columns: 1fr;
+		gap: 24px;
+		margin-top: 24px;
+	}
+
+	.book-detail-cover {
+		width: min(190px, 65vw);
+	}
+
+	.book-detail-content {
+		text-align: center;
+	}
+
+	.book-detail-rating,
+	.book-detail-meta,
+	.book-detail-actions {
+		justify-content: center;
+	}
+
+	.book-detail-meta span {
+		min-width: 80px;
+	}
+
+	.book-detail-primary,
+	.book-detail-secondary,
+	.book-detail-actions form {
+		width: 100%;
+	}
+
+	.book-detail-description-text {
+		font-size: 0.9rem;
+	}
+}
+
 @media (max-width: 640px) {
 	h1,
 	.uiverse-heading {
@@ -102,6 +167,10 @@
 
 	#drawer-navigation {
 		width: min(88vw, 320px);
+	}
+
+	.book-recommendation-grid {
+		grid-template-columns: 1fr;
 	}
 }
 

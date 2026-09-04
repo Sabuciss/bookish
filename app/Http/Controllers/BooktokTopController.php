@@ -19,6 +19,12 @@ class BooktokTopController extends Controller
         $selectedGenre = $request->filled('genre')
             ? trim($request->string('genre')->toString())
             : null;
+        $selectedAuthor = $request->filled('author')
+            ? trim($request->string('author')->toString())
+            : null;
+        $selectedTitle = $request->filled('title')
+            ? trim($request->string('title')->toString())
+            : null;
 
         $booksQuery = BooktokTopBook::query()
             ->orderBy('rank_position')
@@ -26,6 +32,14 @@ class BooktokTopController extends Controller
 
         if ($selectedYear !== null) {
             $booksQuery->where('published_year', $selectedYear);
+        }
+
+        if ($selectedAuthor !== null) {
+            $booksQuery->where('author', 'like', '%' . $selectedAuthor . '%');
+        }
+
+        if ($selectedTitle !== null) {
+            $booksQuery->where('title', 'like', '%' . $selectedTitle . '%');
         }
 
         $books = $booksQuery->get();
@@ -60,6 +74,18 @@ class BooktokTopController extends Controller
             })->values();
         }
 
+        $booktokAuthors = $books
+            ->groupBy(fn (BooktokTopBook $book) => trim($book->author))
+            ->map(fn ($authorBooks, $author) => [
+                'name' => $author,
+                'book_count' => $authorBooks->count(),
+            ])
+            ->sortBy(fn (array $author) => [
+                -$author['book_count'],
+                mb_strtolower($author['name']),
+            ])
+            ->values();
+
         $userBookStatuses = [];
         if ($request->user()) {
             $userBookStatuses = $this->buildUserBookStatuses(
@@ -83,8 +109,11 @@ class BooktokTopController extends Controller
             'books' => $books,
             'availableYears' => $availableYears,
             'selectedYear' => $selectedYear,
+            'selectedAuthor' => $selectedAuthor,
+            'selectedTitle' => $selectedTitle,
             'availableGenres' => $availableGenres,
             'selectedGenre' => $selectedGenre,
+            'booktokAuthors' => $booktokAuthors,
             'userBookStatuses' => $userBookStatuses,
         ]);
     }
@@ -92,6 +121,17 @@ class BooktokTopController extends Controller
     public function show(Request $request, BooktokTopBook $book): View
     {
         $googleBook = $this->fetchGoogleBookData($book->title, $book->author);
+        $book->google_thumbnail = $googleBook['thumbnail'] ?? null;
+        $book->google_volume_id = $googleBook['volume_id'] ?? null;
+        $book->google_page_count = $googleBook['page_count'] ?? null;
+        $book->google_categories = $googleBook['categories'] ?? null;
+        $book->google_published_date = $googleBook['published_date'] ?? null;
+        $book->google_publisher = $googleBook['publisher'] ?? null;
+        $book->google_average_rating = $googleBook['average_rating'] ?? null;
+        $book->google_ratings_count = $googleBook['ratings_count'] ?? null;
+        $book->google_description = $googleBook['description'] ?? null;
+        $book->google_preview_link = $googleBook['preview_link'] ?? null;
+        $book->google_info_link = $googleBook['info_link'] ?? null;
         $currentBookStatus = null;
 
         if ($request->user()) {

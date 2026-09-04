@@ -71,6 +71,160 @@ canvas {
 	animation: themeIconPop 0.2s ease-out;
 }
 
+[x-cloak] {
+	display: none !important;
+}
+
+.book-notification {
+	position: relative;
+}
+
+.book-notification-button,
+.book-notification-login {
+	position: relative;
+	display: inline-flex;
+	width: 38px;
+	height: 38px;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #d1d5db;
+	border-radius: 8px;
+	background: #ffffff;
+	color: #475569;
+	cursor: pointer;
+}
+
+.book-notification-button svg,
+.book-notification-login svg {
+	width: 20px;
+	height: 20px;
+}
+
+.book-notification-count {
+	position: absolute;
+	top: -6px;
+	right: -6px;
+	display: inline-flex;
+	min-width: 18px;
+	height: 18px;
+	align-items: center;
+	justify-content: center;
+	padding: 0 4px;
+	border-radius: 999px;
+	background: #f97316;
+	color: #ffffff;
+	font-size: 0.65rem;
+	font-weight: 800;
+}
+
+.book-notification-panel {
+	position: absolute;
+	top: calc(100% + 12px);
+	right: 0;
+	z-index: 50;
+	width: min(360px, 88vw);
+	padding: 12px;
+	border: 1px solid #dbe4ef;
+	border-radius: 12px;
+	background: #ffffff;
+	box-shadow: 0 16px 35px rgba(15, 23, 42, 0.18);
+}
+
+.book-notification-heading {
+	display: flex;
+	justify-content: space-between;
+	padding: 4px 4px 10px;
+	color: #172554;
+	font-size: 0.9rem;
+}
+
+.book-notification-heading span {
+	color: #64748b;
+}
+
+.book-notification-item {
+	display: grid;
+	grid-template-columns: 38px minmax(0, 1fr);
+	gap: 10px;
+	align-items: center;
+	padding: 10px 4px;
+	border-top: 1px solid #e2e8f0;
+	color: inherit;
+	text-decoration: none;
+}
+
+.book-notification-item:hover {
+	background: #f8fafc;
+}
+
+.book-notification-cover {
+	display: inline-flex;
+	width: 38px;
+	height: 52px;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	background: #ccfbf1;
+	color: #0f766e;
+	font-weight: 800;
+}
+
+img.book-notification-cover {
+	object-fit: cover;
+}
+
+.book-notification-item > span:last-child {
+	display: grid;
+	gap: 3px;
+	min-width: 0;
+}
+
+.book-notification-item strong {
+	overflow: hidden;
+	color: #172554;
+	font-size: 0.82rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.book-notification-item small,
+.book-notification-empty {
+	color: #64748b;
+	font-size: 0.74rem;
+}
+
+.book-notification-empty {
+	margin: 0;
+	padding: 14px 4px 4px;
+}
+
+html.dark .book-notification-button,
+html.dark .book-notification-login,
+html.dark .book-notification-panel {
+	border-color: #374151;
+	background: #111827;
+	color: #e5e7eb;
+}
+
+html.dark .book-notification-heading,
+html.dark .book-notification-item strong {
+	color: #e0e7ff;
+}
+
+html.dark .book-notification-heading span,
+html.dark .book-notification-item small,
+html.dark .book-notification-empty {
+	color: #cbd5e1;
+}
+
+html.dark .book-notification-item {
+	border-color: #374151;
+}
+
+html.dark .book-notification-item:hover {
+	background: #0f172a;
+}
+
 @keyframes themeIconPop {
 	0% {
 		transform: scale(0.75) rotate(-12deg);

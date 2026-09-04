@@ -11,8 +11,22 @@
 
         <section class="uiverse-container" style="margin-bottom: 16px;">
             <form method="GET" action="{{ route('booktok.index') }}">
-                <p class="welcome-card-text">Filtrē BookTok topu pēc publicēšanas gada un žanra.</p>
+                <p class="welcome-card-text">Filtrē BookTok topu pēc gada, žanra, autora vai grāmatas nosaukuma.</p>
                 <div class="weekly-top-controls">
+                    <input
+                        type="search"
+                        name="author"
+                        value="{{ $selectedAuthor }}"
+                        class="weekly-genre-select"
+                        placeholder="Autors"
+                    >
+                    <input
+                        type="search"
+                        name="title"
+                        value="{{ $selectedTitle }}"
+                        class="weekly-genre-select"
+                        placeholder="Grāmatas nosaukums"
+                    >
                     <select id="published_year" name="published_year" class="weekly-genre-select weekly-year-input">
                         <option value="">Visi gadi</option>
                         @foreach ($availableYears as $year)
@@ -29,16 +43,38 @@
 
                     <button type="submit" class="reading-progress-submit">Pielietot filtru</button>
 
-                    @if ($selectedYear || $selectedGenre)
+                    @if ($selectedYear || $selectedGenre || $selectedAuthor || $selectedTitle)
                         <a href="{{ route('booktok.index') }}" class="reading-progress-submit">Notīrīt filtru</a>
                     @endif
                 </div>
             </form>
         </section>
 
+        <section class="booktok-authors uiverse-container">
+            <div class="booktok-section-heading">
+                <div>
+                    <p class="book-detail-eyebrow">BookTok kopiena</p>
+                    <h2 class="booktok-section-title">Top autori</h2>
+                </div>
+                <span class="booktok-section-count">{{ $booktokAuthors->count() }} autori</span>
+            </div>
+
+            <div class="booktok-author-grid">
+                @foreach ($booktokAuthors as $author)
+                    <div class="booktok-author-card">
+                        <span class="booktok-author-avatar">{{ mb_strtoupper(mb_substr($author['name'], 0, 1)) }}</span>
+                        <div>
+                            <strong>{{ $author['name'] }}</strong>
+                            <span>{{ $author['book_count'] }} {{ $author['book_count'] === 1 ? 'grāmata' : 'grāmatas' }}</span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+
         <section class="reading-progress-history uiverse-container">
             @if ($books->isEmpty())
-                @if ($selectedYear || $selectedGenre)
+                @if ($selectedYear || $selectedGenre || $selectedAuthor || $selectedTitle)
                     <p>Izvēlētajiem filtriem nav atrastas top grāmatas.</p>
                 @else
                     <p>BookTok top dati vēl nav pieejami. Palaiž `php artisan migrate --seed`.</p>

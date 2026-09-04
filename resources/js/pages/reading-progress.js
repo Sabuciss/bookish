@@ -19,6 +19,31 @@ if (root) {
     const previewPages = document.getElementById('selected-book-pages');
     const changeBookBtn = document.getElementById('change-book-btn');
     const loadBookButtons = Array.from(document.querySelectorAll('.js-load-book'));
+    const datePicker = document.getElementById('reading-date-picker');
+    const dateDisplay = document.getElementById('reading-date-display');
+    const dateOpenButton = document.getElementById('reading-date-open');
+
+    const formatEuropeanDate = (isoDate) => {
+        const [year, month, day] = String(isoDate || '').split('-');
+        return year && month && day ? `${day}.${month}.${year}` : '';
+    };
+
+    datePicker?.addEventListener('change', () => {
+        if (dateDisplay) {
+            dateDisplay.value = formatEuropeanDate(datePicker.value);
+        }
+    });
+
+    dateOpenButton?.addEventListener('click', () => {
+        if (typeof datePicker?.showPicker === 'function') {
+            datePicker.showPicker();
+        } else {
+            datePicker?.focus();
+            datePicker?.click();
+        }
+    });
+
+    dateDisplay?.addEventListener('click', () => dateOpenButton?.click());
 
     const livePreview       = document.getElementById('live-progress-preview');
     const liveBar            = document.getElementById('live-progress-bar');

@@ -16,10 +16,6 @@
         <h1>{{ $isEditMode ? 'Atjaunot reading progress' : 'Pievienot reading progress' }}</h1>
         <p>Šī ir atsevišķa lapa reading progress pievienošanai un atjaunošanai. Grāmatu plaukts ir atdalīts atsevišķā skatā.</p>
 
-        <div class="rp-actions-row">
-            <a href="{{ route('reading-shelf.show') }}" class="reading-progress-submit" style="text-decoration: none; display: inline-block;">Atvērt grāmatu plauktu</a>
-        </div>
-
         @if (session('status'))
             <div class="reading-progress-alert reading-progress-alert-success">
                 {{ session('status') }}
@@ -142,13 +138,13 @@
                     <a href="{{ route('reading-progress.index') }}" class="cancel-edit-btn" style="text-decoration:none;">✕ Atcelt</a>
                 </div>
 
-                <form action="{{ route('reading-progress.store') }}" method="POST" class="reading-progress-form form">
+                <form action="{{ route('reading-progress.store') }}" method="POST" class="reading-progress-form form" lang="lv">
                     @csrf
                     <input type="hidden" name="entry_id" id="entry_id" value="{{ old('entry_id', $prefill['entry_id'] ?? '') }}">
 
                     <label>
                         Meklēt grāmatu (Google Books)
-                        <div style="display: flex; gap: 8px;">
+                        <div class="rp-search-row">
                             <input
                                 type="text"
                                 id="book-search-query"
@@ -168,13 +164,13 @@
                     @php $currStatus = old('reading_status', $prefillStatus); @endphp
                     <input type="hidden" name="reading_status" id="reading_status" value="{{ $currStatus }}">
 
-                    <label>
+                    <label class="rp-book-title-field">
                         Grāmata
                         <input type="text" name="book_title" id="book_title" maxlength="255" value="{{ old('book_title', $prefill['book_title'] ?? '') }}" required class="reading-progress-input input">
                     </label>
 
                     <div id="selected-book-preview" class="rp-book-preview" style="display: none;">
-                        <div style="display: flex; gap: 12px; align-items: center;">
+                        <div class="rp-selected-book-inner">
                             <img id="selected-book-image" src="" alt="Izvēlētās grāmatas vāks" style="width: 60px; height: 88px; object-fit: cover; border-radius: 8px; display: none;">
                             <div>
                                 <strong id="selected-book-title"></strong>
@@ -184,12 +180,12 @@
                         </div>
                     </div>
 
-                    <label>
+                    <label class="rp-pages-field">
                         Grāmatas kopējās lpp
                         <input type="number" name="total_pages" id="total_pages" min="1" value="{{ old('total_pages', $prefill['total_pages'] ?? '') }}" class="reading-progress-input input">
                     </label>
 
-                    <label>
+                    <label class="rp-pages-field">
                         Izlasītās lpp
                         <input type="number" name="pages_read" id="pages_read" min="0" value="{{ old('pages_read', $prefill['pages_read'] ?? '') }}" required class="reading-progress-input input">
                     </label>
@@ -204,7 +200,7 @@
                             <span id="live-progress-status" class="live-progress-status-badge"></span>
                         </div>
                     </div>
-                        <span class="reading-progress-emotion-label">Emocijas <span class="rp-snapshot-meta" style="font-size:0.8rem;font-weight:400;">(var izvēlēties vairākas)</span></span>
+                        <span class="reading-progress-emotion-label">Emocijas <span class="rp-snapshot-meta rp-emotion-note">(var izvēlēties vairākas)</span></span>
                         <input type="hidden" name="emotion" id="emotion_input" value="{{ old('emotion', $prefillEmotion) }}">
                         <div class="emotion-picker" id="emotion-picker">
                             @foreach ([
@@ -236,20 +232,25 @@
                         <div class="rp-datetime-row">
                             <label style="flex: 1.5;">
                                 Datums
-                                <input type="date" name="reading_date" value="{{ old('reading_date', $prefill['reading_date'] ?? now()->toDateString()) }}" required class="reading-progress-input input">
+                                <div class="rp-date-control">
+                                    <input type="text" id="reading-date-display" value="{{ \Illuminate\Support\Carbon::parse(old('reading_date', $prefill['reading_date'] ?? now()->toDateString()))->format('d.m.Y') }}" readonly class="reading-progress-input input rp-date-display" aria-label="Datums, diena mēnesis gads">
+                                    <button type="button" id="reading-date-open" class="rp-date-open" aria-label="Atvērt datuma izvēlni">▣</button>
+                                    <input type="date" name="reading_date" id="reading-date-picker" value="{{ old('reading_date', $prefill['reading_date'] ?? now()->toDateString()) }}" required class="rp-date-picker" lang="lv-LV">
+                                </div>
                             </label>
                             <label style="flex: 1;">
                                 No cikiem
-                                <input type="time" name="start_time" value="{{ old('start_time', $prefill['start_time'] ?? '00:00') }}" required class="reading-progress-input input">
+                                <input type="time" name="start_time" value="{{ old('start_time', $prefill['start_time'] ?? '00:00') }}" required class="reading-progress-input input rp-time-input" lang="lv-LV" step="60" aria-label="Sākuma laiks, 24 stundu formāts">
                             </label>
                             <label style="flex: 1;">
                                 Līdz cikiem
-                                <input type="time" name="end_time" value="{{ old('end_time', $prefill['end_time'] ?? '00:01') }}" required class="reading-progress-input input">
+                                <input type="time" name="end_time" value="{{ old('end_time', $prefill['end_time'] ?? '00:01') }}" required class="reading-progress-input input rp-time-input" lang="lv-LV" step="60" aria-label="Beigu laiks, 24 stundu formāts">
                             </label>
                         </div>
-                    </div>
-
-                    <button type="submit" id="progress-submit-btn" class="reading-progress-submit login-button">{{ $isEditMode ? 'Atjaunot progresu' : 'Saglabāt progresu' }}</button>
+                        <div class="rp-form-footer">
+                            <a href="{{ route('reading-shelf.show') }}" class="rp-back-button">Atpakaļ</a>
+                            <button type="submit" id="progress-submit-btn" class="reading-progress-submit login-button">{{ $isEditMode ? 'Atjaunot progresu' : 'Saglabāt progresu' }}</button>
+                        </div>
                 </form>
             </section>
         </div>

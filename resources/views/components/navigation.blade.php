@@ -12,12 +12,51 @@
 
     <div class="flex items-center gap-3">
       @auth
+        @php
+          $releaseReminders = Auth::user()->bookReleaseReminders()
+            ->whereNull('notified_at')
+            ->orderBy('release_date')
+            ->get();
+        @endphp
+        <div class="book-notification" x-data="{ open: false }">
+          <button type="button" class="book-notification-button" @click="open = !open" :aria-expanded="open.toString()" aria-label="Atvērt paziņojumus">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            @if($releaseReminders->count())
+              <span class="book-notification-count">{{ $releaseReminders->count() }}</span>
+            @endif
+          </button>
+          <div x-show="open" x-cloak @click.outside="open = false" class="book-notification-panel">
+            <div class="book-notification-heading">
+              <strong>Mani paziņojumi</strong>
+              <span>{{ $releaseReminders->count() }}</span>
+            </div>
+            @forelse($releaseReminders as $reminder)
+              <a class="book-notification-item" href="{{ $reminder->info_link ?: route('booktok.index') }}" target="{{ $reminder->info_link ? '_blank' : '_self' }}" rel="noopener noreferrer">
+                @if($reminder->cover_url)
+                  <img class="book-notification-cover" src="{{ $reminder->cover_url }}" alt="{{ $reminder->title }} vāks">
+                @else
+                  <span class="book-notification-cover">{{ mb_strtoupper(mb_substr($reminder->title, 0, 1)) }}</span>
+                @endif
+                <span>
+                  <strong>{{ $reminder->title }}</strong>
+                  <small>{{ $reminder->author ?: 'Autors nav norādīts' }}</small>
+                  <small>Iznāks: {{ $reminder->release_date->format('d.m.Y') }}</small>
+                </span>
+              </a>
+            @empty
+              <p class="book-notification-empty">Paziņojumu vēl nav.</p>
+            @endforelse
+          </div>
+        </div>
         <span class="hidden sm:inline text-sm text-body">{{ Auth::user()->name }}</span>
         <form method="POST" action="{{ route('logout') }}" class="hidden sm:block">
           @csrf
           <button type="submit" class="text-sm text-body hover:text-heading transition-colors">Log out</button>
         </form>
       @else
+        <a href="{{ route('login') }}" class="book-notification-login" aria-label="Ielogoties, lai skatītu paziņojumus">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
         <a href="{{ route('login') }}" class="hidden sm:inline text-sm text-body hover:text-heading transition-colors">Log in</a>
         @if (Route::has('register'))
           <a href="{{ route('register') }}" class="hidden sm:inline text-sm text-body hover:text-heading transition-colors">Register</a>

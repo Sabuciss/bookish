@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BooktokTopController;
+use App\Http\Controllers\BookReleaseReminderController;
 use App\Http\Controllers\GoogleBooksController;
 use App\Http\Controllers\ReadingChallengeController;
 use App\Http\Controllers\ReadingHighlightController;
@@ -34,6 +35,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('reading-progress.store');
     Route::post('/reading-progress/want-to-read', [ReadingProgressController::class, 'storeWantToRead'])
         ->name('reading-progress.want-to-read.store');
+    Route::post('/book-release-reminders', [BookReleaseReminderController::class, 'store'])
+        ->name('book-release-reminders.store');
+    Route::delete('/book-release-reminders/{volumeId}', [BookReleaseReminderController::class, 'destroy'])
+        ->name('book-release-reminders.destroy');
 
     Route::get('/reading-highlights/create', [ReadingHighlightController::class, 'create'])
         ->name('reading-highlights.create');
