@@ -22,6 +22,16 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Test User', 'password' => bcrypt('password')]
         );
 
+        User::query()->updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('password'),
+                'role' => 'admin',
+                'email_verified_at' => now(),
+            ]
+        );
+
         $this->call([
             BooktokTopBookSeeder::class,
             ReadingHighlightSeeder::class,

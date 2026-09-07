@@ -24,17 +24,17 @@
                 @csrf
 
                 <label>
+                    Kas to teica?
+                    <input type="text" name="character" maxlength="255" value="{{ old('character') }}" class="reading-progress-input input" placeholder="Piemēram, varonis vai autors">
+                </label>
+
+                <label>
                     Grāmata
-                    <input type="text" name="book_title" maxlength="255" value="{{ old('book_title') }}" class="reading-progress-input input" placeholder="Nav obligāti">
+                    <input type="text" name="book_title" maxlength="255" value="{{ old('book_title') }}" class="reading-progress-input input" placeholder="Grāmatas nosaukums">
                 </label>
 
                 <label>
-                    Kurš to teica (varonis)
-                    <input type="text" name="character" maxlength="255" value="{{ old('character') }}" class="reading-progress-input input" placeholder="Nav obligāti">
-                </label>
-
-                <label>
-                    Kas tika teikts (citāts)
+                    Kas tika teikts?
                     <textarea name="quote_text" rows="5" maxlength="5000" required class="reading-progress-input input">{{ old('quote_text') }}</textarea>
                 </label>
 

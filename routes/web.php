@@ -7,6 +7,7 @@ use App\Http\Controllers\GoogleBooksController;
 use App\Http\Controllers\ReadingChallengeController;
 use App\Http\Controllers\ReadingHighlightController;
 use App\Http\Controllers\ReadingProgressController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -66,6 +67,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::delete('/highlights/{highlight}', [AdminController::class, 'destroyHighlight'])
+        ->name('highlights.destroy');
+    Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])
+        ->name('users.destroy');
 });
 
 require __DIR__.'/auth.php';
