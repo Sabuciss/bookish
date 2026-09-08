@@ -5,3 +5,651 @@
 @import url("./css/pages/reading-challenges.css");
 @import url("./css/pages/reading-timer.css");
 @import url("./css/responsive.css");
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap');
+
+:root {
+	--bookish-plum: #7a6258;
+	--bookish-plum-deep: #5e4740;
+	--bookish-rose: #b98f88;
+	--bookish-cream: #fbf7f4;
+	--bookish-paper: #fffdfb;
+	--bookish-ink: #302522;
+	--bookish-muted: #6f5a55;
+	--bookish-line: #ddc9c1;
+	--bookish-soft: #e8d8ce;
+	--bookish-alt: #f2e6df;
+	--bookish-success-bg: #e0f2e8;
+	--bookish-success-text: #185c3b;
+	--bookish-info-bg: #e2eef7;
+	--bookish-info-text: #24516b;
+	--bookish-warning-bg: #f7edcf;
+	--bookish-warning-text: #704d12;
+}
+
+html,
+body {
+	font-family: 'DM Sans', sans-serif;
+}
+
+body {
+	background-color: var(--bookish-cream) !important;
+	background-image: radial-gradient(#ddc9c1 0.7px, transparent 0.7px) !important;
+	background-size: 18px 18px !important;
+	color: var(--bookish-ink) !important;
+}
+
+h1,
+h2,
+h3,
+.bookish-brand,
+.booktok-section-title,
+.welcome-title,
+.book-detail-title,
+.uiverse-heading {
+	font-family: 'Playfair Display', Georgia, serif !important;
+	letter-spacing: 0 !important;
+}
+
+.app-surface-opaque {
+	background: var(--bookish-paper) !important;
+	border-color: var(--bookish-line) !important;
+}
+
+nav.app-surface-opaque {
+	background: var(--bookish-paper) !important;
+	border-bottom: 2px solid var(--bookish-rose) !important;
+	box-shadow: 0 5px 18px rgba(77, 38, 57, 0.08);
+}
+
+nav.app-surface-opaque .text-body,
+nav.app-surface-opaque a:not(.bookish-brand),
+nav.app-surface-opaque form button {
+	color: var(--bookish-muted) !important;
+}
+
+nav.app-surface-opaque .text-body:hover,
+nav.app-surface-opaque a:not(.bookish-brand):hover,
+nav.app-surface-opaque form button:hover {
+	color: var(--bookish-plum) !important;
+}
+
+#drawer-navigation {
+	background: var(--bookish-paper) !important;
+	border-color: var(--bookish-line) !important;
+	box-shadow: 8px 0 24px rgba(77, 38, 57, 0.1);
+	pointer-events: auto;
+}
+
+#drawer-overlay.hidden {
+	display: none !important;
+	pointer-events: none !important;
+}
+
+#drawer-overlay:not(.hidden) {
+	pointer-events: auto;
+}
+
+#drawer-navigation a {
+	position: relative;
+	z-index: 1;
+}
+
+#drawer-navigation > div:first-child {
+	border-color: var(--bookish-line) !important;
+}
+
+#drawer-navigation .bg-neutral-tertiary-soft {
+	background: #f3e8e6 !important;
+	color: var(--bookish-muted) !important;
+}
+
+#drawer-navigation a,
+#drawer-navigation button {
+	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#drawer-navigation a:hover,
+#drawer-navigation button:hover {
+	background: #f0e1e4 !important;
+	color: var(--bookish-plum) !important;
+}
+
+.bookish-main {
+	padding-top: 94px;
+}
+
+.bookish-brand {
+	color: var(--bookish-plum) !important;
+	font-size: 1.45rem !important;
+	font-weight: 600 !important;
+}
+
+.theme-toggle-nav,
+.book-notification-button,
+.book-notification-login {
+	border-color: var(--bookish-line) !important;
+	background: var(--bookish-paper) !important;
+	color: var(--bookish-plum) !important;
+	border-radius: 7px !important;
+}
+
+.bookish-main > .reading-progress-page,
+.bookish-main > .welcome-container,
+.bookish-main > .reading-challenges-page,
+.bookish-main > .reading-timer-section {
+	animation: bookishReveal 0.55s ease both;
+}
+
+.uiverse-container {
+	background: rgba(255, 253, 249, 0.94) !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 4px !important;
+	box-shadow: 0 12px 28px rgba(77, 38, 57, 0.08) !important;
+}
+
+.reading-progress-page > h1,
+.welcome-title {
+	color: var(--bookish-plum) !important;
+	font-size: 3.4rem !important;
+	font-weight: 500 !important;
+	line-height: 1.05 !important;
+}
+
+.reading-progress-page > p,
+.welcome-container > p {
+	color: var(--bookish-muted) !important;
+}
+
+.book-genre-section {
+	border-color: var(--bookish-line) !important;
+}
+
+.book-genre-heading h3 {
+	color: var(--bookish-plum) !important;
+}
+
+.book-genre-heading p {
+	color: var(--bookish-muted) !important;
+}
+
+.book-genre-heading h3 span {
+	color: var(--bookish-rose) !important;
+}
+
+.book-genre-filter-button {
+	border-color: var(--bookish-line) !important;
+	background: var(--bookish-paper) !important;
+	color: var(--bookish-muted) !important;
+}
+
+.book-genre-filter-button.is-active,
+.book-genre-filter-button:hover {
+	border-color: var(--bookish-plum) !important;
+	background: var(--bookish-plum) !important;
+	color: var(--bookish-paper) !important;
+}
+
+.bookish-field-label {
+	display: block;
+	margin: 0 0 6px;
+	color: var(--bookish-ink);
+	font-size: 0.76rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+}
+
+.bookish-field-group {
+	display: flex;
+	flex: 1 1 180px;
+	min-width: 0;
+	flex-direction: column;
+	gap: 0;
+}
+
+.bookish-field-group .weekly-genre-select,
+.bookish-field-group .weekly-year-input {
+	width: 100%;
+	max-width: none;
+	flex: 0 0 40px;
+}
+
+.reading-progress-submit,
+.booktok-view-button.is-active,
+.booktok-view-button:hover {
+	border-color: var(--bookish-plum) !important;
+	background: var(--bookish-plum) !important;
+	color: #fffaf5 !important;
+	border-radius: 7px !important;
+	box-shadow: none !important;
+}
+
+.booktok-view-button {
+	border-color: var(--bookish-line) !important;
+	background: var(--bookish-paper) !important;
+	color: var(--bookish-plum) !important;
+	border-radius: 7px !important;
+	font-family: 'DM Sans', sans-serif !important;
+	text-transform: uppercase;
+	letter-spacing: 0.08em !important;
+	font-size: 0.72rem;
+}
+
+.booktok-author-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	border-color: var(--bookish-line) !important;
+	border-radius: 2px !important;
+	background: var(--bookish-soft) !important;
+	transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.booktok-author-link {
+	display: flex;
+	align-items: center;
+	flex: 1;
+	min-width: 0;
+	gap: 10px;
+	color: inherit;
+	text-decoration: none;
+}
+
+.booktok-author-info {
+	display: grid;
+	gap: 3px;
+	min-width: 0;
+}
+
+.booktok-favorite-button {
+	display: inline-flex;
+	flex: 0 0 34px;
+	width: 34px;
+	height: 34px;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--bookish-line);
+	border-radius: 50%;
+	background: transparent;
+	color: var(--bookish-plum);
+	cursor: pointer;
+	font-size: 1.25rem;
+	line-height: 1;
+	text-decoration: none;
+	transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.booktok-favorite-button:hover,
+.booktok-favorite-button.is-favorite {
+	background: var(--bookish-rose);
+	border-color: var(--bookish-rose);
+	color: #fffaf5;
+	transform: scale(1.06);
+}
+
+.booktok-author-card:hover {
+	border-color: var(--bookish-rose) !important;
+	box-shadow: 0 8px 18px rgba(77, 38, 57, 0.1);
+	transform: translateY(-2px);
+}
+
+.booktok-author-avatar {
+	border-radius: 50% !important;
+	background: var(--bookish-plum) !important;
+	color: #fffaf5 !important;
+}
+
+.booktok-section-title,
+.book-detail-section-title {
+	color: var(--bookish-plum) !important;
+}
+
+.reading-progress-table th {
+	background: var(--bookish-plum) !important;
+	color: #fffaf5 !important;
+	font-family: 'DM Sans', sans-serif;
+	font-size: 0.72rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.reading-progress-table td {
+	border-color: var(--bookish-line) !important;
+}
+
+.reading-progress-table a,
+.book-detail-link {
+	color: var(--bookish-plum) !important;
+}
+
+input,
+select,
+textarea {
+	color: var(--bookish-ink) !important;
+	background: var(--bookish-paper) !important;
+	border-color: var(--bookish-line) !important;
+}
+
+input:not([type='hidden']):not([type='checkbox']):not([type='radio']),
+select {
+	min-height: 40px;
+	padding: 9px 15px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 999px !important;
+	background: var(--bookish-paper) !important;
+	box-shadow: 0 1px 2px rgba(122, 98, 88, 0.05) !important;
+	font-size: 0.88rem;
+}
+
+textarea {
+	min-height: 96px;
+	padding: 12px 15px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 16px !important;
+	background: var(--bookish-paper) !important;
+	box-shadow: 0 1px 2px rgba(122, 98, 88, 0.05) !important;
+	font-size: 0.88rem;
+}
+
+input:not([type='hidden']):not([type='checkbox']):not([type='radio']):focus,
+select:focus,
+textarea:focus {
+	outline: none !important;
+	border-color: var(--bookish-rose) !important;
+	box-shadow: 0 0 0 3px rgba(185, 143, 136, 0.18) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+	color: var(--bookish-muted) !important;
+	opacity: 1;
+}
+
+html.dark {
+	--bookish-plum: #b88791;
+	--bookish-plum-deep: #f7e9e8;
+	--bookish-rose: #8a5362;
+	--bookish-cream: #351923;
+	--bookish-paper: #4d2835;
+	--bookish-ink: #f8ece9;
+	--bookish-muted: #d9bfc1;
+	--bookish-line: #754957;
+	--bookish-soft: #6e3d4c;
+	--bookish-alt: #432330;
+	--bookish-success-bg: #173d2d;
+	--bookish-success-text: #c3f2d6;
+	--bookish-info-bg: #1d3b4b;
+	--bookish-info-text: #cbeafa;
+	--bookish-warning-bg: #51421f;
+	--bookish-warning-text: #ffedb0;
+}
+
+html.dark body {
+	background-color: var(--bookish-cream) !important;
+	background-image: radial-gradient(#754957 0.7px, transparent 0.7px) !important;
+	color: var(--bookish-ink) !important;
+}
+
+html.dark .app-surface-opaque,
+html.dark .uiverse-container,
+html.dark .book-notification-panel {
+	background: var(--bookish-paper) !important;
+	border-color: var(--bookish-line) !important;
+	color: var(--bookish-ink) !important;
+}
+
+html.dark nav.app-surface-opaque {
+	background: var(--bookish-paper) !important;
+	border-bottom-color: var(--bookish-rose) !important;
+	box-shadow: 0 5px 18px rgba(0, 0, 0, 0.22);
+}
+
+html.dark #drawer-navigation .bg-neutral-tertiary-soft {
+	background: var(--bookish-soft) !important;
+	color: var(--bookish-muted) !important;
+}
+
+html.dark .bookish-brand,
+html.dark .reading-progress-page > h1,
+html.dark .welcome-title,
+html.dark .booktok-section-title,
+html.dark .book-detail-section-title,
+html.dark .book-detail-title,
+html.dark .uiverse-heading,
+html.dark .book-notification-heading,
+html.dark .book-notification-item strong {
+	color: var(--bookish-plum) !important;
+}
+
+html.dark .reading-progress-page > p,
+html.dark .welcome-container > p,
+html.dark .booktok-section-count,
+html.dark .booktok-author-card div span,
+html.dark .book-notification-heading span,
+html.dark .book-notification-item small,
+html.dark .book-notification-empty {
+	color: var(--bookish-muted) !important;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea,
+html.dark .uiverse-container .form .input {
+	background: var(--bookish-cream) !important;
+	border-color: var(--bookish-line) !important;
+	color: var(--bookish-ink) !important;
+}
+
+html.dark input:not([type='hidden']):not([type='checkbox']):not([type='radio']),
+html.dark select,
+html.dark textarea {
+	background: var(--bookish-cream) !important;
+	border-color: var(--bookish-line) !important;
+	color: var(--bookish-ink) !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder,
+html.dark .uiverse-container .form .input::placeholder {
+	color: var(--bookish-muted) !important;
+}
+
+html.dark .reading-progress-table td,
+html.dark .reading-progress-table th {
+	border-color: var(--bookish-line) !important;
+}
+
+html.dark .reading-progress-table td,
+html.dark .reading-progress-table td span,
+html.dark .booktok-author-card strong {
+	color: var(--bookish-ink) !important;
+}
+
+html.dark .reading-progress-table a,
+html.dark .book-detail-link {
+	color: var(--bookish-plum) !important;
+}
+
+html.dark .booktok-author-card {
+	background: var(--bookish-paper) !important;
+	border-color: var(--bookish-line) !important;
+}
+
+html.dark .booktok-author-card:nth-child(3n + 2),
+html.dark .book-recommendation-card:nth-child(3n + 2),
+html.dark .highlight-card:nth-child(3n + 2),
+html.dark .reading-challenge-card:nth-child(3n + 2) {
+	background: var(--bookish-soft) !important;
+}
+
+html.dark .booktok-author-card:nth-child(3n),
+html.dark .book-recommendation-card:nth-child(3n),
+html.dark .highlight-card:nth-child(3n),
+html.dark .reading-challenge-card:nth-child(3n) {
+	background: var(--bookish-alt) !important;
+}
+
+html.dark .booktok-author-card:nth-child(3n + 2) .booktok-author-avatar {
+	background: #b88791 !important;
+}
+
+html.dark .booktok-author-card:nth-child(3n) .booktok-author-avatar {
+	background: #8a5362 !important;
+}
+
+html.dark .book-recommendation-card,
+html.dark .highlight-card,
+html.dark .reading-challenge-card,
+html.dark .rp-snapshot-col,
+html.dark .rp-snapshot-article,
+html.dark .reading-progress-overview,
+html.dark .reading-progress-history,
+html.dark .reading-progress-editor,
+html.dark .rp-form-footer,
+html.dark .live-progress-preview,
+html.dark .status-tag,
+html.dark .emotion-tag,
+html.dark .rp-emotion-icon {
+	background: var(--bookish-paper) !important;
+	border-color: var(--bookish-line) !important;
+	color: var(--bookish-ink) !important;
+}
+
+html.dark .book-recommendation-card h3 a,
+html.dark .book-recommendation-card p,
+html.dark .book-recommendation-card span,
+html.dark .highlight-card p,
+html.dark .highlight-card strong,
+html.dark .reading-challenge-card p,
+html.dark .reading-challenge-card strong,
+html.dark .rp-snapshot-meta,
+html.dark .status-tag,
+html.dark .emotion-tag,
+html.dark .rp-back-button,
+html.dark #drawer-navigation a,
+html.dark #drawer-navigation div,
+html.dark #drawer-navigation span {
+	color: var(--bookish-muted) !important;
+}
+
+html.dark .book-recommendation-card h3 a,
+html.dark .highlight-card strong,
+html.dark .reading-challenge-card strong,
+html.dark #drawer-navigation .text-heading {
+	color: var(--bookish-plum) !important;
+}
+
+html.dark #drawer-navigation a:hover,
+html.dark #drawer-navigation button:hover {
+	background: var(--bookish-soft) !important;
+	color: var(--bookish-plum) !important;
+}
+
+html.dark nav.app-surface-opaque a,
+html.dark nav.app-surface-opaque span,
+html.dark nav.app-surface-opaque button {
+	color: var(--bookish-muted) !important;
+}
+
+html.dark nav.app-surface-opaque .bookish-brand,
+html.dark nav.app-surface-opaque button:hover {
+	color: var(--bookish-plum) !important;
+}
+
+html.dark .rp-datetime-row,
+html.dark .live-progress-bar-wrap {
+	background: var(--bookish-cream) !important;
+	border-color: var(--bookish-line) !important;
+}
+
+html.dark .cancel-edit-btn,
+html.dark .edit-mode-banner {
+	background: #51421f !important;
+	border-color: #b8954a !important;
+	color: #ffedb0 !important;
+}
+
+html.dark .emotion-tag:hover,
+html.dark .status-tag:hover {
+	background: var(--bookish-soft) !important;
+}
+
+html.dark .emotion-tag.selected {
+	background: var(--bookish-rose) !important;
+	border-color: var(--bookish-rose) !important;
+	color: var(--bookish-cream) !important;
+}
+
+html.dark .booktok-author-avatar {
+	background: var(--bookish-rose) !important;
+	color: var(--bookish-cream) !important;
+}
+
+html.dark .reading-progress-submit,
+html.dark .booktok-view-button.is-active,
+html.dark .booktok-view-button:hover {
+	background: var(--bookish-rose) !important;
+	border-color: var(--bookish-rose) !important;
+	color: var(--bookish-cream) !important;
+}
+
+html.dark .booktok-view-button {
+	background: var(--bookish-paper) !important;
+	border-color: var(--bookish-line) !important;
+	color: var(--bookish-plum) !important;
+}
+
+html.dark .book-notification-item,
+html.dark .book-notification-item:hover {
+	border-color: var(--bookish-line) !important;
+	background: transparent !important;
+}
+
+html.dark .book-notification-button,
+html.dark .book-notification-login,
+html.dark .theme-toggle-nav {
+	background: var(--bookish-paper) !important;
+	border-color: var(--bookish-line) !important;
+	color: var(--bookish-plum) !important;
+}
+
+html.dark .reading-progress-alert-success {
+	background: var(--bookish-success-bg) !important;
+	color: var(--bookish-success-text) !important;
+}
+
+html.dark .book-detail-status--read {
+	background: var(--bookish-success-bg) !important;
+	color: var(--bookish-success-text) !important;
+}
+
+html.dark .book-detail-status--progress {
+	background: var(--bookish-info-bg) !important;
+	color: var(--bookish-info-text) !important;
+}
+
+html.dark .book-detail-status--want {
+	background: var(--bookish-warning-bg) !important;
+	color: var(--bookish-warning-text) !important;
+}
+
+@keyframes bookishReveal {
+	from { opacity: 0; transform: translateY(10px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+	.bookish-brand {
+		font-size: 1.15rem !important;
+	}
+
+	.bookish-main {
+		padding-top: 82px;
+	}
+
+	.reading-progress-page > h1,
+	.welcome-title {
+		font-size: 2.35rem !important;
+	}
+}

@@ -62,6 +62,72 @@
 	gap: 14px;
 }
 
+.book-genre-sections {
+	display: grid;
+	gap: 18px;
+}
+
+.book-genre-filter {
+	display: flex;
+	gap: 8px;
+	margin: 0 0 18px;
+	padding-bottom: 2px;
+	overflow-x: auto;
+}
+
+.book-genre-filter-button {
+	flex: 0 0 auto;
+	padding: 8px 13px;
+	border: 1px solid #dfd0cc;
+	border-radius: 999px;
+	background: #fffdf9;
+	color: #76656a;
+	font-size: 0.76rem;
+	font-weight: 700;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.book-genre-filter-button.is-active,
+.book-genre-filter-button:hover {
+	border-color: #7a6258;
+	background: #7a6258;
+	color: #fffdf9;
+}
+
+.book-genre-section {
+	padding-top: 18px;
+	border-top: 1px solid #e2d3ce;
+}
+
+.book-genre-heading {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 12px;
+}
+
+.book-genre-heading h3 {
+	margin: 0;
+	color: #172554;
+	font-size: 1.2rem;
+}
+
+.book-genre-heading h3 span {
+	color: #9f7889;
+	font-family: 'DM Sans', sans-serif;
+	font-size: 0.72rem;
+	font-weight: 700;
+}
+
+.book-genre-heading p {
+	max-width: 650px;
+	margin: 4px 0 0;
+	color: #64748b;
+	font-size: 0.78rem;
+	line-height: 1.5;
+}
+
 .book-recommendation-card {
 	display: grid;
 	grid-template-columns: 64px minmax(0, 1fr);
@@ -488,6 +554,33 @@ html.dark .book-reminder-button--saved {
 	margin-bottom: 16px;
 }
 
+.booktok-view-switcher {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.booktok-view-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 110px;
+	padding: 9px 16px;
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	background: #ffffff;
+	color: #334155;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.booktok-view-button.is-active,
+.booktok-view-button:hover {
+	border-color: #2563eb;
+	background: #2563eb;
+	color: #ffffff;
+}
+
 .booktok-section-heading {
 	display: flex;
 	justify-content: space-between;
@@ -526,6 +619,7 @@ html.dark .book-reminder-button--saved {
 	border: 1px solid #e2e8f0;
 	border-radius: 10px;
 	background: #f8fafc;
+	text-decoration: none;
 }
 
 .booktok-author-avatar {

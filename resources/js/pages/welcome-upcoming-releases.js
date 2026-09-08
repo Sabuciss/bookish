@@ -3,6 +3,8 @@ const upcomingBookSearch = document.getElementById('upcoming-book-search');
 const upcomingBookSearchResults = document.getElementById('upcoming-book-search-results');
 const bookRecommendations = document.getElementById('book-recommendations');
 const upcomingReleases = document.getElementById('upcoming-releases');
+const genreSections = document.querySelectorAll('[data-genre]');
+const genreFilterButtons = document.querySelectorAll('[data-genre-filter]');
 
 const parsePublishedDate = (rawDate) => {
     const value = String(rawDate || '').trim();
@@ -111,9 +113,42 @@ const loadBookishHighlights = async () => {
     }
 };
 
+const loadGenreSections = async () => {
+    if (!genreSections.length) {
+        return;
+    }
+
+    await Promise.all([...genreSections].map(async (section) => {
+        const genreBooks = section.querySelector('.book-genre-books');
+
+        try {
+            const books = await fetchBookResults(section.dataset.query, 'relevance');
+            renderBookCards(genreBooks, books.slice(0, 6), 'Šī žanra grāmatas neizdevās atrast.');
+        } catch {
+            renderBookCards(genreBooks, [], 'Google Books žanra dati īslaicīgi nav pieejami.');
+        }
+    }));
+};
+
+genreFilterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+        const selectedGenre = button.dataset.genreFilter;
+
+        genreFilterButtons.forEach((filterButton) => {
+            filterButton.classList.toggle('is-active', filterButton === button);
+        });
+
+        genreSections.forEach((section) => {
+            section.hidden = selectedGenre !== 'all' && section.dataset.genre !== selectedGenre;
+        });
+    });
+});
+
 if (bookRecommendations || upcomingReleases) {
     loadBookishHighlights();
 }
+
+loadGenreSections();
 
 const reminderToken = document.querySelector('meta[name="csrf-token"]')?.content;
 const reminderUrl = document.querySelector('meta[name="book-release-reminder-url"]')?.content;

@@ -63,6 +63,18 @@ export function initDrawerNavigation() {
         });
     });
 
+    document.querySelectorAll('#drawer-navigation a').forEach((link) => {
+        link.addEventListener('click', (event) => {
+            const drawerId = link.closest('[id]')?.id;
+
+            if (drawerId) {
+                hideDrawer(drawerId);
+            }
+
+            event.stopPropagation();
+        });
+    });
+
     document.addEventListener('keydown', (event) => {
         if (event.key !== 'Escape') {
             return;

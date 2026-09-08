@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\BooktokTopBook;
+use App\Models\BooktokFavoriteAuthor;
 use App\Models\ReadingProgress;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
@@ -25,6 +27,11 @@ class BooktokTopController extends Controller
         $selectedTitle = $request->filled('title')
             ? trim($request->string('title')->toString())
             : null;
+        $selectedView = $request->query('view', 'books') === 'authors' ? 'authors' : 'books';
+        $selectedFavoriteAuthors = $request->boolean('favorite_authors');
+        $favoriteAuthors = $request->user()
+            ? $request->user()->booktokFavoriteAuthors()->pluck('author')->all()
+            : [];
 
         $booksQuery = BooktokTopBook::query()
             ->orderBy('rank_position')
@@ -40,6 +47,10 @@ class BooktokTopController extends Controller
 
         if ($selectedTitle !== null) {
             $booksQuery->where('title', 'like', '%' . $selectedTitle . '%');
+        }
+
+        if ($selectedFavoriteAuthors && $request->user()) {
+            $booksQuery->whereIn('author', $favoriteAuthors);
         }
 
         $books = $booksQuery->get();
@@ -111,11 +122,35 @@ class BooktokTopController extends Controller
             'selectedYear' => $selectedYear,
             'selectedAuthor' => $selectedAuthor,
             'selectedTitle' => $selectedTitle,
+            'selectedView' => $selectedView,
+            'selectedFavoriteAuthors' => $selectedFavoriteAuthors,
             'availableGenres' => $availableGenres,
             'selectedGenre' => $selectedGenre,
             'booktokAuthors' => $booktokAuthors,
+            'favoriteAuthors' => $favoriteAuthors,
             'userBookStatuses' => $userBookStatuses,
         ]);
+    }
+
+    public function addFavoriteAuthor(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'author' => ['required', 'string', 'max:255'],
+        ]);
+
+        BooktokFavoriteAuthor::query()->firstOrCreate([
+            'user_id' => (int) $request->user()->id,
+            'author' => trim($validated['author']),
+        ]);
+
+        return back()->with('status', 'Autors pievienots favorītiem.');
+    }
+
+    public function removeFavoriteAuthor(Request $request, string $author): RedirectResponse
+    {
+        $request->user()->booktokFavoriteAuthors()->where('author', $author)->delete();
+
+        return back()->with('status', 'Autors noņemts no favorītiem.');
     }
 
     public function show(Request $request, BooktokTopBook $book): View

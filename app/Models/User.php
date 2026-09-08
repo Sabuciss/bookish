@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(BookReleaseReminder::class);
     }
+
+    public function booktokFavoriteAuthors(): HasMany
+    {
+        return $this->hasMany(BooktokFavoriteAuthor::class);
+    }
 }
