@@ -44,7 +44,7 @@
 
 .welcome-eyebrow {
 	margin: 0 0 4px;
-	color: #0f766e;
+	color: #754255;
 	font-size: 0.7rem;
 	font-weight: 800;
 	letter-spacing: 0.08em;
@@ -52,7 +52,7 @@
 }
 
 .welcome-section-note {
-	color: #64748b;
+	color: #866b75;
 	font-size: 0.78rem;
 }
 
@@ -109,7 +109,7 @@
 
 .book-genre-heading h3 {
 	margin: 0;
-	color: #172554;
+	color: #4d3540;
 	font-size: 1.2rem;
 }
 
@@ -123,7 +123,7 @@
 .book-genre-heading p {
 	max-width: 650px;
 	margin: 4px 0 0;
-	color: #64748b;
+	color: #866b75;
 	font-size: 0.78rem;
 	line-height: 1.5;
 }
@@ -166,7 +166,7 @@
 }
 
 .book-recommendation-card h3 a {
-	color: #172554;
+	color: #4d3540;
 	text-decoration: none;
 }
 
@@ -178,7 +178,7 @@
 .book-recommendation-card span {
 	display: block;
 	margin: 7px 0 0;
-	color: #64748b;
+	color: #866b75;
 	font-size: 0.74rem;
 	line-height: 1.35;
 }
@@ -187,10 +187,10 @@
 	display: inline-flex;
 	margin-top: 10px;
 	padding: 7px 9px;
-	border: 1px solid #0f766e;
+	border: 1px solid #754255;
 	border-radius: 6px;
 	background: #ffffff;
-	color: #0f766e;
+	color: #754255;
 	font-size: 0.72rem;
 	font-weight: 800;
 	cursor: pointer;
@@ -198,7 +198,7 @@
 
 .book-reminder-button:hover,
 .book-reminder-button--saved {
-	background: #ccfbf1;
+	background: #fff0f5;
 }
 
 .book-reminder-button:disabled {
@@ -207,7 +207,7 @@
 }
 
 html.dark .welcome-eyebrow {
-	color: #5eead4;
+	color: #ffe9f0;
 }
 
 html.dark .book-recommendation-card {
@@ -216,7 +216,7 @@ html.dark .book-recommendation-card {
 }
 
 html.dark .book-recommendation-card h3 a {
-	color: #e0e7ff;
+	color: #ffe9f0;
 }
 
 html.dark .book-recommendation-card p,
@@ -863,24 +863,24 @@ html.dark .release-calendar-day {
 }
 
 html.dark .weekly-top-meta {
-	color: #cbd5e1;
+	color: #f2dce3;
 }
 
 html.dark .weekly-top-description {
-	color: #e2e8f0;
+	color: #f2dce3;
 }
 
 html.dark .weekly-top-title-link {
-	color: #93c5fd;
+	color: #ffe9f0;
 }
 
 html.dark .weekly-top-details summary,
 html.dark .weekly-top-details-list {
-	color: #cbd5e1;
+	color: #f2dce3;
 }
 
 html.dark .weekly-top-action {
-	color: #93c5fd;
+	color: #ffe9f0;
 }
 
 html.dark .book-detail,
