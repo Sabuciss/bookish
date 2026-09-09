@@ -7,6 +7,25 @@
         <meta name="book-login-url" content="{{ route('login') }}">
 
         <div class="welcome-grid">
+            <article class="welcome-card welcome-card--wide welcome-card--search">
+                <h2 class="welcome-card-title">Kas jauns / kas plānojas</h2>
+                <p class="welcome-card-text">Meklē pēc autora vai grāmatas nosaukuma un apskati gaidāmos izdevumus (Google Books dati).</p>
+
+                <div class="weekly-top-controls">
+                    <input
+                        id="upcoming-book-search-input"
+                        type="text"
+                        class="weekly-genre-select"
+                        placeholder="Autors vai grāmatas nosaukums"
+                    >
+                    <button id="upcoming-book-search" type="button" class="reading-progress-submit">Meklēt</button>
+                </div>
+
+                <div id="upcoming-book-search-results" class="weekly-top-books">
+                    <p class="welcome-card-text">Ievadi autora vārdu vai grāmatas nosaukumu.</p>
+                </div>
+            </article>
+
             <section class="welcome-card welcome-card--wide">
                 <div class="welcome-section-heading">
                     <div>
@@ -17,19 +36,6 @@
                 </div>
                 <div id="book-recommendations" class="book-recommendation-grid">
                     <p class="welcome-card-text">Ielādējam ieteikumus...</p>
-                </div>
-            </section>
-
-            <section class="welcome-card welcome-card--wide">
-                <div class="welcome-section-heading">
-                    <div>
-                        <p class="welcome-eyebrow">Kalendārs</p>
-                        <h2 class="welcome-card-title">Drīzumā iznāks</h2>
-                    </div>
-                    <span class="welcome-section-note">Tuvākie izdevumi</span>
-                </div>
-                <div id="upcoming-releases" class="book-recommendation-grid">
-                    <p class="welcome-card-text">Ielādējam gaidāmos izdevumus...</p>
                 </div>
             </section>
 
@@ -126,25 +132,6 @@
                     </section>
                 </div>
             </section>
-
-            <article class="welcome-card">
-                <h2 class="welcome-card-title">Kas jauns / kas plānojas</h2>
-                <p class="welcome-card-text">Meklē pēc autora vai grāmatas nosaukuma un apskati gaidāmos izdevumus (Google Books dati).</p>
-
-                <div class="weekly-top-controls">
-                    <input
-                        id="upcoming-book-search-input"
-                        type="text"
-                        class="weekly-genre-select"
-                        placeholder="Autors vai grāmatas nosaukums"
-                    >
-                    <button id="upcoming-book-search" type="button" class="reading-progress-submit">Meklēt</button>
-                </div>
-
-                <div id="upcoming-book-search-results" class="weekly-top-books">
-                    <p class="welcome-card-text">Ievadi autora vārdu vai grāmatas nosaukumu.</p>
-                </div>
-            </article>
 
         </div>
     </div>

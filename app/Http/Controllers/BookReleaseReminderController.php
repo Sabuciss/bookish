@@ -5,9 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\BookReleaseReminder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class BookReleaseReminderController extends Controller
 {
+    public function index(Request $request): View
+    {
+        $reminders = BookReleaseReminder::query()
+            ->where('user_id', (int) $request->user()->id)
+            ->whereNull('notified_at')
+            ->whereDate('release_date', '>=', today())
+            ->orderBy('release_date')
+            ->get();
+
+        return view('book-release-reminders.index', [
+            'reminders' => $reminders,
+        ]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([

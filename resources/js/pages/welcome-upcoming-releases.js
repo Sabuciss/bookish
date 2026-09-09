@@ -2,9 +2,11 @@ const upcomingBookSearchInput = document.getElementById('upcoming-book-search-in
 const upcomingBookSearch = document.getElementById('upcoming-book-search');
 const upcomingBookSearchResults = document.getElementById('upcoming-book-search-results');
 const bookRecommendations = document.getElementById('book-recommendations');
-const upcomingReleases = document.getElementById('upcoming-releases');
 const genreSections = document.querySelectorAll('[data-genre]');
 const genreFilterButtons = document.querySelectorAll('[data-genre-filter]');
+const GENRE_ROTATION_INTERVAL_MS = 5 * 60 * 1000;
+const genreBookCollections = new Map();
+let recommendationBooks = [];
 
 const parsePublishedDate = (rawDate) => {
     const value = String(rawDate || '').trim();
@@ -86,30 +88,26 @@ const fetchBookResults = async (query, orderBy = 'relevance') => {
     return normalizeBookItems(data.items || []);
 };
 
+const selectGenreBooks = (books, count = 6) => [...books]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, count);
+
+const renderGenreBooks = () => {
+    genreBookCollections.forEach((books, container) => {
+        renderBookCards(container, selectGenreBooks(books), 'Šī žanra grāmatas neizdevās atrast.');
+    });
+};
+
+const renderRecommendations = () => {
+    renderBookCards(bookRecommendations, selectGenreBooks(recommendationBooks), 'Ieteikumus neizdevās atrast.');
+};
+
 const loadBookishHighlights = async () => {
-    const [recommendationsResult, upcomingResult] = await Promise.allSettled([
-        fetchBookResults('subject:fiction', 'relevance'),
-        fetchBookResults(`subject:fiction publishedDate:${new Date().getFullYear()}`, 'newest'),
-    ]);
-
-    if (recommendationsResult.status === 'fulfilled') {
-        renderBookCards(bookRecommendations, recommendationsResult.value.slice(0, 6), 'Ieteikumus neizdevās atrast.');
-    } else {
+    try {
+        recommendationBooks = await fetchBookResults('subject:fiction', 'relevance');
+        renderRecommendations();
+    } catch {
         renderBookCards(bookRecommendations, [], 'Google Books ieteikumi īslaicīgi nav pieejami.');
-    }
-
-    if (upcomingResult.status === 'fulfilled') {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const upcoming = upcomingResult.value
-            .map((book) => ({ ...book, parsedDate: parsePublishedDate(book.publishedDate) }))
-            .filter((book) => book.parsedDate && book.parsedDate >= today)
-            .sort((first, second) => first.parsedDate - second.parsedDate)
-            .slice(0, 6);
-
-        renderBookCards(upcomingReleases, upcoming, 'Tuvākie izdevumi nav atrasti.', true);
-    } else {
-        renderBookCards(upcomingReleases, [], 'Google Books izdošanas dati īslaicīgi nav pieejami.');
     }
 };
 
@@ -123,7 +121,8 @@ const loadGenreSections = async () => {
 
         try {
             const books = await fetchBookResults(section.dataset.query, 'relevance');
-            renderBookCards(genreBooks, books.slice(0, 6), 'Šī žanra grāmatas neizdevās atrast.');
+            genreBookCollections.set(genreBooks, books);
+            renderBookCards(genreBooks, selectGenreBooks(books), 'Šī žanra grāmatas neizdevās atrast.');
         } catch {
             renderBookCards(genreBooks, [], 'Google Books žanra dati īslaicīgi nav pieejami.');
         }
@@ -144,18 +143,26 @@ genreFilterButtons.forEach((button) => {
     });
 });
 
-if (bookRecommendations || upcomingReleases) {
+if (bookRecommendations) {
     loadBookishHighlights();
 }
 
 loadGenreSections();
+
+if (genreSections.length) {
+    window.setInterval(renderGenreBooks, GENRE_ROTATION_INTERVAL_MS);
+}
+
+if (bookRecommendations) {
+    window.setInterval(renderRecommendations, GENRE_ROTATION_INTERVAL_MS);
+}
 
 const reminderToken = document.querySelector('meta[name="csrf-token"]')?.content;
 const reminderUrl = document.querySelector('meta[name="book-release-reminder-url"]')?.content;
 const loginUrl = document.querySelector('meta[name="book-login-url"]')?.content;
 const isAuthenticated = document.querySelector('meta[name="bookish-authenticated"]')?.content === '1';
 
-upcomingReleases?.addEventListener('click', async (event) => {
+const saveReleaseReminder = async (event) => {
     const button = event.target.closest('.book-reminder-button');
 
     if (!button) {
@@ -196,7 +203,9 @@ upcomingReleases?.addEventListener('click', async (event) => {
         button.disabled = false;
         button.textContent = 'Mēģināt vēlreiz';
     }
-});
+};
+
+upcomingBookSearchResults?.addEventListener('click', saveReleaseReminder);
 
 if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) {
     const UPCOMING_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
@@ -241,8 +250,11 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
                     ? `<a href="${escapeHtml(link)}" target="${target}" rel="noopener noreferrer"><img class="weekly-top-cover" src="${escapeHtml(entry.thumbnail)}" alt="${escapeHtml(entry.title)} vāks"></a>`
                     : `<img class="weekly-top-cover" src="${escapeHtml(entry.thumbnail)}" alt="${escapeHtml(entry.title)} vāks">`)
                 : '<div class="weekly-top-cover weekly-top-cover--empty">Nav vāka</div>';
+            const reminderButton = entry.parsedDate && entry.volumeId
+                ? `<button type="button" class="book-reminder-button" data-volume-id="${escapeHtml(entry.volumeId)}" data-title="${escapeHtml(entry.title)}" data-author="${escapeHtml(entry.author)}" data-release-date="${entry.parsedDate.toISOString().slice(0, 10)}" data-info-link="${escapeHtml(entry.infoLink)}" data-cover-url="${escapeHtml(entry.thumbnail)}">Atgādināt</button>`
+                : '';
 
-            return `<div class="weekly-top-item">${coverHtml}<div class="weekly-top-content"><p class="welcome-card-text"><strong>${titleHtml}</strong></p><p class="welcome-card-text weekly-top-meta">Autors: ${escapeHtml(entry.author)} · Izdošana: ${escapeHtml(entry.publishedDate || 'Nav norādīts')}</p></div></div>`;
+            return `<div class="weekly-top-item">${coverHtml}<div class="weekly-top-content"><p class="welcome-card-text"><strong>${titleHtml}</strong></p><p class="welcome-card-text weekly-top-meta">Autors: ${escapeHtml(entry.author)} · Izdošana: ${escapeHtml(entry.publishedDate || 'Nav norādīts')}</p>${reminderButton}</div></div>`;
         }).join('');
     };
 

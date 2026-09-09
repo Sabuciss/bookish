@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ReadingProgress;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -26,28 +27,35 @@ class GoogleBooksController extends Controller
         $orderBy = $validated['orderBy'] ?? 'relevance';
         $cacheKey = 'google_books_top_' . md5($query . '_' . $maxResults . '_' . $startIndex . '_' . $orderBy);
 
-        $items = Cache::remember($cacheKey, now()->addHours(6), function () use ($query, $maxResults, $startIndex, $orderBy) {
-            $params = [
-                'q' => $query,
-                'orderBy' => $orderBy,
-                'maxResults' => $maxResults,
-                'startIndex' => $startIndex,
-                'printType' => 'books',
-            ];
+        try {
+            $items = Cache::remember($cacheKey, now()->addHours(6), function () use ($query, $maxResults, $startIndex, $orderBy) {
+                $params = [
+                    'q' => $query,
+                    'orderBy' => $orderBy,
+                    'maxResults' => $maxResults,
+                    'startIndex' => $startIndex,
+                    'printType' => 'books',
+                ];
 
-            $apiKey = config('services.google_books.api_key');
-            if (!empty($apiKey)) {
-                $params['key'] = $apiKey;
-            }
+                $apiKey = config('services.google_books.api_key');
+                if (!empty($apiKey)) {
+                    $params['key'] = $apiKey;
+                }
 
-            $response = Http::timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
+                $response = Http::connectTimeout(3)->timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
 
-            if (!$response->ok()) {
-                return [];
-            }
+                if (!$response->ok()) {
+                    return [];
+                }
 
-            return $response->json('items', []);
-        });
+                return $response->json('items', []);
+            });
+        } catch (ConnectionException) {
+            return response()->json([
+                'items' => [],
+                'message' => 'Google Books dati pašlaik nav pieejami. Mēģini vēlreiz pēc brīža.',
+            ], 503);
+        }
 
         return response()->json([
             'items' => $items,
@@ -58,22 +66,26 @@ class GoogleBooksController extends Controller
     {
         $cacheKey = 'google_books_volume_' . md5($volumeId);
 
-        $book = Cache::remember($cacheKey, now()->addHours(6), function () use ($volumeId) {
-            $apiKey = config('services.google_books.api_key');
+        try {
+            $book = Cache::remember($cacheKey, now()->addHours(6), function () use ($volumeId) {
+                $apiKey = config('services.google_books.api_key');
 
-            $params = [];
-            if (!empty($apiKey)) {
-                $params['key'] = $apiKey;
-            }
+                $params = [];
+                if (!empty($apiKey)) {
+                    $params['key'] = $apiKey;
+                }
 
-            $response = Http::timeout(10)->get('https://www.googleapis.com/books/v1/volumes/' . rawurlencode($volumeId), $params);
+                $response = Http::connectTimeout(3)->timeout(10)->get('https://www.googleapis.com/books/v1/volumes/' . rawurlencode($volumeId), $params);
 
-            if (!$response->ok()) {
-                return null;
-            }
+                if (!$response->ok()) {
+                    return null;
+                }
 
-            return $response->json();
-        });
+                return $response->json();
+            });
+        } catch (ConnectionException) {
+            abort(503, 'Google Books dati pašlaik nav pieejami. Mēģini vēlreiz pēc brīža.');
+        }
 
         if (!$book) {
             abort(404, 'Grāmata nav atrasta.');

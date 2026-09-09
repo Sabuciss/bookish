@@ -38,6 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('reading-progress.want-to-read.store');
     Route::post('/book-release-reminders', [BookReleaseReminderController::class, 'store'])
         ->name('book-release-reminders.store');
+    Route::get('/book-release-reminders', [BookReleaseReminderController::class, 'index'])
+        ->name('book-release-reminders.index');
     Route::post('/booktok/favorite-authors', [BooktokTopController::class, 'addFavoriteAuthor'])
         ->name('booktok.favorite-authors.store');
     Route::delete('/booktok/favorite-authors/{author}', [BooktokTopController::class, 'removeFavoriteAuthor'])

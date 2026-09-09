@@ -42,6 +42,19 @@ canvas {
 	-webkit-backdrop-filter: none !important;
 }
 
+#drawer-navigation a[aria-current="page"] {
+	padding-left: 12px;
+	border-left: 4px solid #d599ae;
+	background: #754255;
+	color: #ffffff;
+	font-weight: 700;
+}
+
+#drawer-navigation a[aria-current="page"]:hover {
+	background: #875668;
+	color: #ffffff;
+}
+
 .theme-toggle-nav {
 	border: 1px solid #d1d5db;
 	background: #ffffff;

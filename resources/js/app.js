@@ -3,6 +3,7 @@ import './pages/reading-timer';
 import './pages/reading-progress';
 import './pages/reading-challenges';
 import './pages/welcome-upcoming-releases';
+import './pages/release-calendar';
 
 import { initDrawerNavigation } from './ui/navigation';
 import { initThemeToggle } from './ui/theme';

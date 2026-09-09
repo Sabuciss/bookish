@@ -14,8 +14,8 @@
       @auth
         @php
           $releaseReminders = Auth::user()->bookReleaseReminders()
-            ->whereNull('notified_at')
-            ->orderBy('release_date')
+            ->whereNotNull('notified_at')
+            ->latest('notified_at')
             ->get();
         @endphp
         <div class="book-notification" x-data="{ open: false }">
@@ -27,7 +27,7 @@
           </button>
           <div x-show="open" x-cloak @click.outside="open = false" class="book-notification-panel">
             <div class="book-notification-heading">
-              <strong>Mani paziņojumi</strong>
+              <strong>Izlaistās grāmatas</strong>
               <span>{{ $releaseReminders->count() }}</span>
             </div>
             @forelse($releaseReminders as $reminder)
@@ -40,7 +40,7 @@
                 <span>
                   <strong>{{ $reminder->title }}</strong>
                   <small>{{ $reminder->author ?: 'Autors nav norādīts' }}</small>
-                  <small>Iznāks: {{ $reminder->release_date->format('d.m.Y') }}</small>
+                  <small>Izlaista: {{ $reminder->release_date->format('d.m.Y') }}</small>
                 </span>
               </a>
             @empty
@@ -105,47 +105,52 @@
 
     <ul class="space-y-2 font-medium">
       <li>
-        <a href="{{ route('reading-shelf.show') }}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+        <a href="{{ route('reading-shelf.show') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-shelf.show'), 'text-body' => !request()->routeIs('reading-shelf.show')]) @if (request()->routeIs('reading-shelf.show')) aria-current="page" @endif>
           <span class="ms-1">Grāmatu plaukts</span>
         </a>
       </li>
       <li>
-        <a href="{{ route('reading-progress.index') }}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+        <a href="{{ route('reading-progress.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-progress.*'), 'text-body' => !request()->routeIs('reading-progress.*')]) @if (request()->routeIs('reading-progress.*')) aria-current="page" @endif>
           <span class="ms-1">Pievienot progresu</span>
         </a>
       </li>
       <li>
-        <a href="{{ route('reading-highlights.index') }}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+        <a href="{{ route('reading-highlights.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-highlights.index'), 'text-body' => !request()->routeIs('reading-highlights.index')]) @if (request()->routeIs('reading-highlights.index')) aria-current="page" @endif>
           <span class="ms-1">Highlights apskate</span>
         </a>
       </li>
       <li>
-        <a href="{{ route('reading-highlights.create') }}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+        <a href="{{ route('reading-highlights.create') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-highlights.create'), 'text-body' => !request()->routeIs('reading-highlights.create')]) @if (request()->routeIs('reading-highlights.create')) aria-current="page" @endif>
           <span class="ms-1">Izveidot highlight</span>
         </a>
       </li>
       <li>
-        <a href="{{ url('/#nedelas-gramata') }}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+        <a href="{{ url('/#nedelas-gramata') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->is('/'), 'text-body' => !request()->is('/')]) @if (request()->is('/')) aria-current="page" @endif>
           <span class="ms-1">Jaunumi</span>
         </a>
       </li>
       <li>
-        <a href="{{ route('reading-timer.index') }}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+        <a href="{{ route('book-release-reminders.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('book-release-reminders.index'), 'text-body' => !request()->routeIs('book-release-reminders.index')]) @if (request()->routeIs('book-release-reminders.index')) aria-current="page" @endif>
+          <span class="ms-1">Izdošanas kalendārs</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ route('reading-timer.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-timer.*'), 'text-body' => !request()->routeIs('reading-timer.*')]) @if (request()->routeIs('reading-timer.*')) aria-current="page" @endif>
           <span class="ms-1">Laika sadaļa</span>
         </a>
       </li>
       <li>
-        <a href="{{ route('reading-challenges.index') }}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+        <a href="{{ route('reading-challenges.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-challenges.index'), 'text-body' => !request()->routeIs('reading-challenges.index')]) @if (request()->routeIs('reading-challenges.index')) aria-current="page" @endif>
           <span class="ms-1">Izaicinājums</span>
         </a>
       </li>
       <li>
-        <a href="{{ route('reading-challenges.results') }}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+        <a href="{{ route('reading-challenges.results') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-challenges.results'), 'text-body' => !request()->routeIs('reading-challenges.results')]) @if (request()->routeIs('reading-challenges.results')) aria-current="page" @endif>
           <span class="ms-1">Laika rezultāti</span>
         </a>
       </li>
       <li>
-        <a href="{{ route('booktok.index') }}" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+        <a href="{{ route('booktok.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('booktok.*'), 'text-body' => !request()->routeIs('booktok.*')]) @if (request()->routeIs('booktok.*')) aria-current="page" @endif>
           <span class="ms-1">BookTok Tops</span>
         </a>
       </li>

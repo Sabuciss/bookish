@@ -14,6 +14,12 @@
         </div>
 
         <section class="reading-progress-overview uiverse-container" style="margin-bottom: 1rem;">
+            <p class="welcome-eyebrow">Tavs lasīšanas kopsavilkums</p>
+            <h2 class="uiverse-heading">Kopā izlasīts: {{ number_format($totalPagesRead, 0, ',', ' ') }} lappuses</h2>
+            <h2 class="uiverse-heading">Kopā izlasītas: {{ $totalBooksRead }} {{ $totalBooksRead === 1 ? 'grāmata' : 'grāmatas' }}</h2>
+        </section>
+
+        <section class="reading-progress-overview uiverse-container" style="margin-bottom: 1rem;">
             <h2 class="uiverse-heading">Plaukti: Want to Read / In Progress / Read</h2>
             <div style="display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); align-items: start;">
                 @php

@@ -19,6 +19,8 @@ class ReadingProgressController extends Controller
         return view('reading-progress.shelf', [
             'bookSnapshots' => $data['bookSnapshots'],
             'bookSnapshotsByStatus' => $data['bookSnapshotsByStatus'],
+            'totalPagesRead' => $data['totalPagesRead'],
+            'totalBooksRead' => $data['totalBooksRead'],
         ]);
     }
 
@@ -121,6 +123,8 @@ class ReadingProgressController extends Controller
             'progressEntries' => $progressEntries,
             'bookSnapshots' => array_values($bookSnapshots),
             'bookSnapshotsByStatus' => $bookSnapshotsByStatus,
+            'totalPagesRead' => collect($bookSnapshots)->sum('pages_read'),
+            'totalBooksRead' => count($bookSnapshotsByStatus['read']),
             'latestPagesByBook' => collect($bookSnapshots)
                 ->mapWithKeys(fn (array $snapshot, string $key) => [$key => (int) $snapshot['pages_read']])
                 ->all(),
