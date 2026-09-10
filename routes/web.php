@@ -8,6 +8,7 @@ use App\Http\Controllers\ReadingChallengeController;
 use App\Http\Controllers\ReadingHighlightController;
 use App\Http\Controllers\ReadingProgressController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BookListingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,8 +27,14 @@ Route::get('/api/google-books/top', [GoogleBooksController::class, 'top'])
     ->name('google-books.top');
 Route::get('/books/{volumeId}', [GoogleBooksController::class, 'show'])
     ->name('books.show');
+Route::get('/book-listings', [BookListingController::class, 'index'])
+    ->name('book-listings.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/book-listings/create', [BookListingController::class, 'create'])
+        ->name('book-listings.create');
+    Route::post('/book-listings', [BookListingController::class, 'store'])
+        ->name('book-listings.store');
     Route::get('/reading-shelf', [ReadingProgressController::class, 'showBookshelf'])
         ->name('reading-shelf.show');
     Route::get('/reading-progress', [ReadingProgressController::class, 'showProgressTracker'])

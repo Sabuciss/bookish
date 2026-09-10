@@ -22,6 +22,8 @@ if (root) {
     const datePicker = document.getElementById('reading-date-picker');
     const dateDisplay = document.getElementById('reading-date-display');
     const dateOpenButton = document.getElementById('reading-date-open');
+    let searchTimer = null;
+    let searchRequestId = 0;
 
     const formatEuropeanDate = (isoDate) => {
         const [year, month, day] = String(isoDate || '').split('-');
@@ -177,6 +179,9 @@ if (root) {
         const currentRead = latestPagesByBook[key] || 0;
 
         titleInput.value = book.title || '';
+        if (queryInput) {
+            queryInput.value = book.title || '';
+        }
         volumeIdInput.value = book.id || '';
         coverInput.value = book.thumbnail || '';
 
@@ -240,14 +245,7 @@ if (root) {
         books.forEach((book) => {
             const button = document.createElement('button');
             button.type = 'button';
-            button.style.textAlign = 'left';
-            button.style.border = '1px solid #e5e7eb';
-            button.style.borderRadius = '10px';
-            button.style.padding = '10px';
-            button.style.background = '#fff';
-            button.style.display = 'flex';
-            button.style.gap = '10px';
-            button.style.alignItems = 'center';
+            button.className = 'rp-book-search-result';
             button.innerHTML = `
                 ${book.thumbnail ? `<img src="${book.thumbnail}" alt="${book.title} vāks" style="width:44px;height:64px;object-fit:cover;border-radius:6px;">` : ''}
                 <span>
@@ -273,6 +271,7 @@ if (root) {
             return;
         }
 
+        const requestId = ++searchRequestId;
         statusEl.textContent = 'Meklēju grāmatas...';
         resultsEl.innerHTML = '';
 
@@ -295,6 +294,10 @@ if (root) {
                     thumbnail: (info.imageLinks && (info.imageLinks.thumbnail || info.imageLinks.smallThumbnail)) || '',
                 };
             });
+
+            if (requestId !== searchRequestId || query !== queryInput.value.trim()) {
+                return;
+            }
 
             renderResults(books);
         } catch (error) {
@@ -342,6 +345,31 @@ if (root) {
     updateLivePreview();
 
     searchBtn?.addEventListener('click', searchBooks);
+    const scheduleBookSearch = (value) => {
+        window.clearTimeout(searchTimer);
+
+        if (value.trim().length < 2) {
+            searchRequestId += 1;
+            resultsEl.innerHTML = '';
+            statusEl.textContent = '';
+            return;
+        }
+
+        statusEl.textContent = 'Meklēju grāmatas...';
+        searchTimer = window.setTimeout(searchBooks, 350);
+    };
+
+    queryInput?.addEventListener('input', () => {
+        scheduleBookSearch(queryInput.value);
+    });
+
+    titleInput?.addEventListener('input', () => {
+        if (queryInput && queryInput.value !== titleInput.value) {
+            queryInput.value = titleInput.value;
+        }
+
+        scheduleBookSearch(titleInput.value);
+    });
     queryInput?.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             event.preventDefault();

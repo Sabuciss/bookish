@@ -158,6 +158,16 @@
 }
 
 @media (max-width: 640px) {
+	.book-listings-heading,
+	.book-listing-card-heading {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.book-listing-form-row {
+		grid-template-columns: 1fr;
+	}
+
 	h1,
 	.uiverse-heading {
 		line-height: 1.2;

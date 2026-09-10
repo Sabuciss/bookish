@@ -70,6 +70,59 @@
 	transform: none;
 }
 
+.rp-book-search-results {
+	display: grid;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+.rp-book-search-result {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	padding: 10px;
+	border: 1px solid var(--bookish-line, #e5e7eb);
+	border-radius: 8px;
+	background: var(--bookish-paper, #ffffff);
+	color: var(--bookish-ink, #111827);
+	text-align: left;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.rp-book-search-result:hover,
+.rp-book-search-result:focus-visible {
+	border-color: var(--bookish-rose, #b98f88);
+	background: var(--bookish-alt, #f2e6df);
+	outline: none;
+}
+
+.rp-book-search-result img {
+	width: 44px;
+	height: 64px;
+	flex: 0 0 44px;
+	object-fit: cover;
+	border-radius: 5px;
+}
+
+.rp-book-search-result span {
+	display: grid;
+	gap: 3px;
+	min-width: 0;
+}
+
+.rp-book-search-result strong {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.rp-book-search-result span span {
+	color: var(--bookish-muted, #4b5563);
+	font-size: 0.82rem;
+}
+
 .reading-progress-submit {
 	padding: 10px 14px;
 	cursor: pointer;

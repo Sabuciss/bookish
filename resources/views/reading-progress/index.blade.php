@@ -156,7 +156,7 @@
                     </label>
 
                     <div id="book-search-status" class="rp-snapshot-meta"></div>
-                    <div id="book-search-results" style="display: grid; gap: 8px;"></div>
+                    <div id="book-search-results" class="rp-book-search-results"></div>
 
                     <input type="hidden" name="google_volume_id" id="google_volume_id" value="{{ old('google_volume_id', $prefill['google_volume_id'] ?? '') }}">
                     <input type="hidden" name="book_cover_url" id="book_cover_url" value="{{ old('book_cover_url', $prefill['book_cover_url'] ?? '') }}">
