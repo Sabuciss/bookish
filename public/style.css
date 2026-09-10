@@ -39,6 +39,82 @@ body {
 	color: var(--bookish-ink) !important;
 }
 
+.admin-shell,
+.admin-shell > div,
+.admin-shell main {
+	background-color: var(--bookish-cream) !important;
+	background-image: radial-gradient(#ddc9c1 0.7px, transparent 0.7px) !important;
+	background-size: 18px 18px !important;
+	color: var(--bookish-ink) !important;
+}
+
+.admin-shell header {
+	background: var(--bookish-paper) !important;
+	border-bottom: 2px solid var(--bookish-rose) !important;
+	box-shadow: 0 5px 18px rgba(77, 38, 57, 0.08) !important;
+}
+
+.admin-shell .text-gray-800,
+.admin-shell .text-gray-900,
+.admin-shell .text-gray-700,
+.admin-shell .text-gray-600,
+.admin-shell .text-gray-500,
+.admin-shell .text-gray-400,
+.admin-shell .text-gray-300,
+.admin-shell .text-gray-200 {
+	color: var(--bookish-ink) !important;
+}
+
+.admin-shell .text-gray-500,
+.admin-shell .text-gray-400,
+.admin-shell .text-gray-300 {
+	color: var(--bookish-muted) !important;
+}
+
+.admin-shell .bg-white,
+.admin-shell .dark\:bg-gray-800 {
+	background: var(--bookish-paper) !important;
+}
+
+.admin-shell .ring-gray-200,
+.admin-shell .dark\:ring-gray-700,
+.admin-shell .border-gray-200,
+.admin-shell .dark\:border-gray-700,
+.admin-shell .divide-gray-200 > :not([hidden]) ~ :not([hidden]),
+.admin-shell .dark\:divide-gray-700 > :not([hidden]) ~ :not([hidden]) {
+	border-color: var(--bookish-line) !important;
+}
+
+.admin-shell .text-rose-700,
+.admin-shell .dark\:text-rose-300,
+.admin-shell a:hover {
+	color: var(--bookish-plum) !important;
+}
+
+.admin-shell .bg-emerald-50,
+.admin-shell .dark\:bg-emerald-900\/30,
+.admin-shell .bg-emerald-100,
+.admin-shell .dark\:bg-emerald-900\/40 {
+	background: var(--bookish-soft) !important;
+}
+
+.admin-shell .text-emerald-800,
+.admin-shell .dark\:text-emerald-200,
+.admin-shell .text-emerald-700,
+.admin-shell .dark\:text-emerald-300 {
+	color: var(--bookish-plum) !important;
+}
+
+.admin-shell .text-red-600,
+.admin-shell .text-red-400 {
+	color: var(--bookish-plum-deep) !important;
+}
+
+.admin-shell .text-red-600:hover,
+.admin-shell .text-red-400:hover {
+	color: var(--bookish-plum) !important;
+}
+
 h1,
 h2,
 h3,
