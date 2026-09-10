@@ -115,6 +115,93 @@ body {
 	color: var(--bookish-plum) !important;
 }
 
+.profile-shell,
+.profile-shell > div,
+.profile-shell main {
+	background-color: var(--bookish-cream) !important;
+	background-image: radial-gradient(#ddc9c1 0.7px, transparent 0.7px) !important;
+	background-size: 18px 18px !important;
+	color: var(--bookish-ink) !important;
+}
+
+.profile-shell header {
+	background: var(--bookish-paper) !important;
+	border-bottom: 2px solid var(--bookish-rose) !important;
+	box-shadow: 0 5px 18px rgba(77, 38, 57, 0.08) !important;
+}
+
+.profile-shell .bg-white,
+.profile-shell .dark\:bg-gray-800 {
+	background: var(--bookish-paper) !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 4px !important;
+	box-shadow: 0 12px 28px rgba(77, 38, 57, 0.08) !important;
+}
+
+.profile-shell .text-gray-900,
+.profile-shell .text-gray-800,
+.profile-shell .text-gray-700,
+.profile-shell .text-gray-600,
+.profile-shell .text-gray-500,
+.profile-shell .text-gray-400,
+.profile-shell .text-gray-300,
+.profile-shell .text-gray-200 {
+	color: var(--bookish-ink) !important;
+}
+
+.profile-shell .text-gray-600,
+.profile-shell .text-gray-500,
+.profile-shell .text-gray-400,
+.profile-shell .text-gray-300 {
+	color: var(--bookish-muted) !important;
+}
+
+.profile-shell input,
+.profile-shell select,
+.profile-shell textarea {
+	border-color: var(--bookish-line) !important;
+	background: var(--bookish-paper) !important;
+	color: var(--bookish-ink) !important;
+	box-shadow: 0 1px 2px rgba(122, 98, 88, 0.05) !important;
+}
+
+.profile-shell input:focus,
+.profile-shell select:focus,
+.profile-shell textarea:focus {
+	border-color: var(--bookish-rose) !important;
+	box-shadow: 0 0 0 3px rgba(185, 143, 136, 0.18) !important;
+}
+
+.profile-shell button.bg-gray-800,
+.profile-shell button.dark\:bg-gray-200 {
+	border: 1px solid var(--bookish-plum) !important;
+	background: var(--bookish-plum) !important;
+	color: #fffaf5 !important;
+}
+
+.profile-shell button.bg-gray-800:hover,
+.profile-shell button.dark\:bg-gray-200:hover {
+	background: var(--bookish-plum-deep) !important;
+}
+
+.profile-shell .text-indigo-600,
+.profile-shell .focus\:ring-indigo-500:focus,
+.profile-shell .focus\:ring-indigo-500:focus-visible {
+	--tw-ring-color: var(--bookish-rose) !important;
+	color: var(--bookish-plum) !important;
+}
+
+.profile-shell .bg-red-600,
+.profile-shell .dark\:bg-red-500 {
+	background: var(--bookish-plum-deep) !important;
+	color: #fffaf5 !important;
+}
+
+.profile-shell .bg-red-600:hover,
+.profile-shell .dark\:bg-red-500:hover {
+	background: var(--bookish-plum) !important;
+}
+
 h1,
 h2,
 h3,
