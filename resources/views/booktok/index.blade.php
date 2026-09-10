@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="reading-progress-page">
+    <div class="reading-progress-page booktok-page">
         <h1>BookTok tops </h1>
         <p>Atsevišķa sadaļa ar BookTok top grāmatām no sagatavotā seedera.</p>
 
@@ -188,11 +188,11 @@
                                 <td>
                                     @auth
                                         @if ($bookStatus === 'read')
-                                            <span style="background: #dcfce7; color: #166534; border-radius: 999px; padding: 4px 10px; font-size: 0.8rem; font-weight: 700;">READ</span>
+                                            <span class="reading-progress-status-badge">READ</span>
                                         @elseif ($bookStatus === 'in_progress')
-                                            <span style="background: #dbeafe; color: #1e3a8a; border-radius: 999px; padding: 4px 10px; font-size: 0.8rem; font-weight: 700;">In Progress</span>
+                                            <span class="reading-progress-status-badge">In Progress</span>
                                         @elseif ($bookStatus === 'want_to_read')
-                                            <span style="background: #fef3c7; color: #92400e; border-radius: 999px; padding: 4px 10px; font-size: 0.8rem; font-weight: 700;">Added to Want to Read</span>
+                                            <span class="reading-progress-status-badge">Added to Want to Read</span>
                                         @else
                                             <form action="{{ route('reading-progress.want-to-read.store') }}" method="POST" style="display: inline-block;">
                                                 @csrf

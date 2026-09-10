@@ -99,7 +99,7 @@
                                         <td>{{ $progressPercent !== null ? $progressPercent.'%' : '-' }}</td>
                                         <td>
                                             @if ($entry->reading_status === 'read')
-                                                <span style="background: #dcfce7; color: #166534; border-radius: 999px; padding: 2px 8px; font-size: 0.8rem; font-weight: 600;">READ</span>
+                                                <span class="reading-progress-status-badge">READ</span>
                                             @elseif ($entry->reading_status === 'want_to_read')
                                                 Want to Read
                                             @else

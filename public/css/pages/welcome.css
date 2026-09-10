@@ -655,9 +655,12 @@ html.dark .book-reminder-button--saved {
 	font-weight: 800;
 }
 
-.book-detail-status--read { background: #dcfce7; color: #166534; }
-.book-detail-status--progress { background: #dbeafe; color: #1e3a8a; }
-.book-detail-status--want { background: #fef3c7; color: #92400e; }
+.book-detail-status--read,
+.book-detail-status--progress,
+.book-detail-status--want {
+	background: #9a5b6d;
+	color: #ffffff;
+}
 
 .book-detail-description {
 	max-width: 980px;

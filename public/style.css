@@ -233,6 +233,80 @@ nav.app-surface-opaque form button:hover {
 	text-transform: uppercase;
 	letter-spacing: 0.08em !important;
 	font-size: 0.72rem;
+	min-height: 40px;
+	white-space: nowrap;
+}
+
+.booktok-page .reading-progress-submit {
+	min-height: 40px;
+	margin: 10px 0 0;
+	padding: 9px 16px;
+	font-family: 'DM Sans', sans-serif;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.booktok-page .booktok-view-button:focus-visible,
+.booktok-page .reading-progress-submit:focus-visible {
+	outline: 3px solid rgba(185, 143, 136, 0.45);
+	outline-offset: 2px;
+}
+
+.guest-auth-page {
+	background-color: var(--bookish-cream) !important;
+	background-image: radial-gradient(#ddc9c1 0.7px, transparent 0.7px) !important;
+	background-size: 18px 18px !important;
+}
+
+.guest-auth-card {
+	background: var(--bookish-paper) !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 4px !important;
+	box-shadow: 0 12px 28px rgba(77, 38, 57, 0.1) !important;
+	color: var(--bookish-ink) !important;
+}
+
+.guest-auth-card label,
+.guest-auth-card span {
+	color: var(--bookish-ink) !important;
+}
+
+.guest-auth-card a {
+	color: var(--bookish-plum) !important;
+}
+
+.guest-auth-card a:hover {
+	color: var(--bookish-plum-deep) !important;
+}
+
+.guest-auth-card button[type='submit'] {
+	min-height: 42px;
+	padding: 10px 18px;
+	border: 1px solid var(--bookish-plum) !important;
+	border-radius: 7px !important;
+	background: var(--bookish-plum) !important;
+	box-shadow: none !important;
+	color: #fffaf5 !important;
+	font-family: 'DM Sans', sans-serif;
+	font-size: 0.78rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.guest-auth-card button[type='submit']:hover,
+.guest-auth-card button[type='submit']:focus {
+	background: var(--bookish-plum-deep) !important;
+	border-color: var(--bookish-plum-deep) !important;
+	color: #fffaf5 !important;
+}
+
+.guest-auth-card button[type='submit']:focus-visible {
+	outline: 3px solid rgba(185, 143, 136, 0.45);
+	outline-offset: 2px;
 }
 
 .booktok-author-card {
@@ -620,18 +694,18 @@ html.dark .reading-progress-alert-success {
 }
 
 html.dark .book-detail-status--read {
-	background: var(--bookish-success-bg) !important;
-	color: var(--bookish-success-text) !important;
+	background: #9a5b6d !important;
+	color: #ffffff !important;
 }
 
 html.dark .book-detail-status--progress {
-	background: var(--bookish-info-bg) !important;
-	color: var(--bookish-info-text) !important;
+	background: #9a5b6d !important;
+	color: #ffffff !important;
 }
 
 html.dark .book-detail-status--want {
-	background: var(--bookish-warning-bg) !important;
-	color: var(--bookish-warning-text) !important;
+	background: #9a5b6d !important;
+	color: #ffffff !important;
 }
 
 @keyframes bookishReveal {

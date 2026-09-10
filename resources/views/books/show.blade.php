@@ -56,11 +56,11 @@
             <div style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
                 @auth
                     @if ($currentBookStatus === 'read')
-                        <span style="background: #dcfce7; color: #166534; border-radius: 999px; padding: 6px 12px; font-size: 0.85rem; font-weight: 700;">READ</span>
+                        <span class="reading-progress-status-badge">READ</span>
                     @elseif ($currentBookStatus === 'in_progress')
-                        <span style="background: #dbeafe; color: #1e3a8a; border-radius: 999px; padding: 6px 12px; font-size: 0.85rem; font-weight: 700;">In Progress</span>
+                        <span class="reading-progress-status-badge">In Progress</span>
                     @elseif ($currentBookStatus === 'want_to_read')
-                        <span style="background: #fef3c7; color: #92400e; border-radius: 999px; padding: 6px 12px; font-size: 0.85rem; font-weight: 700;">Added to Want to Read</span>
+                        <span class="reading-progress-status-badge">Added to Want to Read</span>
                     @else
                         <form action="{{ route('reading-progress.want-to-read.store') }}" method="POST" style="display: inline-block;">
                             @csrf
