@@ -678,6 +678,83 @@ nav.app-surface-opaque form button:hover {
 	line-height: 1.5;
 }
 
+.book-listing-application-form {
+	display: grid;
+	gap: 8px;
+	padding-top: 12px;
+	border-top: 1px solid var(--bookish-line);
+}
+
+.book-listing-application-form label {
+	display: grid;
+	gap: 5px;
+	color: var(--bookish-muted);
+	font-size: 0.72rem;
+	font-weight: 700;
+}
+
+.book-listing-application-form textarea {
+	min-height: 58px;
+	padding: 8px 10px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 8px !important;
+	background: var(--bookish-paper) !important;
+	color: var(--bookish-ink) !important;
+	font-size: 0.8rem;
+	resize: vertical;
+}
+
+.book-listing-application-sent,
+.book-listing-owner-note {
+	margin: 0;
+	padding: 9px 10px;
+	background: var(--bookish-alt);
+	color: var(--bookish-muted);
+	font-size: 0.78rem;
+}
+
+.book-listing-applications {
+	display: grid;
+	gap: 8px;
+	padding: 12px;
+	border: 1px solid var(--bookish-line);
+	background: var(--bookish-alt);
+	color: var(--bookish-ink);
+	font-size: 0.78rem;
+}
+
+.book-listing-application {
+	display: grid;
+	gap: 3px;
+	padding-top: 8px;
+	border-top: 1px solid var(--bookish-line);
+}
+
+.book-listing-application > div {
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.book-listing-application > div span,
+.book-listing-application-status {
+	color: var(--bookish-muted);
+	font-size: 0.72rem;
+}
+
+.book-listing-application p {
+	margin: 3px 0 0;
+	color: var(--bookish-ink);
+	line-height: 1.4;
+}
+
+.book-listing-apply-login {
+	color: var(--bookish-plum);
+	font-size: 0.8rem;
+	font-weight: 700;
+}
+
 .book-listing-footer {
 	display: flex;
 	align-items: center;

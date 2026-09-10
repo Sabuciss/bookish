@@ -42,6 +42,43 @@
                         @if ($listing->description)
                             <p class="book-listing-description">{{ $listing->description }}</p>
                         @endif
+                        @auth
+                            @if ($listing->user_id !== auth()->id())
+                                @if (!$listing->applications->contains('user_id', auth()->id()))
+                                    <form method="POST" action="{{ route('book-listings.apply', $listing) }}" class="book-listing-application-form">
+                                        @csrf
+                                        <label>
+                                            Ziņa pārdevējam (pēc izvēles)
+                                            <textarea name="message" rows="2" maxlength="1000" placeholder="Piemēram, kad vari grāmatu saņemt.">{{ old('message') }}</textarea>
+                                        </label>
+                                        <button type="submit" class="reading-progress-submit">Pieteikties uz grāmatu</button>
+                                    </form>
+                                @else
+                                    <p class="book-listing-application-sent">Pieteikums jau nosūtīts.</p>
+                                @endif
+                            @else
+                                <p class="book-listing-owner-note">Šis ir tavs sludinājums.</p>
+                                @if ($listing->applications->isNotEmpty())
+                                    <div class="book-listing-applications">
+                                        <strong>Pieteikušies interesenti ({{ $listing->applications->count() }})</strong>
+                                        @foreach ($listing->applications as $application)
+                                            <div class="book-listing-application">
+                                                <div>
+                                                    <strong>{{ $application->user->name }}</strong>
+                                                    <span>{{ $application->user->email }}</span>
+                                                </div>
+                                                <span class="book-listing-application-status">{{ $application->status === 'pending' ? 'Gaida atbildi' : $application->status }}</span>
+                                                @if ($application->message)
+                                                    <p>{{ $application->message }}</p>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            @endif
+                        @else
+                            <a href="{{ route('login') }}" class="book-listing-apply-login">Ielogojies, lai pieteiktos</a>
+                        @endauth
                         <div class="book-listing-footer">
                             <span>Publicēja {{ $listing->user->name }}</span>
                             <a href="mailto:{{ $listing->contact_email }}?subject=Par grāmatu: {{ rawurlencode($listing->book_title) }}">Sazināties</a>

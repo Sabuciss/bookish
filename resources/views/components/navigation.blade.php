@@ -157,13 +157,15 @@
           <span class="ms-1">BookTok Tops</span>
         </a>
       </li>
-      @if (Auth::user()->isAdmin())
-        <li>
-          <a href="{{ route('admin.dashboard') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('admin.*'), 'text-body' => !request()->routeIs('admin.*')]) @if (request()->routeIs('admin.*')) aria-current="page" @endif>
-            <span class="ms-1">Admin panelis</span>
-          </a>
-        </li>
-      @endif
+      @auth
+        @if (Auth::user()->isAdmin())
+          <li>
+            <a href="{{ route('admin.dashboard') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('admin.*'), 'text-body' => !request()->routeIs('admin.*')]) @if (request()->routeIs('admin.*')) aria-current="page" @endif>
+              <span class="ms-1">Admin panelis</span>
+            </a>
+          </li>
+        @endif
+      @endauth
       <li>
         <a href="{{ route('book-listings.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('book-listings.*'), 'text-body' => !request()->routeIs('book-listings.*')]) @if (request()->routeIs('book-listings.*')) aria-current="page" @endif>
           <span class="ms-1">Grāmatu sludinājumi</span>
