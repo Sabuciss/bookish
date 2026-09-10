@@ -86,6 +86,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
     Route::delete('/highlights/{highlight}', [AdminController::class, 'destroyHighlight'])
         ->name('highlights.destroy');
+    Route::delete('/book-listings/{bookListing}', [AdminController::class, 'destroyBookListing'])
+        ->name('book-listings.destroy');
     Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])
         ->name('users.destroy');
 });

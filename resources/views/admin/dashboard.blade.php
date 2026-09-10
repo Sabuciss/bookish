@@ -23,21 +23,35 @@
                 </div>
             @endif
 
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
                 @foreach ([
-                    ['label' => 'Lietotāji', 'value' => $stats['users']],
-                    ['label' => 'Izcēlumi', 'value' => $stats['highlights']],
-                    ['label' => 'Progresa ieraksti', 'value' => $stats['progressEntries']],
-                    ['label' => 'Izaicinājumi', 'value' => $stats['challenges']],
+                    ['label' => 'Lietotāji', 'value' => $stats['users'], 'filter' => 'users'],
+                    ['label' => 'Izcēlumi', 'value' => $stats['highlights'], 'filter' => 'highlights'],
+                    ['label' => 'Progresa ieraksti', 'value' => $stats['progressEntries'], 'filter' => null],
+                    ['label' => 'Izaicinājumi', 'value' => $stats['challenges'], 'filter' => null],
+                    ['label' => 'Sludinājumi', 'value' => $stats['bookListings'], 'filter' => 'book-listings'],
                 ] as $stat)
-                    <div class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __($stat['label']) }}</p>
-                        <p class="mt-2 text-3xl font-semibold text-gray-900 dark:text-gray-100">{{ $stat['value'] }}</p>
-                    </div>
+                    @if ($stat['filter'])
+                        <a href="{{ route('admin.dashboard', ['filter' => $stat['filter']]) }}" class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 transition hover:ring-rose-400 dark:bg-gray-800 dark:ring-gray-700 dark:hover:ring-rose-400">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __($stat['label']) }}</p>
+                            <p class="mt-2 text-3xl font-semibold text-gray-900 dark:text-gray-100">{{ $stat['value'] }}</p>
+                            <span class="mt-2 block text-xs font-medium text-rose-700 dark:text-rose-300">Atvērt sadaļu →</span>
+                        </a>
+                    @else
+                        <div class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __($stat['label']) }}</p>
+                            <p class="mt-2 text-3xl font-semibold text-gray-900 dark:text-gray-100">{{ $stat['value'] }}</p>
+                        </div>
+                    @endif
                 @endforeach
             </div>
 
+            @if ($activeFilter)
+                <a href="{{ route('admin.dashboard') }}" class="inline-flex text-sm font-medium text-rose-700 hover:text-rose-900 dark:text-rose-300 dark:hover:text-rose-200">← Rādīt visu admin pārskatu</a>
+            @endif
+
             <div class="grid gap-6 lg:grid-cols-2">
+                @if (!$activeFilter || $activeFilter === 'users')
                 <section class="rounded-lg bg-white shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
                     <div class="border-b border-gray-200 px-5 py-4 dark:border-gray-700">
                         <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ __('Visi lietotāji') }}</h3>
@@ -71,7 +85,9 @@
                         @endforelse
                     </div>
                 </section>
+                @endif
 
+                @if (!$activeFilter || $activeFilter === 'highlights')
                 <section class="rounded-lg bg-white shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
                     <div class="border-b border-gray-200 px-5 py-4 dark:border-gray-700">
                         <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ __('Pēdējie izcēlumi') }}</h3>
@@ -99,6 +115,41 @@
                         @endforelse
                     </div>
                 </section>
+                @endif
+
+                @if (!$activeFilter || $activeFilter === 'book-listings')
+                <section class="rounded-lg bg-white shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+                    <div class="border-b border-gray-200 px-5 py-4 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-gray-100">Grāmatu sludinājumi</h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Pārbaudi jaunos sludinājumus un noņem neatbilstošu saturu.</p>
+                    </div>
+                    <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                        @forelse ($bookListings as $listing)
+                            <div class="flex items-start justify-between gap-4 px-5 py-4">
+                                <div class="min-w-0">
+                                    <p class="font-medium text-gray-900 dark:text-gray-100">{{ $listing->book_title }}</p>
+                                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                                        {{ $listing->author ?: 'Autors nav norādīts' }} · {{ number_format((float) $listing->price, 2, ',', ' ') }} EUR
+                                    </p>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $listing->condition }} · {{ $listing->language }} · {{ $listing->user?->name ?? 'Nezināms lietotājs' }}
+                                    </p>
+                                    @if ($listing->description)
+                                        <p class="mt-2 line-clamp-2 text-sm text-gray-600 dark:text-gray-300">{{ $listing->description }}</p>
+                                    @endif
+                                </div>
+                                <form method="POST" action="{{ route('admin.book-listings.destroy', $listing) }}" onsubmit="return confirm('Vai tiešām dzēst šo sludinājumu?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="shrink-0 text-sm font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">Dzēst</button>
+                                </form>
+                            </div>
+                        @empty
+                            <p class="px-5 py-4 text-sm text-gray-500">Nav sludinājumu.</p>
+                        @endforelse
+                    </div>
+                </section>
+                @endif
             </div>
         </div>
     </div>
