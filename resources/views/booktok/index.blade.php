@@ -111,7 +111,7 @@
                 @foreach ($booktokAuthors as $author)
                     <div class="booktok-author-card">
                         <a
-                            href="{{ request()->fullUrlWithQuery(['view' => 'books', 'author' => $author['name']]) }}"
+                            href="{{ request()->fullUrlWithQuery(['view' => 'authors', 'author' => $author['name']]) }}"
                             class="booktok-author-link"
                         >
                             <span class="booktok-author-avatar">{{ mb_strtoupper(mb_substr($author['name'], 0, 1)) }}</span>
@@ -140,10 +140,76 @@
                     </div>
                 @endforeach
             </div>
+
+            @if ($selectedAuthor && count($authorBooks['books'] ?? []))
+                <div class="booktok-author-books-section">
+                    <div class="booktok-section-heading">
+                        <div>
+                            <p class="book-detail-eyebrow">Autora bibliogrāfija</p>
+                            <h2 class="booktok-section-title">{{ $selectedAuthor }} grāmatas</h2>
+                        </div>
+                        <span class="booktok-section-count">Kopā atrastas {{ $authorBooks['total'] ?? count($authorBooks['books'] ?? []) }} grāmatas</span>
+                    </div>
+
+                    <div class="booktok-author-books-grid">
+                        @foreach (($authorBooks['books'] ?? []) as $authorBook)
+                            <a
+                                class="booktok-author-book-card"
+                                href="{{ $authorBook['info_link'] ?: 'https://books.google.com/books?id=' . urlencode($authorBook['id'] ?? '') }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                @if ($authorBook['thumbnail'])
+                                    <img src="{{ $authorBook['thumbnail'] }}" alt="{{ $authorBook['title'] }} vāks">
+                                @endif
+                                <span>
+                                    <strong>{{ $authorBook['title'] }}</strong>
+                                    @if ($authorBook['published_date'])
+                                        <small>{{ $authorBook['published_date'] }}</small>
+                                    @endif
+                                </span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </section>
         @endif
 
         @if ($selectedView === 'books')
+        @if ($selectedAuthor && count($authorBooks['books'] ?? []))
+        <section class="booktok-author-books-section uiverse-container">
+            <div class="booktok-section-heading">
+                <div>
+                    <p class="book-detail-eyebrow">Autora bibliogrāfija</p>
+                    <h2 class="booktok-section-title">{{ $selectedAuthor }} grāmatas</h2>
+                </div>
+                <span class="booktok-section-count">Kopā atrastas {{ $authorBooks['total'] ?? count($authorBooks['books'] ?? []) }} grāmatas</span>
+            </div>
+
+            <div class="booktok-author-books-grid">
+                @foreach (($authorBooks['books'] ?? []) as $authorBook)
+                    <a
+                        class="booktok-author-book-card"
+                        href="{{ $authorBook['info_link'] ?: 'https://books.google.com/books?id=' . urlencode($authorBook['id'] ?? '') }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        @if ($authorBook['thumbnail'])
+                            <img src="{{ $authorBook['thumbnail'] }}" alt="{{ $authorBook['title'] }} vāks">
+                        @endif
+                        <span>
+                            <strong>{{ $authorBook['title'] }}</strong>
+                            @if ($authorBook['published_date'])
+                                <small>{{ $authorBook['published_date'] }}</small>
+                            @endif
+                        </span>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+        @endif
+
         <section class="reading-progress-history uiverse-container">
             @if ($books->isEmpty())
                 @if ($selectedYear || $selectedGenre || $selectedAuthor || $selectedTitle || $selectedFavoriteAuthors)

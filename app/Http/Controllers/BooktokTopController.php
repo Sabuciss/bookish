@@ -85,12 +85,22 @@ class BooktokTopController extends Controller
             })->values();
         }
 
+        $authorBooks = $selectedAuthor !== null
+            ? $this->fetchGoogleBooksByAuthor($selectedAuthor)
+            : ['books' => [], 'total' => 0];
+
         $booktokAuthors = $books
             ->groupBy(fn (BooktokTopBook $book) => trim($book->author))
-            ->map(fn ($authorBooks, $author) => [
-                'name' => $author,
-                'book_count' => $authorBooks->count(),
-            ])
+            ->map(function ($authorBooks, $author) {
+                return [
+                    'name' => $author,
+                    'book_count' => $authorBooks->count(),
+                    'books' => $authorBooks->map(fn (BooktokTopBook $book) => [
+                        'title' => $book->title,
+                        'id' => $book->getKey(),
+                    ])->values()->all(),
+                ];
+            })
             ->sortBy(fn (array $author) => [
                 -$author['book_count'],
                 mb_strtolower($author['name']),
@@ -129,6 +139,7 @@ class BooktokTopController extends Controller
             'booktokAuthors' => $booktokAuthors,
             'favoriteAuthors' => $favoriteAuthors,
             'userBookStatuses' => $userBookStatuses,
+            'authorBooks' => $authorBooks,
         ]);
     }
 
@@ -279,6 +290,57 @@ class BooktokTopController extends Controller
                 ];
             } catch (\Exception $e) {
                 return null;
+            }
+        });
+    }
+
+    private function fetchGoogleBooksByAuthor(string $author): array
+    {
+        $cacheKey = 'booktok_google_author_books_v2_' . md5(mb_strtolower($author));
+
+        return Cache::remember($cacheKey, now()->addHours(12), function () use ($author) {
+            $params = [
+                'q' => 'inauthor:"' . $author . '"',
+                'maxResults' => 40,
+                'orderBy' => 'relevance',
+                'printType' => 'books',
+            ];
+
+            $apiKey = config('services.google_books.api_key');
+            if (!empty($apiKey)) {
+                $params['key'] = $apiKey;
+            }
+
+            try {
+                $response = Http::timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
+
+                if (!$response->ok()) {
+                    return ['books' => [], 'total' => 0];
+                }
+
+                $books = collect($response->json('items', []))
+                    ->map(function (array $item) {
+                        $volumeInfo = $item['volumeInfo'] ?? [];
+
+                        return [
+                            'id' => $item['id'] ?? null,
+                            'title' => $volumeInfo['title'] ?? null,
+                            'published_date' => $volumeInfo['publishedDate'] ?? null,
+                            'thumbnail' => $volumeInfo['imageLinks']['thumbnail'] ?? null,
+                            'info_link' => $volumeInfo['infoLink'] ?? null,
+                        ];
+                    })
+                    ->filter(fn (array $book) => filled($book['title']))
+                    ->unique(fn (array $book) => mb_strtolower($book['title']))
+                    ->values()
+                    ->all();
+
+                return [
+                    'books' => $books,
+                    'total' => max(count($books), (int) $response->json('totalItems', count($books))),
+                ];
+            } catch (\Exception $e) {
+                return ['books' => [], 'total' => 0];
             }
         });
     }

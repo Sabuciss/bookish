@@ -310,9 +310,9 @@ nav.app-surface-opaque form button:hover {
 }
 
 .booktok-author-card {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: start;
 	gap: 10px;
 	border-color: var(--bookish-line) !important;
 	border-radius: 2px !important;
@@ -323,7 +323,8 @@ nav.app-surface-opaque form button:hover {
 .booktok-author-link {
 	display: flex;
 	align-items: center;
-	flex: 1;
+	grid-column: 1;
+	grid-row: 1;
 	min-width: 0;
 	gap: 10px;
 	color: inherit;
@@ -334,6 +335,89 @@ nav.app-surface-opaque form button:hover {
 	display: grid;
 	gap: 3px;
 	min-width: 0;
+}
+
+.booktok-author-books {
+	display: grid !important;
+	grid-column: 1;
+	grid-row: 2;
+	gap: 2px;
+	max-height: 104px;
+	margin: 0 0 0 44px;
+	overflow-y: auto;
+}
+
+.booktok-author-books a {
+	overflow: hidden;
+	min-width: 0;
+	color: var(--bookish-plum) !important;
+	font-size: 0.72rem;
+	text-overflow: ellipsis;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.booktok-author-books a:hover {
+	text-decoration: underline;
+}
+
+.booktok-author-card > form,
+.booktok-author-card > .booktok-favorite-button {
+	grid-column: 2;
+	grid-row: 1;
+}
+
+.booktok-author-books-section {
+	margin-bottom: 16px;
+}
+
+.booktok-author-books-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 10px;
+}
+
+.booktok-author-book-card {
+	display: grid;
+	grid-template-columns: 46px minmax(0, 1fr);
+	gap: 10px;
+	align-items: center;
+	min-height: 66px;
+	padding: 8px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 4px;
+	background: var(--bookish-paper);
+	color: var(--bookish-ink);
+	text-decoration: none;
+}
+
+.booktok-author-book-card:hover {
+	border-color: var(--bookish-rose);
+	background: var(--bookish-alt);
+}
+
+.booktok-author-book-card img {
+	width: 46px;
+	height: 66px;
+	object-fit: cover;
+	border-radius: 3px;
+}
+
+.booktok-author-book-card span {
+	display: grid;
+	gap: 4px;
+	min-width: 0;
+}
+
+.booktok-author-book-card strong {
+	overflow: hidden;
+	font-size: 0.8rem;
+	text-overflow: ellipsis;
+}
+
+.booktok-author-book-card small {
+	color: var(--bookish-muted);
+	font-size: 0.7rem;
 }
 
 .booktok-favorite-button {
