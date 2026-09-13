@@ -1,8 +1,4 @@
 export function initThemeToggle() {
-    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-    const themeToggleBtn = document.getElementById('theme-toggle');
-
     function animateThemeIcon(icon) {
         if (!icon) {
             return;
@@ -14,58 +10,69 @@ export function initThemeToggle() {
     }
 
     function syncThemeIcons(shouldAnimate) {
-        if (!themeToggleDarkIcon || !themeToggleLightIcon) {
-            return;
-        }
-
-        themeToggleDarkIcon.classList.add('hidden');
-        themeToggleLightIcon.classList.add('hidden');
-
         const isDarkMode = document.documentElement.classList.contains('dark');
+        const buttons = document.querySelectorAll('#theme-toggle, .theme-toggle-btn, .theme-toggle-nav');
 
-        if (themeToggleBtn) {
-            themeToggleBtn.setAttribute('aria-label', isDarkMode ? 'Pārslēgt uz gaišo tēmu' : 'Pārslēgt uz tumšo tēmu');
-        }
+        buttons.forEach((btn) => {
+            btn.setAttribute('aria-label', isDarkMode ? 'Pārslēgt uz gaišo tēmu' : 'Pārslēgt uz tumšo tēmu');
 
-        if (isDarkMode) {
-            themeToggleLightIcon.classList.remove('hidden');
-            if (shouldAnimate) {
-                animateThemeIcon(themeToggleLightIcon);
+            const darkIcon = btn.querySelector('#theme-toggle-dark-icon, .theme-dark-icon');
+            const lightIcon = btn.querySelector('#theme-toggle-light-icon, .theme-light-icon');
+
+            if (darkIcon) {
+                darkIcon.classList.add('hidden');
             }
-        } else {
-            themeToggleDarkIcon.classList.remove('hidden');
-            if (shouldAnimate) {
-                animateThemeIcon(themeToggleDarkIcon);
+            if (lightIcon) {
+                lightIcon.classList.add('hidden');
             }
-        }
+
+            if (isDarkMode) {
+                if (lightIcon) {
+                    lightIcon.classList.remove('hidden');
+                    if (shouldAnimate) {
+                        animateThemeIcon(lightIcon);
+                    }
+                }
+            } else {
+                if (darkIcon) {
+                    darkIcon.classList.remove('hidden');
+                    if (shouldAnimate) {
+                        animateThemeIcon(darkIcon);
+                    }
+                }
+            }
+        });
     }
 
     syncThemeIcons(false);
 
-    if (!themeToggleBtn) {
+    const buttons = document.querySelectorAll('#theme-toggle, .theme-toggle-btn, .theme-toggle-nav');
+    if (!buttons.length) {
         return;
     }
 
-    themeToggleBtn.addEventListener('click', () => {
-        const currentTheme = localStorage.getItem('color-theme');
-        const isDarkMode = document.documentElement.classList.contains('dark');
+    buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('color-theme');
+            const isDarkMode = document.documentElement.classList.contains('dark');
 
-        if (currentTheme) {
-            if (currentTheme === 'light') {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('color-theme', 'dark');
-            } else {
+            if (currentTheme) {
+                if (currentTheme === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else if (isDarkMode) {
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
             }
-        } else if (isDarkMode) {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('color-theme', 'light');
-        } else {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('color-theme', 'dark');
-        }
 
-        syncThemeIcons(true);
+            syncThemeIcons(true);
+        });
     });
 }
