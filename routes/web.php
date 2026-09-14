@@ -41,6 +41,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('book-listings.store');
     Route::post('/book-listings/{bookListing}/apply', [BookListingController::class, 'apply'])
         ->name('book-listings.apply');
+    Route::patch('/book-listings/{bookListing}/applications/{application}', [BookListingController::class, 'updateApplication'])
+        ->name('book-listings.applications.update');
     Route::get('/reading-shelf', [ReadingProgressController::class, 'showBookshelf'])
         ->name('reading-shelf.show');
     Route::get('/reading-progress', [ReadingProgressController::class, 'showProgressTracker'])

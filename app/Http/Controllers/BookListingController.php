@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBookListingRequest;
 use App\Http\Requests\StoreBookListingApplicationRequest;
 use App\Models\BookListing;
+use App\Models\BookListingApplication;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -56,10 +57,36 @@ class BookListingController extends Controller
 
         $bookListing->applications()->create([
             'user_id' => $request->user()->id,
+            'offered_book_title' => $request->validated('offered_book_title'),
             'message' => $request->validated('message'),
             'status' => 'pending',
         ]);
 
-        return back()->with('status', 'Pieteikums nosūtīts grāmatas pārdevējam.');
+        return back()->with('status', $bookListing->isExchange()
+            ? 'Apmaiņas piedāvājums nosūtīts sludinājuma autoram.'
+            : 'Pieteikums nosūtīts grāmatas pārdevējam.');
+    }
+
+    public function updateApplication(Request $request, BookListing $bookListing, BookListingApplication $application): RedirectResponse
+    {
+        abort_unless($bookListing->user_id === $request->user()->id, 403);
+        abort_unless($application->book_listing_id === $bookListing->id, 404);
+
+        $status = $request->validate([
+            'status' => ['required', 'in:accepted,rejected'],
+        ])['status'];
+
+        $application->update(['status' => $status]);
+
+        if ($status === 'accepted') {
+            $bookListing->applications()
+                ->where('id', '!=', $application->id)
+                ->where('status', 'pending')
+                ->update(['status' => 'rejected']);
+        }
+
+        return back()->with('status', $status === 'accepted'
+            ? 'Apmaiņas piedāvājums pieņemts.'
+            : 'Apmaiņas piedāvājums noraidīts.');
     }
 }

@@ -23,8 +23,8 @@
                     <input type="text" name="book_title" value="{{ old('book_title') }}" required>
                 </label>
                 @if ($listingType === 'exchange')
-                    <label>Grāmata, ko vēlies saņemt pretī
-                        <input type="text" name="exchange_book_title" value="{{ old('exchange_book_title') }}" required>
+                    <label>Grāmata, ko vēlies saņemt pretī (pēc izvēles)
+                        <input type="text" name="exchange_book_title" value="{{ old('exchange_book_title') }}">
                     </label>
                 @endif
                 <label>Autors

@@ -55,6 +55,12 @@
                                 @if (!$listing->applications->contains('user_id', auth()->id()))
                                     <form method="POST" action="{{ route('book-listings.apply', $listing) }}" class="book-listing-application-form">
                                         @csrf
+                                        @if ($listing->isExchange())
+                                            <label>
+                                                Grāmata, ko piedāvā apmaiņai
+                                                <input type="text" name="offered_book_title" maxlength="255" required>
+                                            </label>
+                                        @endif
                                         <label>
                                             Ziņa {{ $listing->isExchange() ? 'grāmatas īpašniekam' : 'pārdevējam' }} (pēc izvēles)
                                             <textarea name="message" rows="2" maxlength="1000" placeholder="Piemēram, kad vari grāmatu saņemt.">{{ old('message') }}</textarea>
@@ -75,9 +81,28 @@
                                                     <strong>{{ $application->user->name }}</strong>
                                                     <span>{{ $application->user->email }}</span>
                                                 </div>
-                                                <span class="book-listing-application-status">{{ $application->status === 'pending' ? 'Gaida atbildi' : $application->status }}</span>
+                                                <span class="book-listing-application-status">{{ match ($application->status) { 'pending' => 'Gaida atbildi', 'accepted' => 'Pieņemts', 'rejected' => 'Noraidīts', default => $application->status } }}</span>
+                                                @if ($listing->isExchange() && $application->offered_book_title)
+                                                    <p><strong>Piedāvā:</strong> {{ $application->offered_book_title }}</p>
+                                                @endif
                                                 @if ($application->message)
                                                     <p>{{ $application->message }}</p>
+                                                @endif
+                                                @if ($listing->isExchange() && $application->status === 'pending')
+                                                    <div class="book-listing-application-actions">
+                                                        <form method="POST" action="{{ route('book-listings.applications.update', [$listing, $application]) }}">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="hidden" name="status" value="accepted">
+                                                            <button type="submit" class="reading-progress-submit">Pieņemt</button>
+                                                        </form>
+                                                        <form method="POST" action="{{ route('book-listings.applications.update', [$listing, $application]) }}">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="hidden" name="status" value="rejected">
+                                                            <button type="submit" class="book-listing-secondary-action">Noraidīt</button>
+                                                        </form>
+                                                    </div>
                                                 @endif
                                             </div>
                                         @endforeach

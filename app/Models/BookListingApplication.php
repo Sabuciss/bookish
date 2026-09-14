@@ -13,6 +13,7 @@ class BookListingApplication extends Model
     protected $fillable = [
         'book_listing_id',
         'user_id',
+        'offered_book_title',
         'message',
         'status',
     ];

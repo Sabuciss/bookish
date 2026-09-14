@@ -772,6 +772,27 @@ nav.app-surface-opaque form button:hover {
 	line-height: 1.4;
 }
 
+.book-listing-application-actions {
+	display: flex;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+.book-listing-application-actions form {
+	margin: 0;
+}
+
+.book-listing-secondary-action {
+	padding: 8px 12px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 8px;
+	background: transparent;
+	color: var(--bookish-muted);
+	font-size: 0.75rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+
 .book-listing-apply-login {
 	color: var(--bookish-plum);
 	font-size: 0.8rem;
