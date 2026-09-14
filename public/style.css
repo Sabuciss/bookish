@@ -782,6 +782,64 @@ nav.app-surface-opaque form button:hover {
 	margin: 0;
 }
 
+.book-listing-message-thread {
+	display: grid;
+	gap: 6px;
+	margin-top: 8px;
+}
+
+.book-listing-message {
+	padding: 8px 10px;
+	border: 1px solid var(--bookish-line);
+	background: var(--bookish-paper);
+	font-size: 0.75rem;
+}
+
+.book-listing-message.is-mine {
+	background: var(--bookish-alt);
+}
+
+.book-listing-message strong {
+	color: var(--bookish-plum);
+}
+
+.book-listing-message span {
+	margin-left: 6px;
+	color: var(--bookish-muted);
+	font-size: 0.68rem;
+}
+
+.book-listing-message p {
+	margin: 3px 0 0;
+}
+
+.book-listing-message-form {
+	display: grid;
+	gap: 7px;
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px solid var(--bookish-line);
+}
+
+.book-listing-message-form label {
+	display: grid;
+	gap: 4px;
+	color: var(--bookish-muted);
+	font-size: 0.72rem;
+	font-weight: 700;
+}
+
+.book-listing-message-form textarea {
+	min-height: 52px;
+	padding: 8px 10px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 8px;
+	background: var(--bookish-paper);
+	color: var(--bookish-ink);
+	font-size: 0.8rem;
+	resize: vertical;
+}
+
 .book-listing-secondary-action {
 	padding: 8px 12px;
 	border: 1px solid var(--bookish-line);

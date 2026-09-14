@@ -6,6 +6,7 @@ use App\Http\Requests\StoreBookListingRequest;
 use App\Http\Requests\StoreBookListingApplicationRequest;
 use App\Models\BookListing;
 use App\Models\BookListingApplication;
+use App\Models\BookListingMessage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -21,7 +22,7 @@ class BookListingController extends Controller
             'listings' => BookListing::query()
                 ->where('listing_type', $listingType)
                 ->with('user:id,name')
-                ->with(['applications.user:id,name,email'])
+                ->with(['applications.user:id,name,email', 'applications.messages.user:id,name'])
                 ->latest()
                 ->paginate(12),
         ]);
@@ -93,5 +94,23 @@ class BookListingController extends Controller
         return back()->with('status', $status === 'accepted'
             ? 'Apmaiņas piedāvājums pieņemts.'
             : 'Apmaiņas piedāvājums noraidīts.');
+    }
+
+    public function sendMessage(Request $request, BookListing $bookListing, BookListingApplication $application): RedirectResponse
+    {
+        abort_unless($application->book_listing_id === $bookListing->id, 404);
+        abort_unless($bookListing->user_id === $request->user()->id || $application->user_id === $request->user()->id, 403);
+
+        $validated = $request->validate([
+            'message' => ['required', 'string', 'max:2000'],
+        ]);
+
+        BookListingMessage::create([
+            'book_listing_application_id' => $application->id,
+            'user_id' => $request->user()->id,
+            'message' => $validated['message'],
+        ]);
+
+        return back()->with('status', 'Ziņa nosūtīta.');
     }
 }

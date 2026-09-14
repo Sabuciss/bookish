@@ -43,6 +43,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('book-listings.apply');
     Route::patch('/book-listings/{bookListing}/applications/{application}', [BookListingController::class, 'updateApplication'])
         ->name('book-listings.applications.update');
+    Route::post('/book-listings/{bookListing}/applications/{application}/messages', [BookListingController::class, 'sendMessage'])
+        ->name('book-listings.applications.messages.store');
     Route::get('/reading-shelf', [ReadingProgressController::class, 'showBookshelf'])
         ->name('reading-shelf.show');
     Route::get('/reading-progress', [ReadingProgressController::class, 'showProgressTracker'])

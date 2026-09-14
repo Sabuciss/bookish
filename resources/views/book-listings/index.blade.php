@@ -65,6 +65,27 @@
                                         @if ($myApplication->message)
                                             <p>{{ $myApplication->message }}</p>
                                         @endif
+                                        @if ($myApplication->messages->isNotEmpty())
+                                            <div class="book-listing-message-thread">
+                                                @foreach ($myApplication->messages as $message)
+                                                    <div class="book-listing-message {{ $message->user_id === auth()->id() ? 'is-mine' : '' }}">
+                                                        <strong>{{ $message->user->name }}</strong>
+                                                        <span>{{ $message->created_at->format('d.m.Y H:i') }}</span>
+                                                        <p>{{ $message->message }}</p>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                        @if ($myApplication->status !== 'rejected')
+                                            <form method="POST" action="{{ route('book-listings.applications.messages.store', [$listing, $myApplication]) }}" class="book-listing-message-form">
+                                                @csrf
+                                                <label>
+                                                    Tava ziņa autoram
+                                                    <textarea name="message" rows="2" maxlength="2000" required placeholder="Vienosimies par laiku un vietu..."></textarea>
+                                                </label>
+                                                <button type="submit" class="reading-progress-submit">Nosūtīt ziņu</button>
+                                            </form>
+                                        @endif
                                         @if ($myApplication->status === 'accepted')
                                             <p>Sazinies ar autoru: <a href="mailto:{{ $listing->contact_email }}">{{ $listing->contact_email }}</a></p>
                                         @endif
@@ -104,6 +125,27 @@
                                                 @endif
                                                 @if ($application->message)
                                                     <p>{{ $application->message }}</p>
+                                                @endif
+                                                @if ($application->messages->isNotEmpty())
+                                                    <div class="book-listing-message-thread">
+                                                        @foreach ($application->messages as $message)
+                                                            <div class="book-listing-message {{ $message->user_id === auth()->id() ? 'is-mine' : '' }}">
+                                                                <strong>{{ $message->user->name }}</strong>
+                                                                <span>{{ $message->created_at->format('d.m.Y H:i') }}</span>
+                                                                <p>{{ $message->message }}</p>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                                @if ($application->status !== 'rejected')
+                                                    <form method="POST" action="{{ route('book-listings.applications.messages.store', [$listing, $application]) }}" class="book-listing-message-form">
+                                                        @csrf
+                                                        <label>
+                                                            Ziņa interesentam
+                                                            <textarea name="message" rows="2" maxlength="2000" required placeholder="Vienosimies par laiku un vietu..."></textarea>
+                                                        </label>
+                                                        <button type="submit" class="reading-progress-submit">Nosūtīt ziņu</button>
+                                                    </form>
                                                 @endif
                                                 @if ($application->status === 'pending')
                                                     <div class="book-listing-application-actions">
