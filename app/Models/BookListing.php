@@ -14,6 +14,7 @@ class BookListing extends Model
     protected $fillable = [
         'user_id',
         'listing_type',
+        'availability',
         'book_title',
         'exchange_book_title',
         'author',
@@ -31,6 +32,11 @@ class BookListing extends Model
     public function isExchange(): bool
     {
         return $this->listing_type === 'exchange';
+    }
+
+    public function isAvailable(): bool
+    {
+        return $this->availability === 'available';
     }
 
     public function user(): BelongsTo

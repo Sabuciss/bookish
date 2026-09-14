@@ -47,6 +47,10 @@ class BookListingController extends Controller
 
     public function apply(StoreBookListingApplicationRequest $request, BookListing $bookListing): RedirectResponse
     {
+        if (! $bookListing->isAvailable()) {
+            return back()->with('status', 'Šis sludinājums vairs nav pieejams.');
+        }
+
         if ($bookListing->user_id === $request->user()->id) {
             return back()->with('status', 'Uz savu sludinājumu pieteikties nevar.');
         }
@@ -79,6 +83,7 @@ class BookListingController extends Controller
         $application->update(['status' => $status]);
 
         if ($status === 'accepted') {
+            $bookListing->update(['availability' => 'unavailable']);
             $bookListing->applications()
                 ->where('id', '!=', $application->id)
                 ->where('status', 'pending')
