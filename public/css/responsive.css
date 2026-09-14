@@ -168,6 +168,10 @@
 		grid-template-columns: 1fr;
 	}
 
+	.book-listing-details {
+		grid-template-columns: 1fr;
+	}
+
 	h1,
 	.uiverse-heading {
 		line-height: 1.2;

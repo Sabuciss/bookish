@@ -6,14 +6,19 @@ use App\Http\Requests\StoreBookListingRequest;
 use App\Http\Requests\StoreBookListingApplicationRequest;
 use App\Models\BookListing;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class BookListingController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
+        $listingType = $request->routeIs('book-exchange.*') ? 'exchange' : 'sale';
+
         return view('book-listings.index', [
+            'listingType' => $listingType,
             'listings' => BookListing::query()
+                ->where('listing_type', $listingType)
                 ->with('user:id,name')
                 ->with(['applications.user:id,name,email'])
                 ->latest()
@@ -21,9 +26,11 @@ class BookListingController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('book-listings.create');
+        return view('book-listings.create', [
+            'listingType' => $request->routeIs('book-exchange.*') ? 'exchange' : 'sale',
+        ]);
     }
 
     public function store(StoreBookListingRequest $request): RedirectResponse

@@ -13,7 +13,9 @@ class BookListing extends Model
 
     protected $fillable = [
         'user_id',
+        'listing_type',
         'book_title',
+        'exchange_book_title',
         'author',
         'condition',
         'language',
@@ -25,6 +27,11 @@ class BookListing extends Model
     protected $casts = [
         'price' => 'decimal:2',
     ];
+
+    public function isExchange(): bool
+    {
+        return $this->listing_type === 'exchange';
+    }
 
     public function user(): BelongsTo
     {

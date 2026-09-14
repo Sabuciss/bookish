@@ -2,16 +2,21 @@
     <div class="reading-progress-page book-listings-page">
         <div class="book-listings-heading">
             <div>
-                <p class="book-detail-eyebrow">Bookish tirgus</p>
-                <h1>Grāmatu sludinājumi</h1>
-                <p>Atrodi savu nākamo grāmatu vai publicē kādu no savas kolekcijas pārdošanai.</p>
+                <p class="book-detail-eyebrow">Bookish kopiena</p>
+                <h1>{{ $listingType === 'exchange' ? 'Grāmatu apmaiņa' : 'Grāmatu sludinājumi' }}</h1>
+                <p>{{ $listingType === 'exchange' ? 'Atrodi lasītāju, ar kuru apmainīties ar grāmatām.' : 'Atrodi savu nākamo grāmatu vai publicē kādu no savas kolekcijas pārdošanai.' }}</p>
             </div>
             @auth
-                <a href="{{ route('book-listings.create') }}" class="reading-progress-submit">Pievienot sludinājumu</a>
+                <a href="{{ route($listingType === 'exchange' ? 'book-exchange.create' : 'book-listings.create') }}" class="reading-progress-submit">{{ $listingType === 'exchange' ? 'Piedāvāt grāmatu' : 'Pievienot sludinājumu' }}</a>
             @else
-                <a href="{{ route('login') }}" class="reading-progress-submit">Ielogoties, lai pārdotu</a>
+                <a href="{{ route('login') }}" class="reading-progress-submit">Ielogoties, lai pievienotu</a>
             @endauth
         </div>
+
+        <nav class="book-listings-tabs" aria-label="Grāmatu sadaļas">
+            <a href="{{ route('book-listings.index') }}" @class(['is-active' => $listingType === 'sale'])>Pārdošana</a>
+            <a href="{{ route('book-exchange.index') }}" @class(['is-active' => $listingType === 'exchange'])>Apmaiņa</a>
+        </nav>
 
         @if (session('status'))
             <div class="reading-progress-alert reading-progress-alert-success">{{ session('status') }}</div>
@@ -20,7 +25,7 @@
         @if ($listings->isEmpty())
             <section class="uiverse-container book-listings-empty">
                 <h2 class="uiverse-heading">Pagaidām nav sludinājumu</h2>
-                <p>Esi pirmais, kas pievieno grāmatu pārdošanai.</p>
+                <p>{{ $listingType === 'exchange' ? 'Esi pirmais, kas piedāvā grāmatu apmaiņai.' : 'Esi pirmais, kas pievieno grāmatu pārdošanai.' }}</p>
             </section>
         @else
             <div class="book-listing-grid">
@@ -33,11 +38,14 @@
                                     <p>{{ $listing->author }}</p>
                                 @endif
                             </div>
-                            <strong class="book-listing-price">{{ number_format((float) $listing->price, 2, ',', ' ') }} EUR</strong>
+                            <strong class="book-listing-price">{{ $listing->isExchange() ? 'APMAIŅA' : number_format((float) $listing->price, 2, ',', ' ') . ' EUR' }}</strong>
                         </div>
                         <dl class="book-listing-details">
                             <div><dt>Stāvoklis</dt><dd>{{ $listing->condition }}</dd></div>
                             <div><dt>Valoda</dt><dd>{{ $listing->language }}</dd></div>
+                            @if ($listing->isExchange())
+                                <div><dt>Meklē pretī</dt><dd>{{ $listing->exchange_book_title }}</dd></div>
+                            @endif
                         </dl>
                         @if ($listing->description)
                             <p class="book-listing-description">{{ $listing->description }}</p>
@@ -48,10 +56,10 @@
                                     <form method="POST" action="{{ route('book-listings.apply', $listing) }}" class="book-listing-application-form">
                                         @csrf
                                         <label>
-                                            Ziņa pārdevējam (pēc izvēles)
+                                            Ziņa {{ $listing->isExchange() ? 'grāmatas īpašniekam' : 'pārdevējam' }} (pēc izvēles)
                                             <textarea name="message" rows="2" maxlength="1000" placeholder="Piemēram, kad vari grāmatu saņemt.">{{ old('message') }}</textarea>
                                         </label>
-                                        <button type="submit" class="reading-progress-submit">Pieteikties uz grāmatu</button>
+                                        <button type="submit" class="reading-progress-submit">{{ $listing->isExchange() ? 'Piedāvāt apmaiņu' : 'Pieteikties uz grāmatu' }}</button>
                                     </form>
                                 @else
                                     <p class="book-listing-application-sent">Pieteikums jau nosūtīts.</p>

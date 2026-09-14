@@ -171,6 +171,11 @@
           <span class="ms-1">Grāmatu sludinājumi</span>
         </a>
       </li>
+      <li>
+        <a href="{{ route('book-exchange.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('book-exchange.*'), 'text-body' => !request()->routeIs('book-exchange.*')]) @if (request()->routeIs('book-exchange.*')) aria-current="page" @endif>
+          <span class="ms-1">Grāmatu apmaiņa</span>
+        </a>
+      </li>
     </ul>
   </div>
 </aside>

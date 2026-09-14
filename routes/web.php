@@ -29,10 +29,14 @@ Route::get('/books/{volumeId}', [GoogleBooksController::class, 'show'])
     ->name('books.show');
 Route::get('/book-listings', [BookListingController::class, 'index'])
     ->name('book-listings.index');
+Route::get('/book-exchange', [BookListingController::class, 'index'])
+    ->name('book-exchange.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/book-listings/create', [BookListingController::class, 'create'])
         ->name('book-listings.create');
+    Route::get('/book-exchange/create', [BookListingController::class, 'create'])
+        ->name('book-exchange.create');
     Route::post('/book-listings', [BookListingController::class, 'store'])
         ->name('book-listings.store');
     Route::post('/book-listings/{bookListing}/apply', [BookListingController::class, 'apply'])
