@@ -22,7 +22,6 @@ class StoreBookListingRequest extends FormRequest
             'language' => ['required', 'string', 'max:50'],
             'price' => ['nullable', 'required_if:listing_type,sale', 'numeric', 'min:0', 'max:999999.99'],
             'description' => ['nullable', 'string', 'max:2000'],
-            'contact_email' => ['required', 'email', 'max:255'],
         ];
     }
 }

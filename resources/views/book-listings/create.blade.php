@@ -51,9 +51,6 @@
                 <label>Apraksts
                     <textarea name="description" rows="5" maxlength="2000" placeholder="Piemēram, vai grāmatai ir locījumi, piezīmes vai citi defekti.">{{ old('description') }}</textarea>
                 </label>
-                <label>Kontakta e-pasts
-                    <input type="email" name="contact_email" value="{{ old('contact_email', auth()->user()->email) }}" required>
-                </label>
                 <button type="submit" class="reading-progress-submit">{{ $listingType === 'exchange' ? 'Publicēt apmaiņas piedāvājumu' : 'Publicēt sludinājumu' }}</button>
             </form>
         </section>

@@ -40,6 +40,7 @@ class BookListingController extends Controller
         BookListing::create([
             ...$request->validated(),
             'user_id' => $request->user()->id,
+            'contact_email' => $request->user()->email,
         ]);
 
         return to_route('book-listings.index')
