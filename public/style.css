@@ -637,6 +637,52 @@ nav.app-surface-opaque form button:hover {
 	}
 }
 
+@media (max-width: 959px) {
+	.book-listing-grid-exchange {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 640px) {
+	.book-listing-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.book-listing-card {
+		padding: 14px;
+	}
+
+	.book-listing-card-heading {
+		align-items: stretch;
+	}
+
+	.book-listing-application-actions {
+		flex-direction: column;
+	}
+
+	.book-listing-application-actions form,
+	.book-listing-application-actions button,
+	.book-listing-application-actions .reading-progress-submit,
+	.book-listing-message-form button,
+	.book-listing-message-form .reading-progress-submit {
+		width: 100%;
+	}
+
+	.book-listing-application > div {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	
+	.book-listings-tabs {
+		flex-wrap: wrap;
+	}
+
+	.book-listings-tabs a {
+		flex: 1 1 calc(50% - 8px);
+		text-align: center;
+	}
+}
+
 .book-listing-card {
 	display: grid;
 	gap: 14px;
