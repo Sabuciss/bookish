@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('book_listing_id')->constrained('book_listings')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('offered_book_title')->nullable()->after('user_id');
+            $table->string('offered_book_title')->nullable();
             $table->text('message')->nullable();
             $table->string('status', 20)->default('pending');
             $table->timestamps();

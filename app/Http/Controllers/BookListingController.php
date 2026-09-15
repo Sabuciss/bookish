@@ -22,7 +22,7 @@ class BookListingController extends Controller
             'listings' => BookListing::query()
                 ->where('listing_type', $listingType)
                 ->with('user:id,name')
-                ->with(['applications.user:id,name,email', 'applications.messages.user:id,name'])
+                ->with(['applications.user:id,name', 'applications.messages.user:id,name'])
                 ->latest()
                 ->paginate(12),
         ]);

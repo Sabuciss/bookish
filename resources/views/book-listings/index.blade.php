@@ -86,9 +86,6 @@
                                                 <button type="submit" class="reading-progress-submit">Nosūtīt ziņu</button>
                                             </form>
                                         @endif
-                                        @if ($myApplication->status === 'accepted')
-                                            <p>Sazinies ar autoru: <a href="mailto:{{ $listing->contact_email }}">{{ $listing->contact_email }}</a></p>
-                                        @endif
                                     </div>
                                 @elseif ($listing->isAvailable())
                                     <form method="POST" action="{{ route('book-listings.apply', $listing) }}" class="book-listing-application-form">
@@ -117,7 +114,6 @@
                                             <div class="book-listing-application">
                                                 <div>
                                                     <strong>{{ $application->user->name }}</strong>
-                                                    <span>{{ $application->user->email }}</span>
                                                 </div>
                                                 <span class="book-listing-application-status">{{ match ($application->status) { 'pending' => 'Gaida atbildi', 'accepted' => 'Pieņemts', 'rejected' => 'Noraidīts', default => $application->status } }}</span>
                                                 @if ($listing->isExchange() && $application->offered_book_title)
@@ -173,7 +169,6 @@
                         @endauth
                         <div class="book-listing-footer">
                             <span>Publicēja {{ $listing->user->name }}</span>
-                            <a href="mailto:{{ $listing->contact_email }}?subject=Par grāmatu: {{ rawurlencode($listing->book_title) }}">Sazināties</a>
                         </div>
                     </article>
                 @endforeach
