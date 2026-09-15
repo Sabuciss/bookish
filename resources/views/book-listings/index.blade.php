@@ -70,7 +70,7 @@
                                                 @foreach ($myApplication->messages as $message)
                                                     <div class="book-listing-message {{ $message->user_id === auth()->id() ? 'is-mine' : '' }}">
                                                         <strong>{{ $message->user->name }}</strong>
-                                                        <span>{{ $message->created_at->format('d.m.Y H:i') }}</span>
+                                                        <span>{{ $message->created_at->timezone('Europe/Riga')->format('d.m.Y H:i') }}</span>
                                                         <p>{{ $message->message }}</p>
                                                     </div>
                                                 @endforeach
@@ -127,7 +127,7 @@
                                                         @foreach ($application->messages as $message)
                                                             <div class="book-listing-message {{ $message->user_id === auth()->id() ? 'is-mine' : '' }}">
                                                                 <strong>{{ $message->user->name }}</strong>
-                                                                <span>{{ $message->created_at->format('d.m.Y H:i') }}</span>
+                                                                <span>{{ $message->created_at->timezone('Europe/Riga')->format('d.m.Y H:i') }}</span>
                                                                 <p>{{ $message->message }}</p>
                                                             </div>
                                                         @endforeach

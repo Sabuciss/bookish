@@ -37,6 +37,5 @@ class DatabaseSeeder extends Seeder
             ReadingHighlightSeeder::class,
         ]);
 
-        // User::factory(10)->create();
     }
 }
