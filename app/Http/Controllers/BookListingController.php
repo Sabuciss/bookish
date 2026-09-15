@@ -9,6 +9,7 @@ use App\Models\BookListingApplication;
 use App\Models\BookListingMessage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class BookListingController extends Controller
@@ -61,12 +62,32 @@ class BookListingController extends Controller
             return back()->with('status', 'Tu jau esi pieteicies uz šo grāmatu.');
         }
 
-        $bookListing->applications()->create([
-            'user_id' => $request->user()->id,
-            'offered_book_title' => $request->validated('offered_book_title'),
-            'message' => $request->validated('message'),
-            'status' => 'pending',
-        ]);
+        $created = DB::transaction(function () use ($bookListing, $request): bool {
+            $lockedListing = BookListing::query()
+                ->lockForUpdate()
+                ->findOrFail($bookListing->id);
+
+            if (! $lockedListing->isAvailable()) {
+                return false;
+            }
+
+            if ($lockedListing->applications()->where('user_id', $request->user()->id)->exists()) {
+                return false;
+            }
+
+            $lockedListing->applications()->create([
+                'user_id' => $request->user()->id,
+                'offered_book_title' => $request->validated('offered_book_title'),
+                'message' => $request->validated('message'),
+                'status' => 'pending',
+            ]);
+
+            return true;
+        });
+
+        if (! $created) {
+            return back()->with('status', 'Pieteikumu vairs nevar iesniegt šim sludinājumam.');
+        }
 
         return back()->with('status', $bookListing->isExchange()
             ? 'Apmaiņas piedāvājums nosūtīts sludinājuma autoram.'
@@ -82,14 +103,38 @@ class BookListingController extends Controller
             'status' => ['required', 'in:accepted,rejected'],
         ])['status'];
 
-        $application->update(['status' => $status]);
+        $updated = DB::transaction(function () use ($application, $bookListing, $status): bool {
+            $lockedListing = BookListing::query()
+                ->lockForUpdate()
+                ->findOrFail($bookListing->id);
+            $lockedApplication = BookListingApplication::query()
+                ->where('book_listing_id', $lockedListing->id)
+                ->lockForUpdate()
+                ->findOrFail($application->id);
 
-        if ($status === 'accepted') {
-            $bookListing->update(['availability' => 'unavailable']);
-            $bookListing->applications()
-                ->where('id', '!=', $application->id)
-                ->where('status', 'pending')
-                ->update(['status' => 'rejected']);
+            if ($lockedApplication->status !== 'pending') {
+                return false;
+            }
+
+            if ($status === 'accepted' && ! $lockedListing->isAvailable()) {
+                return false;
+            }
+
+            $lockedApplication->update(['status' => $status]);
+
+            if ($status === 'accepted') {
+                $lockedListing->update(['availability' => 'unavailable']);
+                $lockedListing->applications()
+                    ->where('id', '!=', $lockedApplication->id)
+                    ->where('status', 'pending')
+                    ->update(['status' => 'rejected']);
+            }
+
+            return true;
+        });
+
+        if (! $updated) {
+            return back()->with('status', 'Šo pieteikumu vairs nevar mainīt.');
         }
 
         return back()->with('status', $status === 'accepted'
@@ -101,6 +146,7 @@ class BookListingController extends Controller
     {
         abort_unless($application->book_listing_id === $bookListing->id, 404);
         abort_unless($bookListing->user_id === $request->user()->id || $application->user_id === $request->user()->id, 403);
+        abort_if($application->status === 'rejected', 403);
 
         $validated = $request->validate([
             'message' => ['required', 'string', 'max:2000'],
