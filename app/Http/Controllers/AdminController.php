@@ -35,7 +35,14 @@ class AdminController extends Controller
                 ->latest()
                 ->limit(20)
                 ->get(),
-            'bookListings' => BookListing::query()
+            'saleListings' => BookListing::query()
+                ->where('listing_type', 'sale')
+                ->with('user:id,name,email')
+                ->latest()
+                ->limit(30)
+                ->get(),
+            'exchangeListings' => BookListing::query()
+                ->where('listing_type', 'exchange')
                 ->with('user:id,name,email')
                 ->latest()
                 ->limit(30)

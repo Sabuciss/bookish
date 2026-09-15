@@ -120,11 +120,11 @@
                 @if (!$activeFilter || $activeFilter === 'book-listings')
                 <section class="rounded-lg bg-white shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
                     <div class="border-b border-gray-200 px-5 py-4 dark:border-gray-700">
-                        <h3 class="font-semibold text-gray-900 dark:text-gray-100">Grāmatu sludinājumi</h3>
+                        <h3 class="font-semibold text-gray-900 dark:text-gray-100">Pārdošanas sludinājumi</h3>
                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Pārbaudi jaunos sludinājumus un noņem neatbilstošu saturu.</p>
                     </div>
                     <div class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @forelse ($bookListings as $listing)
+                        @forelse ($saleListings as $listing)
                             <div class="flex items-start justify-between gap-4 px-5 py-4">
                                 <div class="min-w-0">
                                     <p class="font-medium text-gray-900 dark:text-gray-100">{{ $listing->book_title }}</p>
@@ -146,6 +146,38 @@
                             </div>
                         @empty
                             <p class="px-5 py-4 text-sm text-gray-500">Nav sludinājumu.</p>
+                        @endforelse
+                    </div>
+                </section>
+
+                <section class="rounded-lg bg-white shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+                    <div class="border-b border-gray-200 px-5 py-4 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-gray-100">Apmaiņas piedāvājumi</h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Pārbaudi jaunos apmaiņas piedāvājumus un noņem neatbilstošu saturu.</p>
+                    </div>
+                    <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                        @forelse ($exchangeListings as $listing)
+                            <div class="flex items-start justify-between gap-4 px-5 py-4">
+                                <div class="min-w-0">
+                                    <p class="font-medium text-gray-900 dark:text-gray-100">{{ $listing->book_title }}</p>
+                                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                                        Meklē pretī: {{ $listing->exchange_book_title ?: 'Nav norādīts' }}
+                                    </p>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $listing->condition }} · {{ $listing->language }} · {{ $listing->user?->name ?? 'Nezināms lietotājs' }}
+                                    </p>
+                                    @if ($listing->description)
+                                        <p class="mt-2 line-clamp-2 text-sm text-gray-600 dark:text-gray-300">{{ $listing->description }}</p>
+                                    @endif
+                                </div>
+                                <form method="POST" action="{{ route('admin.book-listings.destroy', $listing) }}" onsubmit="return confirm('Vai tiešām dzēst šo apmaiņas piedāvājumu?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="shrink-0 text-sm font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">Dzēst</button>
+                                </form>
+                            </div>
+                        @empty
+                            <p class="px-5 py-4 text-sm text-gray-500">Nav apmaiņas piedāvājumu.</p>
                         @endforelse
                     </div>
                 </section>
