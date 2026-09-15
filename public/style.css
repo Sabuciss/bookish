@@ -631,6 +631,12 @@ nav.app-surface-opaque form button:hover {
 	gap: 14px;
 }
 
+@media (min-width: 960px) {
+	.book-listing-grid-exchange {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
 .book-listing-card {
 	display: grid;
 	gap: 14px;

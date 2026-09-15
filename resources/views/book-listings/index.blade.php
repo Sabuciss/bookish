@@ -28,7 +28,7 @@
                 <p>{{ $listingType === 'exchange' ? 'Esi pirmais, kas piedāvā grāmatu apmaiņai.' : 'Esi pirmais, kas pievieno grāmatu pārdošanai.' }}</p>
             </section>
         @else
-            <div class="book-listing-grid">
+            <div class="book-listing-grid {{ $listingType === 'exchange' ? 'book-listing-grid-exchange' : '' }}">
                 @foreach ($listings as $listing)
                     <article class="book-listing-card">
                         <div class="book-listing-card-heading">
