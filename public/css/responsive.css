@@ -198,6 +198,78 @@
 		padding-top: 76px;
 	}
 
+	.welcome-container {
+		margin: 8px auto;
+	}
+
+	.welcome-grid,
+	.welcome-card {
+		min-width: 0;
+	}
+
+	.welcome-title {
+		font-size: 2.35rem !important;
+	}
+
+	.welcome-card,
+	.welcome-card--wide {
+		padding: 14px;
+	}
+
+	.welcome-section-heading {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 4px;
+		margin-bottom: 12px;
+	}
+
+	.welcome-section-note {
+		font-size: 0.72rem;
+	}
+
+	.weekly-top-controls {
+		gap: 8px;
+	}
+
+	.weekly-top-controls .weekly-genre-select,
+	.weekly-top-controls .reading-progress-submit {
+		width: 100%;
+		max-width: none;
+	}
+
+	.book-genre-filter {
+		margin-right: -14px;
+		padding-right: 14px;
+		padding-bottom: 6px;
+		scroll-padding-inline: 14px;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.book-genre-filter-button {
+		padding: 8px 11px;
+	}
+
+	.book-genre-heading {
+		gap: 8px;
+		margin-bottom: 10px;
+	}
+
+	.book-genre-heading h3 {
+		font-size: 1.05rem;
+	}
+
+	.book-recommendation-card {
+		grid-template-columns: 56px minmax(0, 1fr);
+		gap: 10px;
+		padding: 9px;
+	}
+
+	.book-recommendation-card img,
+	.book-recommendation-cover {
+		width: 56px;
+		height: 82px;
+	}
+
 	.uiverse-container {
 		padding: 14px 12px;
 		border-width: 2px;
