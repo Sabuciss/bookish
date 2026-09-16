@@ -16,5 +16,17 @@ class BooktokTopBook extends Model
         'title',
         'author',
         'published_year',
+        'google_thumbnail',
+        'google_volume_id',
+        'google_page_count',
+        'google_published_date',
+        'google_publisher',
+        'google_categories',
+        'google_average_rating',
+        'google_ratings_count',
+        'google_description',
+        'google_preview_link',
+        'google_info_link',
+        'google_data_fetched_at',
     ];
 }

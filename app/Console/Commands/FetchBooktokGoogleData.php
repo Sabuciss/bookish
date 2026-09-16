@@ -34,6 +34,7 @@ class FetchBooktokGoogleData extends Command
                     'google_description' => $googleData['description'] ?? null,
                     'google_preview_link' => $googleData['preview_link'] ?? null,
                     'google_info_link' => $googleData['info_link'] ?? null,
+                    'google_data_fetched_at' => now(),
                 ]);
                 $count++;
             }
@@ -47,7 +48,7 @@ class FetchBooktokGoogleData extends Command
 
     private function fetchGoogleBookData(string $title, string $author): ?array
     {
-        $cacheKey = 'booktok_google_book_data_' . md5($title . '|' . $author);
+        $cacheKey = 'booktok_google_book_data_v3_' . md5($title . '|' . $author);
 
         return Cache::remember($cacheKey, now()->addHours(12), function () use ($title, $author) {
             $params = [
@@ -65,7 +66,7 @@ class FetchBooktokGoogleData extends Command
                 $response = Http::timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
 
                 if (!$response->ok()) {
-                    return null;
+                    return $this->fallbackBookData($title, $author);
                 }
 
                 $item = $response->json('items.0');
@@ -82,18 +83,20 @@ class FetchBooktokGoogleData extends Command
                 }
 
                 if (!is_array($item)) {
-                    return null;
+                    return $this->fallbackBookData($title, $author);
                 }
 
                 $volumeInfo = $item['volumeInfo'] ?? [];
                 $saleInfo = $item['saleInfo'] ?? [];
 
-                return [
-                    'thumbnail' => $this->normalizeThumbnailUrl(
+                $thumbnail = $this->normalizeThumbnailUrl(
                         $volumeInfo['imageLinks']['thumbnail']
                             ?? $volumeInfo['imageLinks']['smallThumbnail']
                             ?? null
-                    ),
+                    ) ?: $this->fetchOpenLibraryCover($title, $author);
+
+                return [
+                    'thumbnail' => $thumbnail,
                     'volume_id' => $item['id'] ?? null,
                     'page_count' => $volumeInfo['pageCount'] ?? null,
                     'published_date' => $volumeInfo['publishedDate'] ?? null,
@@ -109,6 +112,30 @@ class FetchBooktokGoogleData extends Command
                 return null;
             }
         });
+    }
+
+    private function fallbackBookData(string $title, string $author): ?array
+    {
+        $thumbnail = $this->fetchOpenLibraryCover($title, $author);
+
+        return $thumbnail ? ['thumbnail' => $thumbnail] : null;
+    }
+
+    private function fetchOpenLibraryCover(string $title, string $author): ?string
+    {
+        try {
+            $response = Http::connectTimeout(3)->timeout(8)->get(
+                'https://openlibrary.org/search.json',
+                ['title' => $title, 'author' => $author, 'limit' => 1, 'fields' => 'cover_i']
+            );
+            $coverId = $response->json('docs.0.cover_i');
+
+            return $response->ok() && $coverId
+                ? 'https://covers.openlibrary.org/b/id/' . $coverId . '-M.jpg'
+                : null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     private function normalizeThumbnailUrl(?string $url): ?string

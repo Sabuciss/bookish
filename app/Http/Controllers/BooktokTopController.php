@@ -55,16 +55,6 @@ class BooktokTopController extends Controller
 
         $books = $booksQuery->get();
 
-        $books->transform(function (BooktokTopBook $book) {
-            $googleBook = $this->fetchGoogleBookData($book->title, $book->author);
-            $book->google_thumbnail = $googleBook['thumbnail'] ?? null;
-            $book->google_volume_id = $googleBook['volume_id'] ?? null;
-            $book->google_page_count = $googleBook['page_count'] ?? null;
-            $book->google_categories = $googleBook['categories'] ?? null;
-
-            return $book;
-        });
-
         $availableGenres = $books
             ->flatMap(function (BooktokTopBook $book) {
                 return preg_split('/\s*,\s*/', (string) $book->google_categories, -1, PREG_SPLIT_NO_EMPTY);
@@ -166,7 +156,9 @@ class BooktokTopController extends Controller
 
     public function show(Request $request, BooktokTopBook $book): View
     {
-        $googleBook = $this->fetchGoogleBookData($book->title, $book->author);
+        $googleBook = $book->google_data_fetched_at
+            ? $this->storedBookData($book)
+            : $this->fetchGoogleBookData($book->title, $book->author);
         $book->google_thumbnail = $googleBook['thumbnail'] ?? null;
         $book->google_volume_id = $googleBook['volume_id'] ?? null;
         $book->google_page_count = $googleBook['page_count'] ?? null;
@@ -243,9 +235,26 @@ class BooktokTopController extends Controller
         return $statuses;
     }
 
+    private function storedBookData(BooktokTopBook $book): array
+    {
+        return [
+            'thumbnail' => $book->google_thumbnail,
+            'volume_id' => $book->google_volume_id,
+            'page_count' => $book->google_page_count,
+            'published_date' => $book->google_published_date,
+            'publisher' => $book->google_publisher,
+            'categories' => $book->google_categories,
+            'average_rating' => $book->google_average_rating,
+            'ratings_count' => $book->google_ratings_count,
+            'description' => $book->google_description,
+            'preview_link' => $book->google_preview_link,
+            'info_link' => $book->google_info_link,
+        ];
+    }
+
     private function fetchGoogleBookData(string $title, string $author): ?array
     {
-        $cacheKey = 'booktok_google_book_data_' . md5($title . '|' . $author);
+        $cacheKey = 'booktok_google_book_data_v3_' . md5($title . '|' . $author);
 
         return Cache::remember($cacheKey, now()->addHours(12), function () use ($title, $author) {
             $params = [
@@ -263,7 +272,7 @@ class BooktokTopController extends Controller
                 $response = Http::timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
 
                 if (!$response->ok()) {
-                    return null;
+                    return $this->fallbackBookData($title, $author);
                 }
 
                 $item = $response->json('items.0');
@@ -280,18 +289,24 @@ class BooktokTopController extends Controller
                 }
 
                 if (!is_array($item)) {
-                    return null;
+                    return $this->fallbackBookData($title, $author);
                 }
 
                 $volumeInfo = $item['volumeInfo'] ?? [];
                 $saleInfo = $item['saleInfo'] ?? [];
 
+                $thumbnail = $this->normalizeThumbnailUrl(
+                    $volumeInfo['imageLinks']['thumbnail']
+                        ?? $volumeInfo['imageLinks']['smallThumbnail']
+                        ?? null
+                );
+
+                if (!$thumbnail) {
+                    $thumbnail = $this->fetchOpenLibraryCover($title, $author);
+                }
+
                 return [
-                    'thumbnail' => $this->normalizeThumbnailUrl(
-                        $volumeInfo['imageLinks']['thumbnail']
-                            ?? $volumeInfo['imageLinks']['smallThumbnail']
-                            ?? null
-                    ),
+                    'thumbnail' => $thumbnail,
                     'volume_id' => $item['id'] ?? null,
                     'page_count' => $volumeInfo['pageCount'] ?? null,
                     'published_date' => $volumeInfo['publishedDate'] ?? null,
@@ -307,6 +322,36 @@ class BooktokTopController extends Controller
                 return null;
             }
         });
+    }
+
+    private function fallbackBookData(string $title, string $author): ?array
+    {
+        $thumbnail = $this->fetchOpenLibraryCover($title, $author);
+
+        return $thumbnail ? ['thumbnail' => $thumbnail] : null;
+    }
+
+    private function fetchOpenLibraryCover(string $title, string $author): ?string
+    {
+        try {
+            $response = Http::connectTimeout(3)->timeout(8)->get(
+                'https://openlibrary.org/search.json',
+                [
+                    'title' => $title,
+                    'author' => $author,
+                    'limit' => 1,
+                    'fields' => 'cover_i',
+                ]
+            );
+
+            $coverId = $response->json('docs.0.cover_i');
+
+            return $response->ok() && $coverId
+                ? 'https://covers.openlibrary.org/b/id/' . $coverId . '-M.jpg'
+                : null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     private function normalizeThumbnailUrl(?string $url): ?string
