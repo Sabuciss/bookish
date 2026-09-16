@@ -83,10 +83,10 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="reading-progress-submit">Pielietot filtru</button>
+                    <button type="submit" class="reading-progress-submit booktok-filter-submit">Pielietot filtru</button>
 
                     @if ($selectedYear || $selectedGenre || $selectedAuthor || $selectedTitle || $selectedFavoriteAuthors)
-                        <a href="{{ route('booktok.index') }}" class="reading-progress-submit">Notīrīt filtru</a>
+                        <a href="{{ route('booktok.index') }}" class="reading-progress-submit booktok-filter-submit">Notīrīt filtru</a>
                     @endif
                 </div>
             </form>

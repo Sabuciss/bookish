@@ -15,6 +15,12 @@
 	gap: 16px;
 }
 
+.welcome-grid > *,
+.welcome-card,
+.welcome-card > * {
+	min-width: 0;
+}
+
 .welcome-card {
 	padding: 16px;
 	border: 1px solid #ddd;

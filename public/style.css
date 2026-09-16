@@ -927,17 +927,20 @@ nav.app-surface-opaque form button:hover {
 
 .book-listing-form-card {
 	max-width: 820px;
+	min-width: 0;
 	margin: 0 auto;
 }
 
 .book-listing-form {
 	display: grid;
+	min-width: 0;
 	gap: 16px;
 	margin-top: 24px;
 }
 
 .book-listing-form label {
 	display: grid;
+	min-width: 0;
 	gap: 6px;
 	color: var(--bookish-ink);
 	font-size: 0.8rem;
@@ -946,8 +949,17 @@ nav.app-surface-opaque form button:hover {
 
 .book-listing-form-row {
 	display: grid;
+	min-width: 0;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 12px;
+}
+
+.book-listing-form input,
+.book-listing-form select,
+.book-listing-form textarea {
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
 }
 
 .book-listing-form textarea {

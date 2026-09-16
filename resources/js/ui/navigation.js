@@ -20,6 +20,9 @@ export function initDrawerNavigation() {
         drawer.classList.remove('-translate-x-full');
         drawer.setAttribute('aria-hidden', 'false');
 
+        const opener = document.querySelector(`[data-drawer-show="${drawerId}"]`);
+        drawer.dataset.returnFocusId = opener?.id || '';
+
         if (overlay) {
             overlay.classList.remove('hidden');
         }
@@ -31,6 +34,15 @@ export function initDrawerNavigation() {
 
         if (!drawer) {
             return;
+        }
+
+        const activeElement = document.activeElement;
+        const opener = drawer.dataset.returnFocusId
+            ? document.getElementById(drawer.dataset.returnFocusId)
+            : document.querySelector(`[data-drawer-show="${drawerId}"]`);
+
+        if (activeElement && drawer.contains(activeElement)) {
+            opener?.focus({ preventScroll: true });
         }
 
         drawer.classList.add('-translate-x-full');

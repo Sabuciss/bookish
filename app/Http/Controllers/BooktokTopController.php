@@ -269,6 +269,17 @@ class BooktokTopController extends Controller
                 $item = $response->json('items.0');
 
                 if (!is_array($item)) {
+                    $fallbackResponse = Http::connectTimeout(3)->timeout(10)->get(
+                        'https://www.googleapis.com/books/v1/volumes',
+                        [...$params, 'q' => $title . ' ' . $author]
+                    );
+
+                    if ($fallbackResponse->ok()) {
+                        $item = $fallbackResponse->json('items.0');
+                    }
+                }
+
+                if (!is_array($item)) {
                     return null;
                 }
 
@@ -276,7 +287,11 @@ class BooktokTopController extends Controller
                 $saleInfo = $item['saleInfo'] ?? [];
 
                 return [
-                    'thumbnail' => $volumeInfo['imageLinks']['thumbnail'] ?? null,
+                    'thumbnail' => $this->normalizeThumbnailUrl(
+                        $volumeInfo['imageLinks']['thumbnail']
+                            ?? $volumeInfo['imageLinks']['smallThumbnail']
+                            ?? null
+                    ),
                     'volume_id' => $item['id'] ?? null,
                     'page_count' => $volumeInfo['pageCount'] ?? null,
                     'published_date' => $volumeInfo['publishedDate'] ?? null,
@@ -292,6 +307,17 @@ class BooktokTopController extends Controller
                 return null;
             }
         });
+    }
+
+    private function normalizeThumbnailUrl(?string $url): ?string
+    {
+        if (!$url) {
+            return null;
+        }
+
+        return str_starts_with($url, 'http://')
+            ? 'https://' . substr($url, 7)
+            : $url;
     }
 
     private function fetchGoogleBooksByAuthor(string $author): array

@@ -26,7 +26,33 @@ canvas {
 	padding: 16px;
 	margin: 0 auto;
 	padding-top: 84px;
+	min-width: 0;
 	width: min(100%, var(--content-max-width));
+}
+
+nav.app-surface-opaque {
+	max-width: 100%;
+	overflow: visible;
+}
+
+nav.app-surface-opaque > div {
+	min-width: 0;
+}
+
+#drawer-navigation {
+	width: min(16rem, calc(100vw - 1rem));
+	max-width: calc(100vw - 1rem);
+	min-width: 0;
+}
+
+#drawer-navigation > div,
+#drawer-navigation li,
+#drawer-navigation a {
+	min-width: 0;
+}
+
+#drawer-navigation a span {
+	overflow-wrap: anywhere;
 }
 
 @media (min-width: 1200px) {

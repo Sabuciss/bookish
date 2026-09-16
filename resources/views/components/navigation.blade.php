@@ -1,7 +1,7 @@
 <nav class="app-surface-opaque bg-neutral-primary fixed w-full z-30 top-0 start-0 border-b border-default">
   <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
     <div class="flex items-center gap-2">
-      <button type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-body rounded-base hover:bg-neutral-secondary-soft hover:text-heading focus:outline-none focus:ring-2 focus:ring-neutral-tertiary">
+      <button id="drawer-navigation-opener" type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-body rounded-base hover:bg-neutral-secondary-soft hover:text-heading focus:outline-none focus:ring-2 focus:ring-neutral-tertiary">
         <span class="sr-only">Atvērt navigāciju</span>
         <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14"/></svg>
       </button>
@@ -76,7 +76,7 @@
 
 <div id="drawer-overlay" class="hidden fixed inset-x-0 bottom-0 z-30 bg-black/20" style="top: 73px;" data-drawer-hide="drawer-navigation" aria-hidden="true"></div>
 
-<aside id="drawer-navigation" class="app-surface-opaque fixed left-0 z-40 w-64 p-4 overflow-y-auto transition-transform -translate-x-full bg-neutral-primary border-e border-default" style="top: 73px; height: calc(100vh - 73px);" tabindex="-1" aria-labelledby="drawer-navigation-label">
+<aside id="drawer-navigation" class="app-surface-opaque fixed left-0 z-40 w-64 max-w-[calc(100vw-1rem)] p-4 overflow-y-auto transition-transform -translate-x-full bg-neutral-primary border-e border-default" style="top: 73px; height: calc(100vh - 73px);" tabindex="-1" aria-hidden="true" aria-labelledby="drawer-navigation-label">
   <div class="border-b border-default pb-4 flex items-center">
     <a href="{{ url('/') }}" class="flex items-center space-x-2 rtl:space-x-reverse">
       <span class="self-center text-lg font-semibold whitespace-nowrap text-heading">Bookish jaunumi</span>
