@@ -397,7 +397,11 @@ class BooktokTopController extends Controller
                             'id' => $item['id'] ?? null,
                             'title' => $volumeInfo['title'] ?? null,
                             'published_date' => $volumeInfo['publishedDate'] ?? null,
-                            'thumbnail' => $volumeInfo['imageLinks']['thumbnail'] ?? null,
+                            'thumbnail' => $this->normalizeThumbnailUrl(
+                                $volumeInfo['imageLinks']['thumbnail']
+                                    ?? $volumeInfo['imageLinks']['smallThumbnail']
+                                    ?? null
+                            ),
                             'info_link' => $volumeInfo['infoLink'] ?? null,
                         ];
                     })

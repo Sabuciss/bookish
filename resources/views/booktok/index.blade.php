@@ -155,9 +155,8 @@
                         @foreach (($authorBooks['books'] ?? []) as $authorBook)
                             <a
                                 class="booktok-author-book-card"
-                                href="{{ $authorBook['info_link'] ?: 'https://books.google.com/books?id=' . urlencode($authorBook['id'] ?? '') }}"
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                href="{{ !empty($authorBook['id']) ? route('books.show', ['volumeId' => $authorBook['id']]) : ($authorBook['info_link'] ?: '#') }}"
+                                @if (empty($authorBook['id'])) target="_blank" rel="noopener noreferrer" @endif
                             >
                                 @if ($authorBook['thumbnail'])
                                     <img src="{{ $authorBook['thumbnail'] }}" alt="{{ $authorBook['title'] }} vāks">
@@ -191,9 +190,8 @@
                 @foreach (($authorBooks['books'] ?? []) as $authorBook)
                     <a
                         class="booktok-author-book-card"
-                        href="{{ $authorBook['info_link'] ?: 'https://books.google.com/books?id=' . urlencode($authorBook['id'] ?? '') }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href="{{ !empty($authorBook['id']) ? route('books.show', ['volumeId' => $authorBook['id']]) : ($authorBook['info_link'] ?: '#') }}"
+                        @if (empty($authorBook['id'])) target="_blank" rel="noopener noreferrer" @endif
                     >
                         @if ($authorBook['thumbnail'])
                             <img src="{{ $authorBook['thumbnail'] }}" alt="{{ $authorBook['title'] }} vāks">
