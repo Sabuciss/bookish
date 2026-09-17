@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\BooktokTopBook;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Http;
 
 class BooktokTopBookSeeder extends Seeder
 {
@@ -218,10 +219,61 @@ class BooktokTopBookSeeder extends Seeder
         foreach ($books as $book) {
             $book['published_year'] = $publicationYearsByTitle[$book['title']] ?? null;
 
+            $book = array_merge($book, $this->fetchGoogleBookData($book['title'], $book['author']));
+
             BooktokTopBook::query()->updateOrCreate(
                 ['rank_position' => $book['rank_position']],
                 $book
             );
+        }
+    }
+
+    private function fetchGoogleBookData(string $title, string $author): array
+    {
+        try {
+            $params = [
+                'q' => 'intitle:"' . $title . '" inauthor:"' . $author . '"',
+                'maxResults' => 1,
+                'printType' => 'books',
+            ];
+
+            $apiKey = config('services.google_books.api_key');
+            if ($apiKey) {
+                $params['key'] = $apiKey;
+            }
+
+            $response = Http::connectTimeout(3)
+                ->timeout(8)
+                ->get('https://www.googleapis.com/books/v1/volumes', $params);
+
+            $item = $response->json('items.0');
+            $volumeInfo = is_array($item) ? ($item['volumeInfo'] ?? []) : [];
+            $thumbnail = $volumeInfo['imageLinks']['thumbnail']
+                ?? $volumeInfo['imageLinks']['smallThumbnail']
+                ?? null;
+
+            if (!$thumbnail) {
+                return [];
+            }
+
+            return [
+                'google_thumbnail' => str_starts_with($thumbnail, 'http://')
+                    ? 'https://' . substr($thumbnail, 7)
+                    : $thumbnail,
+                'google_volume_id' => $item['id'] ?? null,
+                'google_page_count' => $volumeInfo['pageCount'] ?? null,
+                'google_published_date' => $volumeInfo['publishedDate'] ?? null,
+                'google_publisher' => $volumeInfo['publisher'] ?? null,
+                'google_categories' => implode(', ', $volumeInfo['categories'] ?? []),
+                'google_average_rating' => $volumeInfo['averageRating'] ?? null,
+                'google_ratings_count' => $volumeInfo['ratingsCount'] ?? null,
+                'google_description' => $volumeInfo['description'] ?? null,
+                'google_preview_link' => $volumeInfo['previewLink'] ?? null,
+                'google_info_link' => $volumeInfo['infoLink'] ?? null,
+                'google_data_fetched_at' => now(),
+            ];
+        } catch (\Throwable) {
+            return [];
         }
     }
 }
