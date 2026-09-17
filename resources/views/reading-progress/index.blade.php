@@ -235,7 +235,18 @@
                                 <div class="rp-date-control">
                                     <input type="text" id="reading-date-display" value="{{ \Illuminate\Support\Carbon::parse(old('reading_date', $prefill['reading_date'] ?? now()->toDateString()))->format('d.m.Y') }}" readonly class="reading-progress-input input rp-date-display" aria-label="Datums, diena mēnesis gads">
                                     <button type="button" id="reading-date-open" class="rp-date-open" aria-label="Atvērt datuma izvēlni">▣</button>
-                                    <input type="date" name="reading_date" id="reading-date-picker" value="{{ old('reading_date', $prefill['reading_date'] ?? now()->toDateString()) }}" required class="rp-date-picker" lang="lv-LV">
+                                    <input type="hidden" name="reading_date" id="reading-date-picker" value="{{ old('reading_date', $prefill['reading_date'] ?? now()->toDateString()) }}" required>
+                                    <div id="reading-date-calendar" class="rp-calendar" hidden>
+                                        <div class="rp-calendar-header">
+                                            <button type="button" class="rp-calendar-nav" id="reading-date-previous" aria-label="Iepriekšējais mēnesis">‹</button>
+                                            <strong id="reading-date-month"></strong>
+                                            <button type="button" class="rp-calendar-nav" id="reading-date-next" aria-label="Nākamais mēnesis">›</button>
+                                        </div>
+                                        <div class="rp-calendar-weekdays" aria-hidden="true">
+                                            <span>P</span><span>O</span><span>T</span><span>C</span><span>P</span><span>S</span><span>Sv</span>
+                                        </div>
+                                        <div id="reading-date-days" class="rp-calendar-days"></div>
+                                    </div>
                                 </div>
                             </label>
                             <label style="flex: 1;">

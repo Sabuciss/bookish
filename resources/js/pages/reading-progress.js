@@ -22,12 +22,64 @@ if (root) {
     const datePicker = document.getElementById('reading-date-picker');
     const dateDisplay = document.getElementById('reading-date-display');
     const dateOpenButton = document.getElementById('reading-date-open');
+    const dateCalendar = document.getElementById('reading-date-calendar');
+    const dateMonth = document.getElementById('reading-date-month');
+    const dateDays = document.getElementById('reading-date-days');
+    const datePrevious = document.getElementById('reading-date-previous');
+    const dateNext = document.getElementById('reading-date-next');
     let searchTimer = null;
     let searchRequestId = 0;
 
     const formatEuropeanDate = (isoDate) => {
         const [year, month, day] = String(isoDate || '').split('-');
         return year && month && day ? `${day}.${month}.${year}` : '';
+    };
+
+    const parseIsoDate = (value) => {
+        const [year, month, day] = String(value || '').split('-').map(Number);
+        return year && month && day ? new Date(year, month - 1, day) : new Date();
+    };
+
+    let visibleCalendarMonth = parseIsoDate(datePicker?.value);
+
+    const renderDateCalendar = () => {
+        if (!dateCalendar || !dateMonth || !dateDays) return;
+
+        const year = visibleCalendarMonth.getFullYear();
+        const month = visibleCalendarMonth.getMonth();
+        const monthName = visibleCalendarMonth.toLocaleDateString('lv-LV', { month: 'long', year: 'numeric' });
+        const firstDay = new Date(year, month, 1);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const mondayIndex = (firstDay.getDay() + 6) % 7;
+
+        dateMonth.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+        dateDays.innerHTML = '';
+
+        for (let index = 0; index < mondayIndex; index += 1) {
+            dateDays.insertAdjacentHTML('beforeend', '<span class="rp-calendar-day is-empty"></span>');
+        }
+
+        for (let day = 1; day <= daysInMonth; day += 1) {
+            const date = new Date(year, month, day);
+            const isoDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const selected = datePicker?.value === isoDate ? ' is-selected' : '';
+            const today = new Date();
+            const isToday = today.toDateString() === date.toDateString() ? ' is-today' : '';
+
+            dateDays.insertAdjacentHTML(
+                'beforeend',
+                `<button type="button" class="rp-calendar-day${selected}${isToday}" data-date="${isoDate}">${day}</button>`,
+            );
+        }
+    };
+
+    const toggleDateCalendar = (open) => {
+        if (!dateCalendar) return;
+        dateCalendar.hidden = !open;
+        if (open) {
+            visibleCalendarMonth = parseIsoDate(datePicker?.value);
+            renderDateCalendar();
+        }
     };
 
     datePicker?.addEventListener('change', () => {
@@ -37,15 +89,35 @@ if (root) {
     });
 
     dateOpenButton?.addEventListener('click', () => {
-        if (typeof datePicker?.showPicker === 'function') {
-            datePicker.showPicker();
-        } else {
-            datePicker?.focus();
-            datePicker?.click();
-        }
+        toggleDateCalendar(dateCalendar?.hidden ?? true);
     });
 
     dateDisplay?.addEventListener('click', () => dateOpenButton?.click());
+
+    datePrevious?.addEventListener('click', () => {
+        visibleCalendarMonth = new Date(visibleCalendarMonth.getFullYear(), visibleCalendarMonth.getMonth() - 1, 1);
+        renderDateCalendar();
+    });
+
+    dateNext?.addEventListener('click', () => {
+        visibleCalendarMonth = new Date(visibleCalendarMonth.getFullYear(), visibleCalendarMonth.getMonth() + 1, 1);
+        renderDateCalendar();
+    });
+
+    dateDays?.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-date]');
+        if (!button || !datePicker) return;
+
+        datePicker.value = button.dataset.date;
+        if (dateDisplay) dateDisplay.value = formatEuropeanDate(datePicker.value);
+        toggleDateCalendar(false);
+    });
+
+    document.addEventListener('click', (event) => {
+        if (dateCalendar && !dateCalendar.hidden && !event.target.closest('.rp-date-control')) {
+            toggleDateCalendar(false);
+        }
+    });
 
     const livePreview       = document.getElementById('live-progress-preview');
     const liveBar            = document.getElementById('live-progress-bar');
