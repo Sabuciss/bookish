@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ReadingProgress;
+use App\Models\BooktokTopBook;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,16 +20,18 @@ class GoogleBooksController extends Controller
             'maxResults' => ['nullable', 'integer', 'min:1', 'max:40'],
             'startIndex' => ['nullable', 'integer', 'min:0', 'max:960'],
             'orderBy' => ['nullable', 'in:relevance,newest'],
+            'remote' => ['nullable', 'boolean'],
         ]);
 
         $query = $validated['q'];
         $maxResults = (int) ($validated['maxResults'] ?? 3);
         $startIndex = (int) ($validated['startIndex'] ?? 0);
         $orderBy = $validated['orderBy'] ?? 'relevance';
-        $cacheKey = 'google_books_top_' . md5($query . '_' . $maxResults . '_' . $startIndex . '_' . $orderBy);
+        $remoteOnly = (bool) ($validated['remote'] ?? false);
+        $cacheKey = 'google_books_top_v2_' . md5($query . '_' . $maxResults . '_' . $startIndex . '_' . $orderBy . '_' . (int) $remoteOnly);
 
         try {
-            $items = Cache::remember($cacheKey, now()->addHours(6), function () use ($query, $maxResults, $startIndex, $orderBy) {
+            $items = Cache::remember($cacheKey, now()->addHours(6), function () use ($query, $maxResults, $startIndex, $orderBy, $remoteOnly) {
                 $params = [
                     'q' => $query,
                     'orderBy' => $orderBy,
@@ -45,21 +48,46 @@ class GoogleBooksController extends Controller
                 $response = Http::connectTimeout(3)->timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
 
                 if (!$response->ok()) {
-                    return [];
+                    return $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
                 }
 
-                return $response->json('items', []);
+                $items = $response->json('items', []);
+
+                return $items ?: ($remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex));
             });
         } catch (ConnectionException) {
-            return response()->json([
-                'items' => [],
-                'message' => 'Google Books dati pašlaik nav pieejami. Mēģini vēlreiz pēc brīža.',
-            ], 503);
+            $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
         }
 
         return response()->json([
             'items' => $items,
         ]);
+    }
+
+    private function localBooktokItems(int $maxResults, int $startIndex): array
+    {
+        return BooktokTopBook::query()
+            ->orderBy('rank_position')
+            ->skip($startIndex)
+            ->take($maxResults)
+            ->get()
+            ->map(fn (BooktokTopBook $book) => [
+                'id' => $book->google_volume_id,
+                'volumeInfo' => array_filter([
+                    'title' => $book->title,
+                    'authors' => [$book->author],
+                    'publishedDate' => $book->published_year,
+                    'categories' => $book->google_categories
+                        ? array_map('trim', explode(',', $book->google_categories))
+                        : [],
+                    'imageLinks' => $book->google_thumbnail
+                        ? ['thumbnail' => $book->google_thumbnail]
+                        : null,
+                    'infoLink' => route('booktok.show', $book),
+                ], fn ($value) => $value !== null),
+            ])
+            ->values()
+            ->all();
     }
 
     public function show(Request $request, string $volumeId): View

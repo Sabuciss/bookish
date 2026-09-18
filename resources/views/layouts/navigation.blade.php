@@ -61,6 +61,9 @@
                         </form>
                     </x-slot>
                 </x-dropdown>
+                <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')">
+                    {{ __('Profils') }}
+                </x-nav-link>
             </div>
 
             <!-- Hamburger & Theme Toggle -->
@@ -102,7 +105,7 @@
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                    {{ __('Profils') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->

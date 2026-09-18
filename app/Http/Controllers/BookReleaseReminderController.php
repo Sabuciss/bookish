@@ -62,6 +62,10 @@ class BookReleaseReminderController extends Controller
             ->where('google_volume_id', $volumeId)
             ->delete();
 
+        if (! $request->expectsJson()) {
+            return redirect()->back()->with('status', 'Paziņojums noņemts.');
+        }
+
         return response()->json(['message' => 'Paziņojums noņemts.']);
     }
 }

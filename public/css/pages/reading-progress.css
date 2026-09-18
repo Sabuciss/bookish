@@ -60,13 +60,13 @@
 	border: 0;
 	padding: 10px 16px;
 	border-radius: 8px;
-	background: #36415f;
+	background: var(--bookish-plum-deep);
 	box-shadow: none;
 }
 
 .rp-search-row .login-button:hover,
 .rp-book-preview .login-button:hover {
-	background: #27324f;
+	background: var(--bookish-plum);
 	transform: none;
 }
 
@@ -123,12 +123,18 @@
 	font-size: 0.82rem;
 }
 
+.rp-book-search-meta {
+	color: var(--bookish-muted);
+	font-size: 0.9rem;
+}
+
 .reading-progress-submit {
 	padding: 10px 14px;
 	cursor: pointer;
-	border: 1px solid #d1d5db;
+	border: 1px solid var(--bookish-rose);
 	border-radius: 8px;
-	background: #ffffff;
+	background: var(--bookish-paper);
+	color: var(--bookish-plum-deep);
 	width: auto;
 	display: inline-block;
 	justify-self: end;
@@ -141,18 +147,18 @@
 	align-items: center;
 	gap: 10px;
 	padding: 10px 12px;
-	border: 1px solid #fde68a;
-	background: #fffbeb;
+	border: 1px solid var(--bookish-line);
+	background: var(--bookish-soft);
 	border-radius: 8px;
 	margin-bottom: 12px;
 }
 
 .cancel-edit-btn {
-	border: 1px solid #f59e0b;
+	border: 1px solid var(--bookish-rose);
 	border-radius: 6px;
 	padding: 4px 8px;
-	background: #ffffff;
-	color: #92400e;
+	background: var(--bookish-paper);
+	color: var(--bookish-plum-deep);
 	cursor: pointer;
 }
 
@@ -206,9 +212,9 @@
 
 .rp-datetime-row {
 	padding: 14px;
-	border: 1px solid #f1dfe1;
+	border: 1px solid var(--bookish-line);
 	border-radius: 12px;
-	background: #fff7f7;
+	background: var(--bookish-paper);
 }
 
 .rp-date-input,
@@ -219,6 +225,18 @@
 
 .rp-date-control {
 	position: relative;
+}
+
+.rp-date-control .rp-date-display,
+.rp-datetime-row .rp-time-input {
+	box-sizing: border-box;
+	width: 100%;
+	height: 50px;
+	min-height: 50px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 10px;
+	background: var(--bookish-cream);
+	color: var(--bookish-ink);
 }
 
 .rp-date-display {
@@ -238,13 +256,13 @@
 	border-radius: 7px;
 	padding: 10px 16px;
 	border-radius: 8px;
-	background: #36415f;
+	background: var(--bookish-plum-deep);
 	box-shadow: none;
 	background: transparent;
 	color: #334155;
 .rp-search-row .login-button:hover,
 .rp-book-preview .login-button:hover {
-	background: #27324f;
+	background: var(--bookish-plum);
 	transform: none;
 }
 	cursor: pointer;
@@ -329,14 +347,16 @@
 	transform: translateY(-50%);
 	border: 0;
 	border-radius: 7px;
-	background: transparent;
-	color: #334155;
+	border: 1px solid var(--bookish-rose);
+	background: var(--bookish-rose);
+	color: var(--bookish-paper);
 	cursor: pointer;
 	font-size: 1.05rem;
 }
 
 .rp-date-open:hover {
-	background: #e2e8f0;
+	background: var(--bookish-plum);
+	border-color: var(--bookish-plum);
 }
 
 .rp-date-picker {
@@ -358,7 +378,7 @@
 	width: 100%;
 	margin: 4px 0 0;
 	padding: 14px 0 0;
-	border-top: 1px solid #e5e7eb;
+	border-top: 1px solid var(--bookish-line);
 	background: transparent;
 }
 
@@ -369,30 +389,30 @@
 	align-items: center;
 	justify-content: center;
 	padding: 10px 18px;
-	border: 1px solid #cbd5e1;
-	border-radius: 999px;
-	background: #ffffff;
-	color: #64748b;
+	border: 1px solid var(--bookish-rose);
+	border-radius: 8px;
+	background: var(--bookish-paper);
+	color: var(--bookish-plum-deep);
 	font-size: 0.9rem;
 	font-weight: 700;
 	text-decoration: none;
 }
 
 .rp-back-button:hover {
-	background: #f8fafc;
-	color: #334155;
+	background: var(--bookish-soft);
+	color: var(--bookish-plum-deep);
 }
 
 .rp-form-footer .login-button {
 	min-width: 160px;
 	margin: 0;
-	border-radius: 999px;
-	background: #36415f;
+	border-radius: 8px;
+	background: var(--bookish-plum-deep);
 	box-shadow: none;
 }
 
 .rp-form-footer .login-button:hover {
-	background: #27324f;
+	background: var(--bookish-plum);
 	transform: none;
 }
 
@@ -588,10 +608,10 @@
 }
 
 .emotion-tag.selected {
-	background: linear-gradient(135deg, #8E2DE2, #4A00E0);
+	background: var(--bookish-plum);
 	color: #ffffff;
-	border-color: transparent;
-	box-shadow: 0 4px 12px rgba(142, 45, 226, 0.3);
+	border-color: var(--bookish-plum);
+	box-shadow: 0 4px 12px rgba(94, 71, 64, 0.2);
 }
 
 @media (min-width: 1200px) {
@@ -659,8 +679,21 @@ html.dark .reading-progress-form > label {
 }
 
 html.dark .rp-datetime-row {
-	border-color: #4b3740;
-	background: #1f1720;
+	border-color: var(--bookish-plum);
+	background: var(--bookish-ink);
+}
+
+html.dark .rp-date-control .rp-date-display,
+html.dark .rp-datetime-row .rp-time-input {
+	border-color: var(--bookish-plum);
+	background: #2a1b23;
+	color: var(--bookish-paper);
+}
+
+html.dark .rp-date-open {
+	background: var(--bookish-rose);
+	border-color: var(--bookish-rose);
+	color: var(--bookish-paper);
 }
 
 html.dark .rp-snapshot-meta {
@@ -669,13 +702,13 @@ html.dark .rp-snapshot-meta {
 
 html.dark .cancel-edit-btn {
 	background: #111827;
-	border-color: #f59e0b;
-	color: #fcd34d;
+	border-color: var(--bookish-rose);
+	color: var(--bookish-soft);
 }
 
 html.dark .edit-mode-banner {
-	background: #3f2d12;
-	border-color: #f59e0b;
+	background: var(--bookish-ink);
+	border-color: var(--bookish-plum);
 }
 
 html.dark .status-tag {
@@ -710,13 +743,13 @@ html.dark .rp-datetime-row {
 
 html.dark .rp-form-footer {
 	border-color: #374151;
-	background: #111827;
+	background: var(--bookish-ink);
 }
 
 html.dark .rp-back-button {
-	border-color: #4b5563;
-	background: #111827;
-	color: #cbd5e1;
+	border-color: var(--bookish-rose);
+	background: var(--bookish-ink);
+	color: var(--bookish-soft);
 }
 
 html.dark .reading-progress-alert-success {
@@ -757,9 +790,9 @@ html.dark .emotion-tag:hover {
 }
 
 html.dark .emotion-tag.selected {
-	background: linear-gradient(135deg, #8E2DE2, #4A00E0);
+	background: var(--bookish-rose);
 	color: #ffffff;
-	border-color: transparent;
+	border-color: var(--bookish-rose);
 }
 
 html.dark .reading-progress-table th {

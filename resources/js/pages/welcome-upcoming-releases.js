@@ -76,8 +76,8 @@ const renderBookCards = (container, items, emptyText, allowReminders = false) =>
     }).join('');
 };
 
-const fetchBookResults = async (query, orderBy = 'relevance') => {
-    const url = `/api/google-books/top?q=${encodeURIComponent(query)}&maxResults=40&orderBy=${orderBy}`;
+const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12) => {
+    const url = `/api/google-books/top?q=${encodeURIComponent(query)}&maxResults=${maxResults}&orderBy=${orderBy}&remote=1`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -120,7 +120,7 @@ const loadGenreSections = async () => {
         const genreBooks = section.querySelector('.book-genre-books');
 
         try {
-            const books = await fetchBookResults(section.dataset.query, 'relevance');
+            const books = await fetchBookResults(section.dataset.query, 'relevance', 12);
             genreBookCollections.set(genreBooks, books);
             renderBookCards(genreBooks, selectGenreBooks(books), 'Šī žanra grāmatas neizdevās atrast.');
         } catch {
@@ -140,6 +140,7 @@ genreFilterButtons.forEach((button) => {
         genreSections.forEach((section) => {
             section.hidden = selectedGenre !== 'all' && section.dataset.genre !== selectedGenre;
         });
+
     });
 });
 
@@ -291,28 +292,29 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
     };
 
     const fetchUpcomingBooks = async (searchTerm) => {
-        const aggregated = [];
+        const queries = [
+            searchTerm,
+            `intitle:${searchTerm}`,
+            `inauthor:${searchTerm}`,
+        ];
+        const responses = await Promise.all(queries.map((query) => fetch(
+            `/api/google-books/top?q=${encodeURIComponent(query)}&maxResults=40&orderBy=newest&remote=1`,
+        )));
 
-        for (let page = 0; page < 3; page += 1) {
-            const startIndex = page * 20;
-            const url = `/api/google-books/top?q=${encodeURIComponent(searchTerm)}&maxResults=20&startIndex=${startIndex}&orderBy=newest`;
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error('Google Books API error');
-            }
-
-            const data = await response.json();
-            const pageItems = normalizeUpcomingItems(data.items || []);
-
-            if (!pageItems.length) {
-                break;
-            }
-
-            aggregated.push(...pageItems);
+        if (responses.some((response) => !response.ok)) {
+            throw new Error('Google Books API error');
         }
 
-        return aggregated;
+        const payloads = await Promise.all(responses.map((response) => response.json()));
+        const uniqueItems = new Map();
+
+        payloads.flatMap((data) => data.items || []).forEach((item) => {
+            if (item.id && !uniqueItems.has(item.id)) {
+                uniqueItems.set(item.id, item);
+            }
+        });
+
+        return normalizeUpcomingItems([...uniqueItems.values()]);
     };
 
     const loadUpcomingReleases = async () => {
@@ -334,16 +336,18 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        const upcoming = items
+        const datedItems = items
             .map((entry) => ({
                 ...entry,
                 parsedDate: parsePublishedDate(entry.publishedDate),
-            }))
+            }));
+        const upcoming = datedItems
             .filter((entry) => entry.parsedDate && entry.parsedDate >= today)
-            .sort((a, b) => a.parsedDate - b.parsedDate)
+            .sort((a, b) => a.parsedDate - b.parsedDate);
+        const results = (upcoming.length ? upcoming : datedItems)
             .slice(0, 10);
 
-        renderUpcomingItems(upcoming, searchTerm);
+        renderUpcomingItems(results, searchTerm);
     };
 
     const handleLoad = () => {

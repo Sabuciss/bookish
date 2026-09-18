@@ -31,18 +31,25 @@
               <span>{{ $releaseReminders->count() }}</span>
             </div>
             @forelse($releaseReminders as $reminder)
-              <a class="book-notification-item" href="{{ $reminder->info_link ?: route('booktok.index') }}" target="{{ $reminder->info_link ? '_blank' : '_self' }}" rel="noopener noreferrer">
-                @if($reminder->cover_url)
-                  <img class="book-notification-cover" src="{{ $reminder->cover_url }}" alt="{{ $reminder->title }} vāks">
-                @else
-                  <span class="book-notification-cover">{{ mb_strtoupper(mb_substr($reminder->title, 0, 1)) }}</span>
-                @endif
-                <span>
-                  <strong>{{ $reminder->title }}</strong>
-                  <small>{{ $reminder->author ?: 'Autors nav norādīts' }}</small>
-                  <small>Izlaista: {{ $reminder->release_date->format('d.m.Y') }}</small>
-                </span>
-              </a>
+              <div class="book-notification-item">
+                <a class="book-notification-link" href="{{ $reminder->info_link ?: route('booktok.index') }}" target="{{ $reminder->info_link ? '_blank' : '_self' }}" rel="noopener noreferrer">
+                  @if($reminder->cover_url)
+                    <img class="book-notification-cover" src="{{ $reminder->cover_url }}" alt="{{ $reminder->title }} vāks">
+                  @else
+                    <span class="book-notification-cover">{{ mb_strtoupper(mb_substr($reminder->title, 0, 1)) }}</span>
+                  @endif
+                  <span>
+                    <strong>{{ $reminder->title }}</strong>
+                    <small>{{ $reminder->author ?: 'Autors nav norādīts' }}</small>
+                    <small>Izlaista: {{ $reminder->release_date->format('d.m.Y') }}</small>
+                  </span>
+                </a>
+                <form method="POST" action="{{ route('book-release-reminders.destroy', $reminder->google_volume_id) }}" class="book-notification-delete-form">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="book-notification-delete" aria-label="Dzēst paziņojumu par {{ $reminder->title }}" title="Dzēst paziņojumu">×</button>
+                </form>
+              </div>
             @empty
               <p class="book-notification-empty">Paziņojumu vēl nav.</p>
             @endforelse
@@ -65,6 +72,9 @@
           <a href="{{ route('register') }}" class="hidden sm:inline text-sm text-body hover:text-heading transition-colors">Register</a>
         @endif
       @endauth
+        @auth
+          <a href="{{ route('profile.edit') }}" class="hidden sm:inline text-sm text-body hover:text-heading transition-colors">Profils</a>
+        @endauth
 
       <button id="theme-toggle" type="button" class="theme-toggle-nav" aria-label="Pārslēgt tēmu">
         <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>

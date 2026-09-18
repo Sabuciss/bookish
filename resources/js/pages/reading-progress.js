@@ -322,7 +322,7 @@ if (root) {
                 ${book.thumbnail ? `<img src="${book.thumbnail}" alt="${book.title} vāks" style="width:44px;height:64px;object-fit:cover;border-radius:6px;">` : ''}
                 <span>
                     <strong>${book.title || 'Bez nosaukuma'}</strong><br>
-                    <span style="font-size:0.9rem;color:#4b5563;">${book.authors || 'Autors nav norādīts'}${book.pageCount ? ` • ${book.pageCount} lpp` : ''}</span>
+                    <span class="rp-book-search-meta">${book.authors || 'Autors nav norādīts'}${book.pageCount ? ` • ${book.pageCount} lpp` : ''}</span>
                 </span>
             `;
 
