@@ -119,6 +119,11 @@
     <ul class="space-y-2 font-medium">
       @auth
       <li>
+        <a href="{{ route('profile.edit') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('profile.*'), 'text-body' => !request()->routeIs('profile.*')]) @if (request()->routeIs('profile.*')) aria-current="page" @endif>
+          <span class="ms-1">Profils</span>
+        </a>
+      </li>
+      <li>
         <a href="{{ route('reading-shelf.show') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-shelf.show'), 'text-body' => !request()->routeIs('reading-shelf.show')]) @if (request()->routeIs('reading-shelf.show')) aria-current="page" @endif>
           <span class="ms-1">Grāmatu plaukts</span>
         </a>
