@@ -17,31 +17,44 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        $bookSnapshots = [];
+        $userId = (int) $request->user()->id;
+        $latestGoogleEntryIds = ReadingProgress::query()
+            ->selectRaw('MAX(id)')
+            ->where('user_id', $userId)
+            ->whereNotNull('google_volume_id')
+            ->groupBy('google_volume_id');
+        $latestTitleEntryIds = ReadingProgress::query()
+            ->selectRaw('MAX(id)')
+            ->where('user_id', $userId)
+            ->whereNull('google_volume_id')
+            ->groupByRaw('LOWER(book_title)');
 
-        ReadingProgress::query()
-            ->where('user_id', $request->user()->id)
-            ->latest('reading_date')
-            ->latest('id')
-            ->get()
-            ->each(function (ReadingProgress $entry) use (&$bookSnapshots): void {
-                $key = $entry->google_volume_id ?: mb_strtolower(trim($entry->book_title));
+        $latestEntries = ReadingProgress::query()
+            ->where('user_id', $userId)
+            ->where(function ($query) use ($latestGoogleEntryIds, $latestTitleEntryIds): void {
+                $query
+                    ->where(function ($query) use ($latestGoogleEntryIds): void {
+                        $query->whereNotNull('google_volume_id')
+                            ->whereIn('id', $latestGoogleEntryIds);
+                    })
+                    ->orWhere(function ($query) use ($latestTitleEntryIds): void {
+                        $query->whereNull('google_volume_id')
+                            ->whereIn('id', $latestTitleEntryIds);
+                    });
+            })
+            ->get();
 
-                if (isset($bookSnapshots[$key])) {
-                    return;
-                }
+        $bookSnapshots = $latestEntries->map(function (ReadingProgress $entry): array {
+            $pagesRead = (int) $entry->pages_read;
+            $totalPages = $entry->total_pages ? (int) $entry->total_pages : null;
 
-                $pagesRead = (int) $entry->pages_read;
-                $totalPages = $entry->total_pages ? (int) $entry->total_pages : null;
-                $status = $totalPages !== null && $pagesRead >= $totalPages
+            return [
+                'pages_read' => $pagesRead,
+                'reading_status' => $totalPages !== null && $pagesRead >= $totalPages
                     ? 'read'
-                    : ($pagesRead <= 0 ? 'want_to_read' : 'in_progress');
-
-                $bookSnapshots[$key] = [
-                    'pages_read' => $pagesRead,
-                    'reading_status' => $status,
-                ];
-            });
+                    : ($pagesRead <= 0 ? 'want_to_read' : 'in_progress'),
+            ];
+        });
 
         $profileStats = [
             'booksRead' => collect($bookSnapshots)->where('reading_status', 'read')->count(),

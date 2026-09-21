@@ -129,18 +129,8 @@
         </a>
       </li>
       <li>
-        <a href="{{ route('reading-progress.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-progress.*'), 'text-body' => !request()->routeIs('reading-progress.*')]) @if (request()->routeIs('reading-progress.*')) aria-current="page" @endif>
-          <span class="ms-1">Pievienot progresu</span>
-        </a>
-      </li>
-      <li>
         <a href="{{ route('reading-highlights.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-highlights.index'), 'text-body' => !request()->routeIs('reading-highlights.index')]) @if (request()->routeIs('reading-highlights.index')) aria-current="page" @endif>
-          <span class="ms-1">Highlights apskate</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ route('reading-highlights.create') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-highlights.create'), 'text-body' => !request()->routeIs('reading-highlights.create')]) @if (request()->routeIs('reading-highlights.create')) aria-current="page" @endif>
-          <span class="ms-1">Izveidot highlight</span>
+          <span class="ms-1">Highlights</span>
         </a>
       </li>
       @endauth
@@ -185,13 +175,8 @@
           </li>
         @endif
       <li>
-        <a href="{{ route('book-listings.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('book-listings.*'), 'text-body' => !request()->routeIs('book-listings.*')]) @if (request()->routeIs('book-listings.*')) aria-current="page" @endif>
-          <span class="ms-1">Grāmatu sludinājumi</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ route('book-exchange.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('book-exchange.*'), 'text-body' => !request()->routeIs('book-exchange.*')]) @if (request()->routeIs('book-exchange.*')) aria-current="page" @endif>
-          <span class="ms-1">Grāmatu apmaiņa</span>
+        <a href="{{ route('book-listings.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('book-listings.*') || request()->routeIs('book-exchange.*'), 'text-body' => !request()->routeIs('book-listings.*') && !request()->routeIs('book-exchange.*')]) @if (request()->routeIs('book-listings.*') || request()->routeIs('book-exchange.*')) aria-current="page" @endif>
+          <span class="ms-1">Sludinājumi</span>
         </a>
       </li>
       @endauth

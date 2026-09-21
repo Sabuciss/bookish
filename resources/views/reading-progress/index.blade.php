@@ -14,7 +14,7 @@
         data-is-edit-mode="{{ $isEditMode ? '1' : '0' }}"
     >
         <h1>{{ $isEditMode ? 'Atjaunot reading progress' : 'Pievienot reading progress' }}</h1>
-        <p>Šī ir atsevišķa lapa reading progress pievienošanai un atjaunošanai. Grāmatu plaukts ir atdalīts atsevišķā skatā.</p>
+        <p>Šeit vari pievienot un atjaunot lasīšanas progresu.</p>
 
         @if (session('status'))
             <div class="reading-progress-alert reading-progress-alert-success">
@@ -31,6 +31,10 @@
                 </ul>
             </div>
         @endif
+
+        <div class="rp-actions-row">
+            <a href="{{ route('reading-shelf.show') }}" class="reading-progress-submit" style="text-decoration: none;">Atvērt grāmatu plauktu</a>
+        </div>
 
         <div class="reading-progress-layout">
             <section class="reading-progress-history uiverse-container">
