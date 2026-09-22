@@ -40,9 +40,24 @@
                     </div>
                 </div>
                 @if ($listingType === 'exchange')
-                    <label>Grāmata, ko vēlies saņemt pretī (pēc izvēles)
-                        <input type="text" name="exchange_book_title" value="{{ old('exchange_book_title', $listing?->exchange_book_title) }}">
-                    </label>
+                    <div class="listing-book-picker" data-listing-book-picker="wanted">
+                        <label for="exchange-book-search">Meklē grāmatu, ko vēlies saņemt pretī
+                            <input id="exchange-book-search" type="search" autocomplete="off" value="{{ old('exchange_book_title', $listing?->exchange_book_title) }}" placeholder="Piemēram, Fourth Wing">
+                        </label>
+                        <div id="exchange-book-search-status" class="rp-book-search-status" aria-live="polite"></div>
+                        <div id="exchange-book-search-results" class="rp-book-search-results" aria-live="polite"></div>
+                        <input type="hidden" name="exchange_book_title" id="exchange-book-title" value="{{ old('exchange_book_title', $listing?->exchange_book_title) }}" required>
+                        <input type="hidden" name="exchange_google_volume_id" id="exchange-google-volume-id" value="{{ old('exchange_google_volume_id', $listing?->exchange_google_volume_id) }}">
+                        <input type="hidden" name="exchange_book_cover_url" id="exchange-book-cover-url" value="{{ old('exchange_book_cover_url', $listing?->exchange_book_cover_url) }}">
+                        <input type="hidden" name="exchange_book_author" id="exchange-book-author" value="{{ old('exchange_book_author', $listing?->exchange_book_author) }}">
+                        <div id="exchange-selected-book" class="listing-selected-book" @style(['display: flex' => old('exchange_book_title', $listing?->exchange_book_title), 'display: none' => ! old('exchange_book_title', $listing?->exchange_book_title)])>
+                            <img id="exchange-selected-book-cover" src="{{ old('exchange_book_cover_url', $listing?->exchange_book_cover_url) }}" alt="Vēlamās grāmatas vāks" @if (! old('exchange_book_cover_url', $listing?->exchange_book_cover_url)) hidden @endif>
+                            <div>
+                                <strong id="exchange-selected-book-title">{{ old('exchange_book_title', $listing?->exchange_book_title) }}</strong>
+                                <span id="exchange-selected-book-author">{{ old('exchange_book_author', $listing?->exchange_book_author) }}</span>
+                            </div>
+                        </div>
+                    </div>
                 @endif
                 <label>Autors
                     <input type="text" name="author" id="listing-book-author" value="{{ old('author', $listing?->author) }}" readonly>

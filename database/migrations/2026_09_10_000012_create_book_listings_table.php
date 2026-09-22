@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('google_volume_id', 120)->nullable();
             $table->string('book_cover_url', 2048)->nullable();
             $table->string('exchange_book_title')->nullable();
+            $table->string('exchange_google_volume_id', 120)->nullable();
+            $table->string('exchange_book_cover_url', 2048)->nullable();
+            $table->string('exchange_book_author')->nullable();
             $table->string('author')->nullable();
             $table->string('condition', 30);
             $table->string('language', 50);

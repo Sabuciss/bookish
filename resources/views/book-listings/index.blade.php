@@ -50,7 +50,18 @@
                             <div><dt>Stāvoklis</dt><dd>{{ $listing->condition }}</dd></div>
                             <div><dt>Valoda</dt><dd>{{ $listing->language }}</dd></div>
                             @if ($listing->isExchange())
-                                <div><dt>Meklē pretī</dt><dd>{{ $listing->exchange_book_title }}</dd></div>
+                                <div class="book-listing-wanted-book">
+                                    <dt>Meklē pretī</dt>
+                                    <dd>
+                                        @if ($listing->exchange_book_cover_url)
+                                            <img src="{{ $listing->exchange_book_cover_url }}" alt="{{ $listing->exchange_book_title }} vāks">
+                                        @endif
+                                        <span>{{ $listing->exchange_book_title }}</span>
+                                        @if ($listing->exchange_book_author)
+                                            <small>{{ $listing->exchange_book_author }}</small>
+                                        @endif
+                                    </dd>
+                                </div>
                             @endif
                         </dl>
                         @if ($listing->description)

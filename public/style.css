@@ -447,6 +447,26 @@ nav.app-surface-opaque form button:hover {
 	margin: 0 14px 10px 0;
 }
 
+.book-listing-wanted-book dd {
+	display: grid;
+	grid-template-columns: 42px minmax(0, 1fr);
+	gap: 2px 8px;
+	align-items: center;
+}
+
+.book-listing-wanted-book dd img {
+	grid-row: span 2;
+	width: 42px;
+	height: 60px;
+	border-radius: 5px;
+	object-fit: cover;
+}
+
+.book-listing-wanted-book dd small {
+	color: var(--bookish-muted);
+	font-size: 0.75rem;
+}
+
 .book-listing-edit-link {
 	display: inline-block;
 	margin: 10px 0;
