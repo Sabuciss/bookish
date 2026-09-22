@@ -69,6 +69,21 @@
                     </select>
                 </label>
 
+                <div class="challenge-completion-panel">
+                    <strong>Rezultāts</strong>
+                    <span class="challenge-completion-hint">Ja izaicinājums ir izpildīts, saglabā arī datumu un faktisko rezultātu.</span>
+                </div>
+
+                <label>
+                    Izpildes datums
+                    <input type="date" name="completion_date" value="{{ old('completion_date', optional($challenge->completion_date)->format('Y-m-d')) }}" class="input">
+                </label>
+
+                <label id="completion-value-label">
+                    Faktiskais rezultāts (<span id="completion-value-unit">{{ $selectedType === 'time' ? 'minūtes' : 'lapas' }}</span>)
+                    <input type="number" name="completion_value" min="1" value="{{ old('completion_value', $challenge->completion_value) }}" class="input" placeholder="Cik izlasīji vai cik minūtes lasīji">
+                </label>
+
                 <label>
                     Komentārs (nav obligāti)
                     <textarea name="completion_comment" rows="2" class="input" placeholder="Piemēram: izpildīju 7 dienu mērķi">{{ old('completion_comment', $challenge->completion_comment) }}</textarea>

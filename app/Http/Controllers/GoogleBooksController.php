@@ -28,7 +28,7 @@ class GoogleBooksController extends Controller
         $startIndex = (int) ($validated['startIndex'] ?? 0);
         $orderBy = $validated['orderBy'] ?? 'relevance';
         $remoteOnly = (bool) ($validated['remote'] ?? false);
-        $cacheKey = 'google_books_top_v2_' . md5($query . '_' . $maxResults . '_' . $startIndex . '_' . $orderBy . '_' . (int) $remoteOnly);
+        $cacheKey = 'google_books_top_v4_' . md5($query . '_' . $maxResults . '_' . $startIndex . '_' . $orderBy . '_' . (int) $remoteOnly);
 
         try {
             $items = Cache::remember($cacheKey, now()->addHours(6), function () use ($query, $maxResults, $startIndex, $orderBy, $remoteOnly) {

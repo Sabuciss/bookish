@@ -33,6 +33,17 @@ class BookListingController extends Controller
     {
         return view('book-listings.create', [
             'listingType' => $request->routeIs('book-exchange.*') ? 'exchange' : 'sale',
+            'listing' => null,
+        ]);
+    }
+
+    public function edit(Request $request, BookListing $bookListing): View
+    {
+        abort_unless($bookListing->user_id === $request->user()->id, 403);
+
+        return view('book-listings.create', [
+            'listingType' => $bookListing->listing_type,
+            'listing' => $bookListing,
         ]);
     }
 
@@ -46,6 +57,18 @@ class BookListingController extends Controller
 
         return to_route('book-listings.index')
             ->with('status', 'Sludinājums veiksmīgi publicēts.');
+    }
+
+    public function update(StoreBookListingRequest $request, BookListing $bookListing): RedirectResponse
+    {
+        abort_unless($bookListing->user_id === $request->user()->id, 403);
+
+        $bookListing->update($request->validated());
+
+        return to_route($bookListing->listing_type === 'exchange'
+            ? 'book-exchange.index'
+            : 'book-listings.index')
+            ->with('status', 'Sludinājums veiksmīgi atjaunināts.');
     }
 
     public function apply(StoreBookListingApplicationRequest $request, BookListing $bookListing): RedirectResponse

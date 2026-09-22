@@ -31,6 +31,9 @@
             <div class="book-listing-grid {{ $listingType === 'exchange' ? 'book-listing-grid-exchange' : '' }}">
                 @foreach ($listings as $listing)
                     <article class="book-listing-card">
+                        @if ($listing->book_cover_url)
+                            <img class="book-listing-cover" src="{{ $listing->book_cover_url }}" alt="{{ $listing->book_title }} vāks">
+                        @endif
                         <div class="book-listing-card-heading">
                             <div>
                                 <h2>{{ $listing->book_title }}</h2>
@@ -107,6 +110,7 @@
                                 @endif
                             @else
                                 <p class="book-listing-owner-note">Šis ir tavs sludinājums.</p>
+                                <a href="{{ route('book-listings.edit', $listing) }}" class="book-listing-edit-link">Labot sludinājumu</a>
                                 @if ($listing->applications->isNotEmpty())
                                     <div class="book-listing-applications">
                                         <strong>Pieteikušies interesenti ({{ $listing->applications->count() }})</strong>

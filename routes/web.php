@@ -41,6 +41,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('book-listings.create');
     Route::get('/book-exchange/create', [BookListingController::class, 'create'])
         ->name('book-exchange.create');
+    Route::get('/book-listings/{bookListing}/edit', [BookListingController::class, 'edit'])
+        ->name('book-listings.edit');
+    Route::patch('/book-listings/{bookListing}', [BookListingController::class, 'update'])
+        ->name('book-listings.update');
     Route::post('/book-listings', [BookListingController::class, 'store'])
         ->name('book-listings.store');
     Route::post('/book-listings/{bookListing}/apply', [BookListingController::class, 'apply'])

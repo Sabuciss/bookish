@@ -57,18 +57,23 @@
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto;
 	gap: 8px;
-	align-items: end;
+	align-items: stretch;
 }
 
 .rp-search-row .login-button,
 .rp-book-preview .login-button {
-	min-height: 42px;
+	height: 50px;
+	min-height: 50px;
 	margin: 0;
 	border: 0;
 	padding: 10px 16px;
 	border-radius: 8px;
 	background: var(--bookish-plum-deep);
 	box-shadow: none;
+}
+
+.rp-search-row .login-button {
+	align-self: stretch;
 }
 
 .rp-search-row .login-button:hover,
@@ -113,6 +118,25 @@
 	border-radius: 5px;
 }
 
+.rp-book-search-result .rp-search-cover {
+	width: 58px;
+	height: 84px;
+	flex: 0 0 58px;
+	border-radius: 6px;
+	object-fit: cover;
+	background: var(--bookish-soft);
+}
+
+.rp-book-search-result .rp-search-cover-empty {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 6px;
+	color: var(--bookish-muted);
+	font-size: 0.7rem;
+	text-align: center;
+}
+
 .rp-book-search-result span {
 	display: grid;
 	gap: 3px;
@@ -128,6 +152,20 @@
 .rp-book-search-result span span {
 	color: var(--bookish-muted, #4b5563);
 	font-size: 0.82rem;
+}
+
+.rp-book-preview .rp-selected-book-inner {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.rp-book-preview #selected-book-image {
+	width: 72px !important;
+	height: 104px !important;
+	flex: 0 0 72px;
+	object-fit: cover;
+	border-radius: 8px;
 }
 
 .rp-book-search-meta {

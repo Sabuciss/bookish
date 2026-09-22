@@ -20,6 +20,8 @@ class ReadingChallenge extends Model
         'end_date',
         'notes',
         'is_completed',
+        'completion_date',
+        'completion_value',
         'completion_comment',
     ];
 
@@ -27,6 +29,8 @@ class ReadingChallenge extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'is_completed' => 'boolean',
+        'completion_date' => 'date',
+        'completion_value' => 'integer',
     ];
 
     public function user(): BelongsTo

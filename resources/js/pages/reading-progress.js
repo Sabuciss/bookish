@@ -29,6 +29,7 @@ if (root) {
     const dateNext = document.getElementById('reading-date-next');
     let searchTimer = null;
     let searchRequestId = 0;
+    const searchCache = new Map();
 
     const formatEuropeanDate = (isoDate) => {
         const [year, month, day] = String(isoDate || '').split('-');
@@ -179,6 +180,8 @@ if (root) {
 
     const normalizeBookKey = (title) => (title || '').trim().toLowerCase();
 
+    const normalizeCoverUrl = (url) => String(url || '').replace(/^http:\/\//i, 'https://');
+
     const syncStatusTags = () => {
         if (!statusInput || !statusTags.length) {
             return;
@@ -235,7 +238,7 @@ if (root) {
 
         if (book.thumbnail) {
             previewImage.style.display = 'block';
-            previewImage.src = book.thumbnail;
+            previewImage.src = normalizeCoverUrl(book.thumbnail);
         } else {
             previewImage.style.display = 'none';
             previewImage.src = '';
@@ -255,7 +258,7 @@ if (root) {
             queryInput.value = book.title || '';
         }
         volumeIdInput.value = book.id || '';
-        coverInput.value = book.thumbnail || '';
+        coverInput.value = normalizeCoverUrl(book.thumbnail);
 
         if (book.pageCount) {
             totalPagesInput.value = String(book.pageCount);
@@ -319,7 +322,7 @@ if (root) {
             button.type = 'button';
             button.className = 'rp-book-search-result';
             button.innerHTML = `
-                ${book.thumbnail ? `<img src="${book.thumbnail}" alt="${book.title} vāks" style="width:44px;height:64px;object-fit:cover;border-radius:6px;">` : ''}
+                ${book.thumbnail ? `<img class="rp-search-cover" src="${normalizeCoverUrl(book.thumbnail)}" alt="${book.title} vāks">` : '<span class="rp-search-cover rp-search-cover-empty" aria-hidden="true">Nav vāka</span>'}
                 <span>
                     <strong>${book.title || 'Bez nosaukuma'}</strong><br>
                     <span class="rp-book-search-meta">${book.authors || 'Autors nav norādīts'}${book.pageCount ? ` • ${book.pageCount} lpp` : ''}</span>
@@ -348,7 +351,13 @@ if (root) {
         resultsEl.innerHTML = '';
 
         try {
-            const response = await fetch(`/api/google-books/top?q=${encodeURIComponent(query)}&maxResults=8`);
+            const cacheKey = query.toLowerCase();
+            if (searchCache.has(cacheKey)) {
+                renderResults(searchCache.get(cacheKey));
+                return;
+            }
+
+            const response = await fetch(`/api/google-books/top?q=${encodeURIComponent(query)}&maxResults=5&remote=1`);
 
             if (!response.ok) {
                 throw new Error('Google Books API kļūda.');
@@ -363,9 +372,11 @@ if (root) {
                     title: info.title || '',
                     authors: Array.isArray(info.authors) ? info.authors.join(', ') : '',
                     pageCount: info.pageCount || null,
-                    thumbnail: (info.imageLinks && (info.imageLinks.thumbnail || info.imageLinks.smallThumbnail)) || '',
+                    thumbnail: normalizeCoverUrl(info.imageLinks && (info.imageLinks.thumbnail || info.imageLinks.smallThumbnail)),
                 };
             });
+
+            searchCache.set(cacheKey, books);
 
             if (requestId !== searchRequestId || query !== queryInput.value.trim()) {
                 return;
@@ -428,7 +439,7 @@ if (root) {
         }
 
         statusEl.textContent = 'Meklēju grāmatas...';
-        searchTimer = window.setTimeout(searchBooks, 350);
+        searchTimer = window.setTimeout(searchBooks, 700);
     };
 
     queryInput?.addEventListener('input', () => {

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->date('end_date');
             $table->string('notes', 500)->nullable();
             $table->boolean('is_completed')->default(false);
+            $table->date('completion_date')->nullable();
+            $table->unsignedInteger('completion_value')->nullable();
             $table->string('completion_comment', 500)->nullable();
             $table->timestamps();
         });

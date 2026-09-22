@@ -16,6 +16,8 @@ class BookListing extends Model
         'listing_type',
         'availability',
         'book_title',
+        'google_volume_id',
+        'book_cover_url',
         'exchange_book_title',
         'author',
         'condition',

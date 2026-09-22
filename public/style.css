@@ -397,6 +397,98 @@ nav.app-surface-opaque form button:hover {
 	gap: 14px;
 }
 
+.listing-book-picker {
+	margin-bottom: 4px;
+}
+
+.listing-book-picker .rp-book-search-status {
+	margin: 8px 0;
+	color: var(--bookish-muted);
+	font-size: 0.85rem;
+}
+
+.listing-book-picker .rp-book-search-results {
+	margin: 8px 0 12px;
+}
+
+.listing-selected-book {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 10px 0 18px;
+	padding: 10px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 8px;
+	background: var(--bookish-alt);
+}
+
+.listing-selected-book img,
+.book-listing-cover {
+	width: 64px;
+	height: 92px;
+	flex: 0 0 auto;
+	border-radius: 5px;
+	object-fit: cover;
+}
+
+.listing-selected-book strong,
+.listing-selected-book span {
+	display: block;
+}
+
+.listing-selected-book span {
+	margin-top: 4px;
+	color: var(--bookish-muted);
+	font-size: 0.85rem;
+}
+
+.book-listing-cover {
+	float: left;
+	margin: 0 14px 10px 0;
+}
+
+.book-listing-edit-link {
+	display: inline-block;
+	margin: 10px 0;
+	color: var(--bookish-plum-deep);
+	font-size: 0.85rem;
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+.book-listing-edit-link:hover {
+	color: var(--bookish-plum);
+}
+
+.listing-book-picker .rp-book-search-result {
+	min-height: 96px;
+	align-items: center;
+}
+
+.listing-book-picker .listing-search-cover {
+	width: 58px;
+	height: 82px;
+	flex: 0 0 58px;
+	border-radius: 6px;
+	object-fit: cover;
+	background: var(--bookish-soft);
+}
+
+.listing-book-picker .listing-search-cover-empty {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 6px;
+	color: var(--bookish-muted);
+	font-size: 0.7rem;
+	text-align: center;
+}
+
+.listing-book-picker .rp-book-search-result > span:last-child {
+	display: grid;
+	gap: 6px;
+}
+
 @media (min-width: 960px) {
 	.book-listing-grid-exchange {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -557,6 +649,70 @@ button.rp-calendar-day:focus-visible {
 
 .rp-calendar-day.is-empty {
 	pointer-events: none;
+}
+
+.rp-datetime-row {
+	align-items: start;
+	gap: 14px;
+	padding: 16px;
+	background: var(--bookish-paper);
+	border: 1px solid var(--bookish-line);
+	border-radius: 12px;
+}
+
+.rp-datetime-row > label {
+	min-width: 0;
+	gap: 7px;
+	font-size: 0.82rem;
+	font-weight: 700;
+}
+
+.rp-date-control {
+	position: relative;
+	min-height: 50px;
+}
+
+.rp-date-control .rp-date-display,
+.rp-datetime-row .rp-time-input {
+	box-sizing: border-box;
+	width: 100%;
+	height: 50px;
+	min-height: 50px;
+	margin: 0;
+	border: 1px solid var(--bookish-line);
+	border-radius: 10px;
+	background: var(--bookish-cream);
+	color: var(--bookish-ink);
+}
+
+.rp-date-control .rp-date-display {
+	padding: 0 48px 0 14px;
+}
+
+.rp-date-control .rp-date-open {
+	top: 50%;
+	right: 8px;
+	width: 34px;
+	height: 34px;
+	transform: translateY(-50%);
+	border: 1px solid var(--bookish-rose);
+	border-radius: 7px;
+	background: var(--bookish-rose);
+	color: var(--bookish-paper);
+	font-size: 1rem;
+}
+
+.rp-date-control .rp-date-open:hover,
+.rp-date-control .rp-date-open:focus-visible {
+	background: var(--bookish-plum);
+	border-color: var(--bookish-plum);
+	outline: none;
+}
+
+.rp-calendar {
+	width: min(310px, calc(100vw - 32px));
+	padding: 14px;
+	border-radius: 12px;
 }
 
 @media (max-width: 480px) {
