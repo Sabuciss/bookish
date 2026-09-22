@@ -1427,10 +1427,169 @@ html.dark nav.app-surface-opaque button:hover {
 	color: var(--bookish-plum) !important;
 }
 
+/* Compact reading-date control: one quiet row with a contained calendar. */
+.reading-progress-form .rp-datetime-row {
+	display: grid;
+	grid-template-columns: minmax(180px, 1.35fr) minmax(120px, 1fr) minmax(120px, 1fr);
+	gap: 12px;
+	align-items: start;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 12px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 12px;
+	background: var(--bookish-paper);
+}
+
+.reading-progress-form .rp-datetime-row label {
+	margin: 0;
+}
+
+.reading-progress-form .rp-datetime-row > label {
+	min-width: 0;
+	gap: 6px;
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.reading-progress-form .rp-date-control {
+	position: relative;
+	min-width: 0;
+}
+
+.reading-progress-form .rp-date-control .rp-date-display,
+.reading-progress-form .rp-datetime-row .rp-time-input {
+	box-sizing: border-box;
+	width: 100% !important;
+	height: 44px;
+	min-height: 44px;
+	margin: 0;
+	border: 1px solid var(--bookish-line);
+	border-radius: 9px;
+	background: var(--bookish-cream);
+	font-size: 0.9rem;
+}
+
+.reading-progress-form .rp-date-control .rp-date-display {
+	padding: 0 42px 0 12px;
+}
+
+.reading-progress-form .rp-date-control .rp-date-open {
+	top: 50%;
+	right: 6px;
+	width: 30px;
+	height: 30px;
+	transform: translateY(-50%);
+	border: 0;
+	border-radius: 7px;
+	background: var(--bookish-soft);
+	color: var(--bookish-plum-deep);
+	font-size: 0.85rem;
+}
+
+.reading-progress-form .rp-date-control .rp-date-open:hover,
+.reading-progress-form .rp-date-control .rp-date-open:focus-visible {
+	background: var(--bookish-rose);
+	color: var(--bookish-paper);
+	outline: none;
+}
+
+.reading-progress-form .rp-calendar {
+	top: auto !important;
+	bottom: calc(100% + 6px) !important;
+	left: 0;
+	width: 248px !important;
+	max-width: calc(100vw - 32px) !important;
+	box-sizing: border-box;
+	padding: 8px;
+	border-radius: 12px;
+	box-shadow: 0 10px 24px rgba(77, 38, 57, 0.18);
+}
+
+.reading-progress-form .rp-calendar-header {
+	grid-template-columns: 30px 1fr 30px;
+	gap: 6px;
+	margin-bottom: 8px;
+}
+
+.reading-progress-form .rp-calendar-nav {
+	width: 30px;
+	height: 30px;
+	font-size: 1.15rem;
+}
+
+.reading-progress-form .rp-calendar-weekdays,
+.reading-progress-form .rp-calendar-days {
+	gap: 2px;
+}
+
+.reading-progress-form .rp-calendar-day {
+	min-width: 0;
+	font-size: 0.72rem;
+}
+
+@media (max-width: 820px) {
+	.reading-progress-form .rp-datetime-row {
+		grid-template-columns: 1fr;
+		gap: 10px;
+	}
+
+	.reading-progress-form .rp-calendar {
+		left: 50%;
+		bottom: calc(100% + 6px) !important;
+		width: min(248px, calc(100vw - 32px)) !important;
+		transform: translateX(-50%);
+	}
+}
+
 html.dark .rp-datetime-row,
 html.dark .live-progress-bar-wrap {
 	background: var(--bookish-cream) !important;
 	border-color: var(--bookish-line) !important;
+}
+
+/* Keep the progress date controls inside the editor on every viewport. */
+.reading-progress-form .rp-datetime-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr) minmax(0, 1fr);
+	align-items: start;
+	gap: 12px;
+	width: 100%;
+	box-sizing: border-box;
+	overflow: visible;
+}
+
+.reading-progress-form .rp-datetime-row > label,
+.reading-progress-form .rp-date-control,
+.reading-progress-form .rp-date-control .rp-date-display,
+.reading-progress-form .rp-datetime-row .rp-time-input {
+	min-width: 0;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.reading-progress-form .rp-date-control {
+	position: relative;
+}
+
+.reading-progress-form .rp-calendar {
+	left: 0;
+	width: min(304px, calc(100vw - 48px));
+	max-width: calc(100% + 140px);
+	box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+	.reading-progress-form .rp-datetime-row {
+		grid-template-columns: 1fr;
+	}
+
+	.reading-progress-form .rp-calendar {
+		left: 50%;
+		max-width: calc(100vw - 32px);
+		transform: translateX(-50%);
+	}
 }
 
 .rp-datetime-row {
