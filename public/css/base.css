@@ -1,5 +1,8 @@
 :root {
 	--content-max-width: 1240px;
+	--bookish-control-gap: 12px;
+	--bookish-section-gap: 20px;
+	--bookish-focus: rgba(185, 143, 136, 0.28);
 }
 
 * ,
@@ -28,6 +31,42 @@ canvas {
 	padding-top: 84px;
 	min-width: 0;
 	width: min(100%, var(--content-max-width));
+}
+
+button,
+a.reading-progress-submit,
+a.login-button,
+a.rp-back-button {
+	min-height: 40px;
+}
+
+button + button,
+a.reading-progress-submit + button,
+button + a.reading-progress-submit,
+a.reading-progress-submit + a.reading-progress-submit {
+	margin-left: var(--bookish-control-gap);
+}
+
+.rp-actions-row,
+.book-listing-application-actions,
+.book-listing-message-form,
+.book-listing-form > button,
+.reading-progress-form > .rp-form-footer {
+	margin-top: var(--bookish-section-gap);
+}
+
+.rp-actions-row,
+.book-listing-application-actions {
+	gap: var(--bookish-control-gap);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+	outline: 3px solid var(--bookish-focus);
+	outline-offset: 2px;
 }
 
 nav.app-surface-opaque {

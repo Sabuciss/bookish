@@ -20,29 +20,8 @@
 .reading-progress-layout {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(300px, 0.95fr);
-	gap: 24px;
 	align-items: start;
-}
-
-.rp-actions-row {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-	margin-bottom: 16px;
-}
-
-.reading-progress-editor {
-	background: #fffdfd;
-	padding-bottom: 0;
-}
-
-.reading-progress-editor .uiverse-heading {
-	margin: 0 0 20px;
-	padding-bottom: 14px;
-	border-bottom: 1px solid #f1dfe1;
-	color: #26304d;
-	font-size: 1.45rem;
-	text-align: left;
+	gap: 24px;
 }
 
 .reading-progress-form > label {
@@ -183,7 +162,12 @@
 	width: auto;
 	display: inline-block;
 	justify-self: end;
-	margin: 10px 0 0;
+	margin: 0;
+}
+
+.reading-progress-page > .rp-actions-row {
+	margin: 0 0 var(--bookish-section-gap, 20px);
+	padding: 0 4px;
 }
 
 .edit-mode-banner {
@@ -412,6 +396,110 @@
 	border: 0;
 	opacity: 0;
 	pointer-events: none;
+}
+
+.rp-calendar {
+	position: absolute;
+	top: auto;
+	bottom: calc(100% + 8px);
+	left: 0;
+	z-index: 30;
+	width: 248px;
+	max-width: calc(100vw - 32px);
+	box-sizing: border-box;
+	padding: 10px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 12px;
+	background: var(--bookish-paper);
+	box-shadow: 0 12px 26px rgba(77, 38, 57, 0.2);
+	color: var(--bookish-ink);
+}
+
+.rp-calendar-header {
+	display: grid;
+	grid-template-columns: 30px 1fr 30px;
+	gap: 6px;
+	align-items: center;
+	margin-bottom: 8px;
+	text-align: center;
+}
+
+.rp-calendar-nav {
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 1px solid var(--bookish-line);
+	border-radius: 7px;
+	background: var(--bookish-soft);
+	color: var(--bookish-plum-deep);
+	font-size: 1.1rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.rp-calendar-nav:hover,
+.rp-calendar-nav:focus-visible {
+	background: var(--bookish-rose);
+	color: var(--bookish-paper);
+	outline: none;
+}
+
+.rp-calendar-weekdays,
+.rp-calendar-days {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	gap: 2px;
+	text-align: center;
+}
+
+.rp-calendar-weekdays {
+	margin-bottom: 4px;
+	color: var(--bookish-muted);
+	font-size: 0.65rem;
+	font-weight: 800;
+}
+
+.rp-calendar-day {
+	display: inline-flex;
+	width: 100%;
+	aspect-ratio: 1;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--bookish-ink);
+	font-size: 0.75rem;
+	cursor: pointer;
+}
+
+button.rp-calendar-day:hover,
+button.rp-calendar-day:focus-visible {
+	border-color: var(--bookish-rose);
+	background: var(--bookish-soft);
+	outline: none;
+}
+
+.rp-calendar-day.is-selected {
+	background: var(--bookish-rose);
+	color: var(--bookish-paper);
+	font-weight: 800;
+}
+
+.rp-calendar-day.is-today {
+	border-color: var(--bookish-rose);
+}
+
+.rp-calendar-day.is-empty {
+	pointer-events: none;
+}
+
+@media (max-width: 680px) {
+	.rp-calendar {
+		left: 50%;
+		transform: translateX(-50%);
+	}
 }
 
 .rp-form-footer {
@@ -725,14 +813,14 @@ html.dark .reading-progress-form > label {
 
 html.dark .rp-datetime-row {
 	border-color: var(--bookish-plum);
-	background: var(--bookish-ink);
+	background: var(--bookish-paper);
 }
 
 html.dark .rp-date-control .rp-date-display,
 html.dark .rp-datetime-row .rp-time-input {
 	border-color: var(--bookish-plum);
-	background: #2a1b23;
-	color: var(--bookish-paper);
+	background: var(--bookish-cream);
+	color: var(--bookish-ink);
 }
 
 html.dark .rp-date-open {
@@ -779,11 +867,6 @@ html.dark .reading-progress-submit {
 	background: #111827;
 	border-color: #4b5563;
 	color: #e5e7eb;
-}
-
-html.dark .rp-datetime-row {
-	border-color: #4b3740;
-	background: #1f1720;
 }
 
 html.dark .rp-form-footer {
