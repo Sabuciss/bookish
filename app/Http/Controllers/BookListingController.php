@@ -8,6 +8,8 @@ use App\Models\BookListing;
 use App\Models\BookListingApplication;
 use App\Models\BookListingMessage;
 use App\Notifications\BookListingApplicationReceived;
+use App\Notifications\BookListingApplicationStatusChanged;
+use App\Notifications\BookListingMessageReceived;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -147,13 +149,21 @@ class BookListingController extends Controller
             }
 
             $lockedApplication->update(['status' => $status]);
+            $lockedApplication->load('user');
+            $lockedApplication->user->notify(new BookListingApplicationStatusChanged($lockedApplication, $status));
 
             if ($status === 'accepted') {
                 $lockedListing->update(['availability' => 'unavailable']);
-                $lockedListing->applications()
+                $rejectedApplications = $lockedListing->applications()
                     ->where('id', '!=', $lockedApplication->id)
                     ->where('status', 'pending')
-                    ->update(['status' => 'rejected']);
+                    ->with('user')
+                    ->get();
+
+                foreach ($rejectedApplications as $rejectedApplication) {
+                    $rejectedApplication->update(['status' => 'rejected']);
+                    $rejectedApplication->user->notify(new BookListingApplicationStatusChanged($rejectedApplication, 'rejected', 'unavailable'));
+                }
             }
 
             return true;
@@ -178,11 +188,16 @@ class BookListingController extends Controller
             'message' => ['required', 'string', 'max:2000'],
         ]);
 
-        BookListingMessage::create([
+        $message = BookListingMessage::create([
             'book_listing_application_id' => $application->id,
             'user_id' => $request->user()->id,
             'message' => $validated['message'],
         ]);
+
+        $recipient = $bookListing->user_id === $request->user()->id
+            ? $application->user
+            : $bookListing->user;
+        $recipient->notify(new BookListingMessageReceived($message));
 
         return back()->with('status', 'Ziņa nosūtīta.');
     }

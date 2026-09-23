@@ -21,11 +21,19 @@
             ->where('type', \App\Notifications\BookListingApplicationReceived::class)
             ->latest()
             ->get();
+          $listingStatusNotifications = Auth::user()->notifications()
+            ->where('type', \App\Notifications\BookListingApplicationStatusChanged::class)
+            ->latest()
+            ->get();
+          $listingMessageNotifications = Auth::user()->notifications()
+            ->where('type', \App\Notifications\BookListingMessageReceived::class)
+            ->latest()
+            ->get();
           $latestTimerNotification = Auth::user()->notifications()
             ->where('type', \App\Notifications\ReadingTimerSessionSaved::class)
             ->latest()
             ->first();
-          $notificationCount = $releaseReminders->count() + $listingNotifications->count() + (int) (bool) $latestTimerNotification;
+          $notificationCount = $releaseReminders->count() + $listingNotifications->count() + $listingStatusNotifications->count() + $listingMessageNotifications->count() + (int) (bool) $latestTimerNotification;
         @endphp
         <div class="book-notification" x-data="{ open: false }">
           <button type="button" class="book-notification-button" @click="open = !open" :aria-expanded="open.toString()" aria-label="Atvērt paziņojumus">
@@ -46,6 +54,36 @@
                   <span>
                     <strong>Jauns pieteikums</strong>
                     <small>{{ $notification->data['applicant_name'] }} pieteicās uz “{{ $notification->data['title'] }}”</small>
+                  </span>
+                </a>
+              </div>
+            @endforeach
+            @foreach($listingStatusNotifications as $notification)
+              <div class="book-notification-item">
+                <a class="book-notification-link" href="{{ route('book-listings.index') }}">
+                  <span class="book-notification-cover">!</span>
+                  <span>
+                    @if($notification->data['status'] === 'accepted')
+                      <strong>Pieteikums pieņemts</strong>
+                      <small>Tavs piedāvājums par “{{ $notification->data['title'] }}” ir pieņemts.</small>
+                    @elseif(($notification->data['reason'] ?? 'rejected') === 'unavailable')
+                      <strong>Grāmata vairs nav pieejama</strong>
+                      <small>Pieteikums par “{{ $notification->data['title'] }}” ir noraidīts.</small>
+                    @else
+                      <strong>Pieteikums noraidīts</strong>
+                      <small>Tavs pieteikums par “{{ $notification->data['title'] }}” netika pieņemts.</small>
+                    @endif
+                  </span>
+                </a>
+              </div>
+            @endforeach
+            @foreach($listingMessageNotifications as $notification)
+              <div class="book-notification-item">
+                <a class="book-notification-link" href="{{ route('book-listings.index') }}">
+                  <span class="book-notification-cover">Z</span>
+                  <span>
+                    <strong>Jauna ziņa par sludinājumu</strong>
+                    <small>Tev ir atsūtīta jauna ziņa par “{{ $notification->data['title'] }}”.</small>
                   </span>
                 </a>
               </div>
