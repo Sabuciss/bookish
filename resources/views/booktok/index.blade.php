@@ -26,7 +26,7 @@
             </a>
             @auth
                 <a
-                    href="{{ route('booktok.index', ['view' => 'books', 'favorite_authors' => 1]) }}"
+                    href="{{ route('booktok.index', ['view' => 'authors', 'favorite_authors' => 1]) }}"
                     class="booktok-view-button booktok-favorites-button {{ $selectedFavoriteAuthors ? 'is-active' : '' }}"
                     @if ($selectedFavoriteAuthors) aria-current="page" @endif
                 >
@@ -97,14 +97,11 @@
             <div class="booktok-section-heading">
                 <div>
                     <p class="book-detail-eyebrow">BookTok kopiena</p>
-                    <h2 class="booktok-section-title">Top autori</h2>
+                        <h2 class="booktok-section-title">{{ $selectedFavoriteAuthors ? 'Mani favorītu autori' : 'Top autori' }}</h2>
                 </div>
-                <span class="booktok-section-count">
-                    {{ $booktokAuthors->count() }} autori
-                    @auth
-                        · {{ count($favoriteAuthors) }} favorīti
-                    @endauth
-                </span>
+                @if ($selectedFavoriteAuthors)
+                    <span class="booktok-section-count">{{ count($favoriteAuthors) }} favorīti</span>
+                @endif
             </div>
 
             <div class="booktok-author-grid">
@@ -148,14 +145,14 @@
                             <p class="book-detail-eyebrow">Autora bibliogrāfija</p>
                             <h2 class="booktok-section-title">{{ $selectedAuthor }} grāmatas</h2>
                         </div>
-                        <span class="booktok-section-count">Kopā atrastas {{ $authorBooks['total'] ?? count($authorBooks['books'] ?? []) }} grāmatas</span>
+                        <span class="booktok-section-count">Izlaistas grāmatas: {{ count($authorBooks['books'] ?? []) }}</span>
                     </div>
 
                     <div class="booktok-author-books-grid">
                         @foreach (($authorBooks['books'] ?? []) as $authorBook)
                             <a
                                 class="booktok-author-book-card"
-                                href="{{ !empty($authorBook['id']) ? route('books.show', ['volumeId' => $authorBook['id']]) : ($authorBook['info_link'] ?: '#') }}"
+                                href="{{ !empty($authorBook['id']) ? route('books.show', ['volumeId' => $authorBook['id'], 'back' => 'booktok', 'view' => $selectedView, 'author' => $selectedAuthor]) : ($authorBook['info_link'] ?: '#') }}"
                                 @if (empty($authorBook['id'])) target="_blank" rel="noopener noreferrer" @endif
                             >
                                 @if ($authorBook['thumbnail'])
@@ -183,14 +180,14 @@
                     <p class="book-detail-eyebrow">Autora bibliogrāfija</p>
                     <h2 class="booktok-section-title">{{ $selectedAuthor }} grāmatas</h2>
                 </div>
-                <span class="booktok-section-count">Kopā atrastas {{ $authorBooks['total'] ?? count($authorBooks['books'] ?? []) }} grāmatas</span>
+                <span class="booktok-section-count">Izlaistas grāmatas: {{ count($authorBooks['books'] ?? []) }}</span>
             </div>
 
             <div class="booktok-author-books-grid">
                 @foreach (($authorBooks['books'] ?? []) as $authorBook)
                     <a
                         class="booktok-author-book-card"
-                        href="{{ !empty($authorBook['id']) ? route('books.show', ['volumeId' => $authorBook['id']]) : ($authorBook['info_link'] ?: '#') }}"
+                        href="{{ !empty($authorBook['id']) ? route('books.show', ['volumeId' => $authorBook['id'], 'back' => 'booktok', 'view' => $selectedView, 'author' => $selectedAuthor]) : ($authorBook['info_link'] ?: '#') }}"
                         @if (empty($authorBook['id'])) target="_blank" rel="noopener noreferrer" @endif
                     >
                         @if ($authorBook['thumbnail'])
@@ -209,6 +206,15 @@
         @endif
 
         <section class="reading-progress-history uiverse-container">
+            @if ($selectedFavoriteAuthors)
+                <div class="booktok-section-heading">
+                    <div>
+                        <p class="book-detail-eyebrow">Tava izlase</p>
+                        <h2 class="booktok-section-title">Favorītu autoru grāmatas</h2>
+                    </div>
+                    <span class="booktok-section-count">{{ count($favoriteAuthors) }} favorīti</span>
+                </div>
+            @endif
             @if ($books->isEmpty())
                 @if ($selectedYear || $selectedGenre || $selectedAuthor || $selectedTitle || $selectedFavoriteAuthors)
                     <p>Izvēlētajiem filtriem nav atrastas top grāmatas.</p>

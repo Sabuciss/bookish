@@ -32,6 +32,10 @@
                         <strong>{{ number_format($profileStats['booksInProgress'], 0, ',', ' ') }}</strong>
                         <span>Pašlaik lasu</span>
                     </div>
+                    <div class="profile-statistic">
+                        <strong>{{ number_format($profileStats['favoriteAuthors'], 0, ',', ' ') }}</strong>
+                        <span>Iecienītie autori</span>
+                    </div>
                 </div>
 
                 <div class="profile-statistics-shelf">

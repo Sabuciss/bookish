@@ -96,8 +96,8 @@
 
                                 @if ($percent !== null)
                                     <div style="margin-bottom: 8px;">
-                                        <div style="height: 8px; border-radius: 999px; background: #e5e7eb; overflow: hidden;">
-                                            <div style="height: 100%; width: {{ $percent }}%; background: linear-gradient(90deg, #0f766e, #10b981);"></div>
+                                        <div style="height: 8px; border-radius: 999px; background: var(--bookish-line); overflow: hidden;">
+                                            <div style="height: 100%; width: {{ $percent }}%; background: linear-gradient(90deg, var(--bookish-plum-deep), var(--bookish-rose));"></div>
                                         </div>
                                         <div class="rp-snapshot-meta" style="margin-top: 4px;">{{ $percent }}%</div>
                                     </div>

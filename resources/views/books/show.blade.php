@@ -7,7 +7,7 @@
         @endif
 
         <div class="reading-progress-history">
-            <a href="{{ url()->previous() }}" class="weekly-top-action">← Atpakaļ</a>
+            <a href="{{ $backUrl }}" class="weekly-top-action">← Atpakaļ</a>
 
             <div class="weekly-top-item" style="margin-top: 12px;">
                 @if($book['thumbnail'])

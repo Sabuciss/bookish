@@ -1319,9 +1319,99 @@ html.dark .booktok-author-avatar {
 
 .profile-statistics-grid {
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-template-columns: repeat(5, minmax(0, 1fr));
 	gap: 12px;
 	margin-top: 1.5rem;
+}
+
+.release-calendar-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+	align-items: start;
+	gap: 24px;
+}
+
+.release-calendar-month {
+	width: min(100%, 420px);
+	margin-inline: auto;
+	padding: 18px;
+	box-sizing: border-box;
+}
+
+.release-calendar-month-heading {
+	display: grid;
+	grid-template-columns: 40px minmax(0, 1fr) 40px;
+	align-items: center;
+	gap: 10px;
+}
+
+.release-calendar-month-heading .uiverse-heading {
+	min-width: 0;
+	margin: 0;
+	text-align: center;
+	text-transform: capitalize;
+}
+
+.release-calendar-nav {
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 1px solid var(--bookish-line);
+	border-radius: 6px;
+	background: var(--bookish-soft);
+	color: var(--bookish-plum);
+	cursor: pointer;
+}
+
+.release-calendar-weekdays,
+.release-calendar-days {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	gap: 6px;
+	margin-top: 14px;
+	text-align: center;
+}
+
+.release-calendar-weekdays span {
+	color: var(--bookish-muted);
+	font-size: 0.75rem;
+	font-weight: 700;
+}
+
+.release-calendar-day {
+	display: grid;
+	place-items: center;
+	min-width: 0;
+	aspect-ratio: 1;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	color: var(--bookish-ink);
+	font-size: 0.82rem;
+}
+
+.release-calendar-day.has-release {
+	border-color: var(--bookish-rose);
+	background: var(--bookish-soft);
+	font-weight: 700;
+}
+
+.release-calendar-day.is-today {
+	background: var(--bookish-rose);
+	color: var(--bookish-paper);
+}
+
+.release-calendar-day small {
+	font-size: 0.6rem;
+}
+
+@media (max-width: 820px) {
+	.release-calendar-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.release-calendar-month {
+		width: min(100%, 440px);
+	}
 }
 
 .profile-statistic {
@@ -1486,8 +1576,240 @@ html.dark .book-detail-status--progress {
 }
 
 html.dark .book-detail-status--want {
-	background: #9a5b6d !important;
-	color: #ffffff !important;
+	background: var(--bookish-rose) !important;
+	color: var(--bookish-paper) !important;
+}
+
+/* Keep every legacy page component on the shared Bookish palette. */
+body,
+.uiverse-container,
+.weekly-top-item,
+.book-detail,
+.book-detail-description,
+.book-recommendation-card,
+.highlight-card,
+.reading-challenge-card,
+.rp-snapshot-col,
+.rp-snapshot-article,
+.live-progress-preview {
+	background: var(--bookish-paper) !important;
+	border-color: var(--bookish-line) !important;
+	color: var(--bookish-ink);
+}
+
+body {
+	background-color: var(--bookish-cream) !important;
+}
+
+.uiverse-container {
+	background-image: none !important;
+	border-width: 1px;
+	box-shadow: 0 12px 28px rgba(77, 38, 57, 0.08);
+}
+
+.uiverse-heading,
+.book-detail-title,
+.book-detail-section-title,
+.booktok-section-title {
+	color: var(--bookish-plum) !important;
+}
+
+.book-detail-back,
+.book-detail-link,
+.weekly-top-title-link,
+.weekly-top-action {
+	color: var(--bookish-plum-deep) !important;
+}
+
+.book-detail-back:hover,
+.book-detail-link:hover,
+.weekly-top-title-link:hover,
+.weekly-top-action:hover {
+	color: var(--bookish-rose) !important;
+}
+
+.book-detail-author,
+.book-detail-rating,
+.book-detail-meta,
+.book-detail-categories,
+.book-detail-description-text,
+.weekly-top-meta,
+.weekly-top-description,
+.weekly-top-details summary,
+.weekly-top-details-list,
+.booktok-section-count,
+.book-recommendation-card p,
+.book-recommendation-card span,
+.book-detail-eyebrow,
+.welcome-section-note {
+	color: var(--bookish-muted) !important;
+}
+
+.book-detail-meta {
+	border-color: var(--bookish-line) !important;
+}
+
+.book-detail-meta strong,
+.book-detail-eyebrow,
+.welcome-eyebrow {
+	color: var(--bookish-plum-deep) !important;
+}
+
+.book-detail-primary,
+.book-detail-status--read,
+.book-detail-status--progress,
+.book-detail-status--want,
+.reading-progress-status-badge,
+.rp-read-badge,
+.booktok-view-button.is-active,
+.booktok-view-button:hover,
+.book-genre-filter-button.is-active,
+.book-genre-filter-button:hover {
+	border-color: var(--bookish-rose) !important;
+	background: var(--bookish-rose) !important;
+	color: var(--bookish-paper) !important;
+}
+
+.book-detail-secondary,
+.booktok-view-button,
+.book-genre-filter-button,
+.weekly-genre-select,
+.weekly-year-input,
+.book-reminder-button,
+.theme-toggle-nav,
+.book-notification-button,
+.book-notification-login {
+	border-color: var(--bookish-line) !important;
+	background: var(--bookish-paper) !important;
+	color: var(--bookish-plum-deep) !important;
+}
+
+.book-detail-secondary:hover,
+.booktok-view-button:hover,
+.book-genre-filter-button:hover,
+.book-reminder-button:hover,
+.theme-toggle-nav:hover {
+	border-color: var(--bookish-rose) !important;
+	background: var(--bookish-soft) !important;
+	color: var(--bookish-plum-deep) !important;
+}
+
+.booktok-author-card,
+.booktok-author-book-card,
+.book-recommendation-card,
+.highlight-card,
+.reading-challenge-card {
+	background: var(--bookish-soft) !important;
+	border-color: var(--bookish-line) !important;
+}
+
+.release-calendar-month,
+.release-calendar-date,
+.release-calendar-nav,
+.release-calendar-day.has-release,
+.release-calendar-day small {
+	border-color: var(--bookish-line) !important;
+	background: var(--bookish-soft) !important;
+	color: var(--bookish-plum-deep) !important;
+}
+
+.release-calendar-day.is-today,
+.release-calendar-nav:hover,
+.release-calendar-day.has-release {
+	border-color: var(--bookish-rose) !important;
+	background: var(--bookish-rose) !important;
+	color: var(--bookish-paper) !important;
+}
+
+.highlight-quote {
+	color: var(--bookish-ink) !important;
+	border-left-color: var(--bookish-rose) !important;
+}
+
+.highlight-book,
+.highlight-character,
+.reading-challenge-notes,
+.rp-snapshot-meta,
+.live-progress-pages-left {
+	color: var(--bookish-muted) !important;
+}
+
+.live-progress-preview,
+.live-progress-bar-wrap {
+	background: var(--bookish-soft) !important;
+	border-color: var(--bookish-line) !important;
+}
+
+.live-progress-pct,
+.reading-progress-page h1,
+.reading-progress-page h2,
+.reading-progress-page h3,
+.reading-progress-page p,
+.reading-progress-page label,
+.reading-progress-page strong,
+.reading-progress-page td,
+.reading-progress-page th,
+.reading-progress-page span {
+	color: var(--bookish-ink) !important;
+}
+
+.emotion-tag,
+.status-tag {
+	border-color: var(--bookish-line) !important;
+	background: var(--bookish-paper) !important;
+	color: var(--bookish-ink) !important;
+}
+
+.emotion-tag:hover,
+.status-tag:hover,
+.emotion-tag.selected,
+.status-tag.selected {
+	border-color: var(--bookish-rose) !important;
+	background: var(--bookish-rose) !important;
+	color: var(--bookish-paper) !important;
+}
+
+.reading-progress-table th,
+.reading-progress-table td {
+	border-color: var(--bookish-line) !important;
+}
+
+.book-notification-panel,
+.book-notification-button,
+.book-notification-login,
+.theme-toggle-nav {
+	border-color: var(--bookish-line) !important;
+	background: var(--bookish-paper) !important;
+	color: var(--bookish-plum-deep) !important;
+}
+
+.book-notification-heading,
+.book-notification-item strong {
+	color: var(--bookish-plum-deep) !important;
+}
+
+.book-notification-heading span,
+.book-notification-item small,
+.book-notification-empty {
+	color: var(--bookish-muted) !important;
+}
+
+.book-notification-item {
+	border-color: var(--bookish-line) !important;
+}
+
+.book-notification-item:hover {
+	background: var(--bookish-soft) !important;
+}
+
+.book-notification-cover {
+	background: var(--bookish-soft) !important;
+	color: var(--bookish-plum-deep) !important;
+}
+
+.book-notification-count {
+	background: var(--bookish-rose) !important;
+	color: var(--bookish-paper) !important;
 }
 
 @keyframes bookishReveal {

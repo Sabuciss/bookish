@@ -155,6 +155,12 @@ class GoogleBooksController extends Controller
         return view('books.show', [
             'book' => $bookData,
             'currentBookStatus' => $currentBookStatus,
+            'backUrl' => $request->query('back') === 'booktok'
+                ? route('booktok.index', array_filter([
+                    'view' => $request->query('view', 'books'),
+                    'author' => $request->query('author'),
+                ]))
+                : url()->previous(),
         ]);
     }
 }

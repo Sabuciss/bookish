@@ -153,8 +153,8 @@ if (root) {
         if (liveBar) {
             liveBar.style.width = pct + '%';
             liveBar.style.background = pct >= 100
-                ? 'linear-gradient(90deg, #15803d, #22c55e)'
-                : 'linear-gradient(90deg, #8E2DE2, #4A00E0)';
+                ? 'linear-gradient(90deg, var(--bookish-plum), var(--bookish-rose))'
+                : 'linear-gradient(90deg, var(--bookish-plum-deep), var(--bookish-rose))';
         }
 
         if (livePct) {

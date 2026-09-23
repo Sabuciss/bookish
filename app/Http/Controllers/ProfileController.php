@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\ReadingProgress;
+use App\Models\BooktokFavoriteAuthor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +63,9 @@ class ProfileController extends Controller
             'booksOnShelf' => count($bookSnapshots),
             'booksInProgress' => collect($bookSnapshots)->where('reading_status', 'in_progress')->count(),
             'booksWantToRead' => collect($bookSnapshots)->where('reading_status', 'want_to_read')->count(),
+            'favoriteAuthors' => BooktokFavoriteAuthor::query()
+                ->where('user_id', $userId)
+                ->count(),
         ];
 
         return view('profile.edit', [

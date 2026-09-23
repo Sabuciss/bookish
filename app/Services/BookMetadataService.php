@@ -135,7 +135,7 @@ class BookMetadataService
 
                 return [
                     'books' => $books,
-                    'total' => max(count($books), (int) $response->json('totalItems', count($books))),
+                    'total' => count($books),
                 ];
             } catch (\Throwable) {
                 return ['books' => [], 'total' => 0];
