@@ -7,6 +7,7 @@ use App\Http\Requests\StoreBookListingApplicationRequest;
 use App\Models\BookListing;
 use App\Models\BookListingApplication;
 use App\Models\BookListingMessage;
+use App\Notifications\BookListingApplicationReceived;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -98,12 +99,14 @@ class BookListingController extends Controller
                 return false;
             }
 
-            $lockedListing->applications()->create([
+            $application = $lockedListing->applications()->create([
                 'user_id' => $request->user()->id,
                 'offered_book_title' => $request->validated('offered_book_title'),
                 'message' => $request->validated('message'),
                 'status' => 'pending',
             ]);
+
+            $lockedListing->user->notify(new BookListingApplicationReceived($application));
 
             return true;
         });

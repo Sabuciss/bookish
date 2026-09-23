@@ -26,10 +26,10 @@ Route::get('/booktok/{book}', [BooktokTopController::class, 'show'])
     ->middleware('throttle:30,1')
     ->name('booktok.show');
 Route::get('/api/google-books/top', [GoogleBooksController::class, 'top'])
-    ->middleware('throttle:30,1')
+    ->middleware('throttle:120,1')
     ->name('google-books.top');
 Route::get('/books/{volumeId}', [GoogleBooksController::class, 'show'])
-    ->middleware('throttle:30,1')
+    ->middleware('throttle:120,1')
     ->name('books.show');
 Route::get('/book-listings', [BookListingController::class, 'index'])
     ->name('book-listings.index');

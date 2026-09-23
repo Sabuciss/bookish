@@ -17,20 +17,58 @@
             ->whereNotNull('notified_at')
             ->latest('notified_at')
             ->get();
+          $listingNotifications = Auth::user()->notifications()
+            ->where('type', \App\Notifications\BookListingApplicationReceived::class)
+            ->latest()
+            ->get();
+          $latestTimerNotification = Auth::user()->notifications()
+            ->where('type', \App\Notifications\ReadingTimerSessionSaved::class)
+            ->latest()
+            ->first();
+          $notificationCount = $releaseReminders->count() + $listingNotifications->count() + (int) (bool) $latestTimerNotification;
         @endphp
         <div class="book-notification" x-data="{ open: false }">
           <button type="button" class="book-notification-button" @click="open = !open" :aria-expanded="open.toString()" aria-label="Atvērt paziņojumus">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            @if($releaseReminders->count())
-              <span class="book-notification-count">{{ $releaseReminders->count() }}</span>
+            @if($notificationCount)
+              <span class="book-notification-count">{{ $notificationCount }}</span>
             @endif
           </button>
           <div x-show="open" x-cloak @click.outside="open = false" class="book-notification-panel">
             <div class="book-notification-heading">
-              <strong>Izlaistās grāmatas</strong>
-              <span>{{ $releaseReminders->count() }}</span>
+              <strong>Paziņojumi</strong>
+              <span>{{ $notificationCount }}</span>
             </div>
-            @forelse($releaseReminders as $reminder)
+            @foreach($listingNotifications as $notification)
+              <div class="book-notification-item">
+                <a class="book-notification-link" href="{{ route('book-listings.index') }}">
+                  <span class="book-notification-cover">!</span>
+                  <span>
+                    <strong>Jauns pieteikums</strong>
+                    <small>{{ $notification->data['applicant_name'] }} pieteicās uz “{{ $notification->data['title'] }}”</small>
+                  </span>
+                </a>
+              </div>
+            @endforeach
+            @if($latestTimerNotification)
+              <div class="book-notification-item">
+                <a class="book-notification-link" href="{{ route('reading-challenges.results') }}">
+                  <span class="book-notification-cover">T</span>
+                  <span>
+                    <strong>Laika sesija saglabāta</strong>
+                    <small>{{ $latestTimerNotification->data['elapsed_minutes'] }} min, {{ $latestTimerNotification->data['pages_read'] }} lpp</small>
+                    <small>Atvērt visu rezultātu kopsavilkumu</small>
+                  </span>
+                </a>
+              </div>
+            @endif
+            @if($releaseReminders->count())
+              <div class="book-notification-heading">
+                <strong>Izlaistās grāmatas</strong>
+                <span>{{ $releaseReminders->count() }}</span>
+              </div>
+            @endif
+            @foreach($releaseReminders as $reminder)
               <div class="book-notification-item">
                 <a class="book-notification-link" href="{{ $reminder->info_link ?: route('booktok.index') }}" target="{{ $reminder->info_link ? '_blank' : '_self' }}" rel="noopener noreferrer">
                   @if($reminder->cover_url)
@@ -50,9 +88,10 @@
                   <button type="submit" class="book-notification-delete" aria-label="Dzēst paziņojumu par {{ $reminder->title }}" title="Dzēst paziņojumu">×</button>
                 </form>
               </div>
-            @empty
+            @endforeach
+            @if(!$notificationCount)
               <p class="book-notification-empty">Paziņojumu vēl nav.</p>
-            @endforelse
+            @endif
           </div>
         </div>
         <span class="hidden sm:inline text-sm text-body">{{ Auth::user()->name }}</span>

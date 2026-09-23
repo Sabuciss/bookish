@@ -6,6 +6,7 @@ use App\Http\Requests\StoreReadingChallengeRequest;
 use App\Http\Requests\StoreReadingChallengeSessionRequest;
 use App\Models\ReadingChallenge;
 use App\Models\ReadingChallengeSession;
+use App\Notifications\ReadingTimerSessionSaved;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -154,10 +155,12 @@ class ReadingChallengeController extends Controller
 
     public function storeSession(StoreReadingChallengeSessionRequest $request): RedirectResponse
     {
-        ReadingChallengeSession::create([
+        $session = ReadingChallengeSession::create([
             ...$request->validated(),
             'user_id' => $request->user()->id,
         ]);
+
+        $request->user()->notify(new ReadingTimerSessionSaved($session));
 
         return redirect()->route('reading-timer.index')
             ->with('status', 'Taimera sesija veiksmīgi saglabāta.');
