@@ -19,18 +19,22 @@
             ->get();
           $listingNotifications = Auth::user()->notifications()
             ->where('type', \App\Notifications\BookListingApplicationReceived::class)
+            ->whereNull('read_at')
             ->latest()
             ->get();
           $listingStatusNotifications = Auth::user()->notifications()
             ->where('type', \App\Notifications\BookListingApplicationStatusChanged::class)
+            ->whereNull('read_at')
             ->latest()
             ->get();
           $listingMessageNotifications = Auth::user()->notifications()
             ->where('type', \App\Notifications\BookListingMessageReceived::class)
+            ->whereNull('read_at')
             ->latest()
             ->get();
           $latestTimerNotification = Auth::user()->notifications()
             ->where('type', \App\Notifications\ReadingTimerSessionSaved::class)
+            ->whereNull('read_at')
             ->latest()
             ->first();
           $notificationCount = $releaseReminders->count() + $listingNotifications->count() + $listingStatusNotifications->count() + $listingMessageNotifications->count() + (int) (bool) $latestTimerNotification;
@@ -47,6 +51,12 @@
               <strong>Paziņojumi</strong>
               <span>{{ $notificationCount }}</span>
             </div>
+            @if($notificationCount)
+              <form method="POST" action="{{ route('notifications.read-all') }}" class="book-notification-read-all-form">
+                @csrf
+                <button type="submit" class="book-notification-read-all">Atzīmēt visu kā izlasītu</button>
+              </form>
+            @endif
             @foreach($listingNotifications as $notification)
               <div class="book-notification-item">
                 <a class="book-notification-link" href="{{ route('book-listings.index') }}">

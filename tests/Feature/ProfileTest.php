@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\DatabaseNotification;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
@@ -95,5 +96,33 @@ class ProfileTest extends TestCase
             ->assertRedirect('/profile');
 
         $this->assertNotNull($user->fresh());
+    }
+
+    public function test_user_can_mark_all_notifications_as_read(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $unreadNotification = DatabaseNotification::create([
+            'id' => (string) str()->uuid(),
+            'type' => 'test',
+            'notifiable_type' => User::class,
+            'notifiable_id' => $user->id,
+            'data' => [],
+        ]);
+        DatabaseNotification::create([
+            'id' => (string) str()->uuid(),
+            'type' => 'test',
+            'notifiable_type' => User::class,
+            'notifiable_id' => $otherUser->id,
+            'data' => [],
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->post(route('notifications.read-all'));
+
+        $response->assertRedirect();
+        $this->assertNotNull($unreadNotification->fresh()->read_at);
+        $this->assertNull($otherUser->unreadNotifications()->first()->read_at);
     }
 }

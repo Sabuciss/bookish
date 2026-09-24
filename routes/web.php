@@ -9,6 +9,7 @@ use App\Http\Controllers\ReadingHighlightController;
 use App\Http\Controllers\ReadingProgressController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BookListingController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,10 +21,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/booktok', [BooktokTopController::class, 'index'])
-    ->middleware('throttle:30,1')
+    ->middleware('throttle:120,1')
     ->name('booktok.index');
 Route::get('/booktok/{book}', [BooktokTopController::class, 'show'])
-    ->middleware('throttle:30,1')
+    ->middleware('throttle:120,1')
     ->name('booktok.show');
 Route::get('/api/google-books/top', [GoogleBooksController::class, 'top'])
     ->middleware('throttle:120,1')
@@ -71,6 +72,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('booktok.favorite-authors.destroy');
     Route::delete('/book-release-reminders/{volumeId}', [BookReleaseReminderController::class, 'destroy'])
         ->name('book-release-reminders.destroy');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])
+        ->name('notifications.read-all');
 
     Route::get('/reading-highlights/create', [ReadingHighlightController::class, 'create'])
         ->name('reading-highlights.create');
