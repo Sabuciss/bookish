@@ -14,7 +14,9 @@
         @include('components.theme-init-script')
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @if (app()->environment('local') || file_exists(public_path('build/manifest.json')))
+            @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @endif
     </head>
     <body class="font-sans antialiased {{ request()->routeIs('admin.*') ? 'admin-shell' : '' }} {{ request()->routeIs('profile.*') ? 'profile-shell' : '' }}">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">

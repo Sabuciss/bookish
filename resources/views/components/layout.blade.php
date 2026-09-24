@@ -6,7 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? "bookish" }}</title>
     @include('components.theme-init-script')
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @if (app()->environment('local') || file_exists(public_path('build/manifest.json')))
+      @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
     <link rel="stylesheet" href="{{ asset('style.css') }}">
 </head>
 <body>
