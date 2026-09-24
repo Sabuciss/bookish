@@ -42,4 +42,5 @@ class ReadingChallenge extends Model
     {
         return $this->hasMany(ReadingChallengeSession::class);
     }
+
 }

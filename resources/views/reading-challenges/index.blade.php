@@ -43,16 +43,6 @@
                                     Statuss:
                                     <strong>{{ $challenge->is_completed ? 'Izdarīts' : 'Procesā' }}</strong>
                                 </p>
-                                @if ($challenge->is_completed && $challenge->completion_date)
-                                    <p class="reading-challenge-result">
-                                        <strong>Rezultāts:</strong>
-                                        {{ $challenge->completion_value }} {{ $challenge->challenge_type === 'pages' ? 'lpp' : 'min' }}
-                                        {{ $challenge->completion_date->format('d.m.Y') }}
-                                        @if ($challenge->completion_date->lt($challenge->end_date))
-                                            <span class="reading-challenge-early">Pabeigts agrāk</span>
-                                        @endif
-                                    </p>
-                                @endif
                                 <p>Periods: {{ $challenge->start_date->format('Y-m-d') }} līdz {{ $challenge->end_date->format('Y-m-d') }}</p>
                                 @if ($challenge->notes)
                                     <p class="reading-challenge-notes">{{ $challenge->notes }}</p>
@@ -121,24 +111,9 @@
                         </select>
                     </label>
 
-                    <div class="challenge-completion-panel">
-                        <strong>Rezultāts</strong>
-                        <span class="challenge-completion-hint">Atzīmē, kad pabeidzi un cik sasniedzi.</span>
-                    </div>
-
-                    <label id="completion-value-label">
-                        Izpildes datums
-                        <input type="date" name="completion_date" value="{{ old('completion_date', optional($editingChallenge->completion_date ?? null)->format('Y-m-d')) }}" class="input">
-                    </label>
-
-                    <label id="completion-value-label">
-                        Faktiskais rezultāts (<span id="completion-value-unit">{{ $selectedType === 'time' ? 'minūtes' : 'lapas' }}</span>)
-                        <input type="number" name="completion_value" min="1" value="{{ old('completion_value', $editingChallenge->completion_value ?? '') }}" class="input" placeholder="Cik izlasīji vai cik minūtes lasīji">
-                    </label>
-
                     <label>
-                        Komentārs (nav obligāti)
-                        <textarea name="completion_comment" rows="2" class="input" placeholder="Piemēram: izpildīju 7 dienu mērķi">{{ old('completion_comment', $editingChallenge->completion_comment ?? '') }}</textarea>
+                        Progresa komentārs (nav obligāti)
+                        <textarea name="completion_comment" rows="2" class="input" placeholder="Piemēram: izlasīju 35 lapas">{{ old('completion_comment', $editingChallenge->completion_comment ?? '') }}</textarea>
                     </label>
 
                     <button type="submit" class="login-button">{{ $isEditing ? 'Atjaunot izaicinājumu' : 'Saglabāt izaicinājumu' }}</button>

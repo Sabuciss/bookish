@@ -21,8 +21,6 @@ class StoreReadingChallengeRequest extends FormRequest
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'notes' => ['nullable', 'string', 'max:500'],
             'is_completed' => ['nullable', 'boolean'],
-            'completion_date' => ['nullable', 'required_if:is_completed,1', 'date', 'after_or_equal:start_date', 'before_or_equal:today'],
-            'completion_value' => ['nullable', 'required_if:is_completed,1', 'integer', 'min:1'],
             'completion_comment' => ['nullable', 'string', 'max:500'],
         ];
     }
