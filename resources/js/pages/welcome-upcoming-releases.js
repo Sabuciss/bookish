@@ -5,6 +5,7 @@ const bookRecommendations = document.getElementById('book-recommendations');
 const genreSections = document.querySelectorAll('[data-genre]');
 const genreFilterButtons = document.querySelectorAll('[data-genre-filter]');
 const GENRE_ROTATION_INTERVAL_MS = 5 * 60 * 1000;
+const BOOK_RESULTS_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const genreBookCollections = new Map();
 let recommendationBooks = [];
 
@@ -77,6 +78,20 @@ const renderBookCards = (container, items, emptyText, allowReminders = false) =>
 };
 
 const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12) => {
+    const cacheKey = `book-results-cache-v1-${query}-${orderBy}-${maxResults}`;
+    const cached = localStorage.getItem(cacheKey);
+
+    if (cached) {
+        try {
+            const parsed = JSON.parse(cached);
+            if (parsed.timestamp && Date.now() - parsed.timestamp < BOOK_RESULTS_CACHE_TTL_MS && Array.isArray(parsed.items)) {
+                return parsed.items;
+            }
+        } catch {
+            localStorage.removeItem(cacheKey);
+        }
+    }
+
     const url = `/api/google-books/top?q=${encodeURIComponent(query)}&maxResults=${maxResults}&orderBy=${orderBy}&remote=1`;
     const response = await fetch(url);
 
@@ -85,7 +100,14 @@ const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12) =
     }
 
     const data = await response.json();
-    return normalizeBookItems(data.items || []);
+    const items = normalizeBookItems(data.items || []);
+
+    localStorage.setItem(cacheKey, JSON.stringify({
+        timestamp: Date.now(),
+        items,
+    }));
+
+    return items;
 };
 
 const selectGenreBooks = (books, count = 6) => [...books]
