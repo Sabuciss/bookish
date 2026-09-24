@@ -233,18 +233,13 @@
         </a>
       </li>
       <li>
-        <a href="{{ route('reading-timer.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-timer.*'), 'text-body' => !request()->routeIs('reading-timer.*')]) @if (request()->routeIs('reading-timer.*')) aria-current="page" @endif>
-          <span class="ms-1">Laika sadaļa</span>
+        <a href="{{ route('reading-challenges.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-challenges.index'), 'text-body' => !request()->routeIs('reading-challenges.index')]) @if (request()->routeIs('reading-challenges.index')) aria-current="page" @endif>
+          Izaicinājums
         </a>
       </li>
       <li>
-        <a href="{{ route('reading-challenges.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-challenges.index'), 'text-body' => !request()->routeIs('reading-challenges.index')]) @if (request()->routeIs('reading-challenges.index')) aria-current="page" @endif>
-          <span class="ms-1">Izaicinājums</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ route('reading-challenges.results') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-challenges.results'), 'text-body' => !request()->routeIs('reading-challenges.results')]) @if (request()->routeIs('reading-challenges.results')) aria-current="page" @endif>
-          <span class="ms-1">Laika rezultāti</span>
+        <a href="{{ route('reading-timer.index') }}" @class(['flex items-center px-2 py-1.5 rounded-base hover:bg-neutral-tertiary hover:text-fg-brand', 'bg-neutral-tertiary text-fg-brand' => request()->routeIs('reading-timer.*'), 'text-body' => !request()->routeIs('reading-timer.*')]) @if (request()->routeIs('reading-timer.*')) aria-current="page" @endif>
+          Laika sadaļa
         </a>
       </li>
       @endauth

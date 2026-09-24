@@ -3,6 +3,11 @@
         <h1>Laika sadaļa</h1>
         <p>Uzliec lasīšanas taimeri, lasa noteikto laiku un pēc tam saglabā rezultātu ar izlasītajām lapām un piezīmēm.</p>
 
+        <nav class="book-listings-tabs" aria-label="Laika sadaļas">
+            <a href="{{ route('reading-timer.index') }}" @class(['is-active' => request()->routeIs('reading-timer.*')])>Laika sadaļa</a>
+            <a href="{{ route('reading-challenges.results') }}" @class(['is-active' => request()->routeIs('reading-challenges.results')])>Laika rezultāti</a>
+        </nav>
+
         @if (session('status'))
             <div class="reading-progress-alert reading-progress-alert-success">
                 {{ session('status') }}

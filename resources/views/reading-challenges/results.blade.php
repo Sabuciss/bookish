@@ -3,6 +3,11 @@
         <h1>Izaicinajumu rezultati</h1>
         <p>Atseviska vieta, kur salidzinat rezultatus pec laika un minutes. Vari redzet tikai savus vai visparigi visu lietotaju rezultatus.</p>
 
+        <nav class="book-listings-tabs" aria-label="Laika sadaļas">
+            <a href="{{ route('reading-timer.index') }}" @class(['is-active' => request()->routeIs('reading-timer.*')])>Laika sadaļa</a>
+            <a href="{{ route('reading-challenges.results') }}" @class(['is-active' => request()->routeIs('reading-challenges.results')])>Laika rezultāti</a>
+        </nav>
+
         <section class="reading-challenges-list uiverse-container">
             <h2 class="uiverse-heading">Filtri</h2>
 
