@@ -25,7 +25,6 @@ return new class extends Migration
             $table->decimal('price', 8, 2)->nullable();
             $table->string('availability', 20)->default('available');
             $table->text('description')->nullable();
-            $table->string('contact_email');
             $table->timestamps();
         });
     }

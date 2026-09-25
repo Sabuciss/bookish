@@ -12,8 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('author');
+            $table->unsignedBigInteger('author_id')->nullable()->index();
             $table->timestamps();
             $table->unique(['user_id', 'author']);
+
+            $table->foreign('author_id')->references('id')->on('authors')->nullOnDelete();
         });
     }
 

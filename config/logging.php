@@ -54,7 +54,7 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', (string) env('LOG_STACK', 'single')),
+            'channels' => explode(',', (string) env('LOG_STACK', app()->environment('production') ? 'stderr' : 'single')),
             'ignore_exceptions' => false,
         ],
 

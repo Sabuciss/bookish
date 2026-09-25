@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('reading_progresses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('challenge_id')->nullable()->constrained('reading_challenges')->nullOnDelete();
             $table->string('book_title');
             $table->string('google_volume_id', 120)->nullable();
             $table->string('book_cover_url', 2048)->nullable();

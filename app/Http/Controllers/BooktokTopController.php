@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Author;
 use App\Models\BooktokTopBook;
 use App\Models\BooktokFavoriteAuthor;
 use App\Models\ReadingProgress;
@@ -53,7 +54,16 @@ class BooktokTopController extends Controller
         }
 
         if ($selectedFavoriteAuthors && $request->user()) {
-            $booksQuery->whereIn('author', $favoriteAuthors);
+            $favoriteAuthorIds = $request->user()->booktokFavoriteAuthors()->pluck('author_id')->filter()->all();
+            $favoriteAuthorNames = $request->user()->booktokFavoriteAuthors()->pluck('author')->filter()->all();
+
+            if ($favoriteAuthorIds !== []) {
+                $booksQuery->whereIn('author_id', $favoriteAuthorIds);
+            } elseif ($favoriteAuthorNames !== []) {
+                $booksQuery->whereIn('author', $favoriteAuthorNames);
+            } else {
+                $booksQuery->whereRaw('0 = 1');
+            }
         }
 
         $books = $booksQuery->get();

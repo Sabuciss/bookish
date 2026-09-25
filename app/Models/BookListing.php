@@ -27,7 +27,6 @@ class BookListing extends Model
         'language',
         'price',
         'description',
-        'contact_email',
     ];
 
     protected $casts = [
