@@ -82,6 +82,8 @@ class ReadingChallengeController extends Controller
 
         if ($scope === 'mine') {
             $query->where('user_id', $userId);
+        } else {
+            $query->where('is_public', true);
         }
 
         if ($period !== 'all') {

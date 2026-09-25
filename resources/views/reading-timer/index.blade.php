@@ -57,7 +57,15 @@
                     <textarea name="notes" rows="3" class="input" placeholder="Ko velies pierakstīt?">{{ old('notes') }}</textarea>
                 </label>
 
-                <button type="submit" class="login-button">Saglabāt sesiju</button>
+                <label>
+                    <label class="session-visibility-control">
+                    <input type="hidden" name="is_public" value="0">
+                    <input type="checkbox" name="is_public" value="1" aria-describedby="session-visibility-help" @checked(old('is_public', false))>
+                        <span>Publiskot sesiju rezultātu sadaļā</span>
+                        <span id="session-visibility-help" class="session-visibility-tooltip" role="tooltip">Publiska sesija būs redzama sadaļā “Visi”. Ja neatzīmēsi, sesiju redzēsi tikai tu.</span>
+                </label>
+
+                    <button type="submit" class="login-button reading-timer-save">Saglabāt sesiju</button>
             </form>
 
             <h3>Pēdējās sesijas</h3>
@@ -70,6 +78,7 @@
                             <p><strong>Plānots:</strong> {{ $session->planned_minutes }} min</p>
                             <p><strong>Faktiski:</strong> {{ $session->elapsed_seconds ? floor($session->elapsed_seconds / 60) : $session->planned_minutes }} min</p>
                             <p><strong>Izlasīts:</strong> {{ $session->pages_read }} lpp</p>
+                            <p><strong>Redzamība:</strong> {{ $session->is_public ? 'Publiska' : 'Privāta' }}</p>
                             @if ($session->notes)
                                 <p class="reading-challenge-notes">{{ $session->notes }}</p>
                             @endif

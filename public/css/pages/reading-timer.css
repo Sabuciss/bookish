@@ -17,10 +17,16 @@
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	gap: 10px;
+	align-items: stretch;
 	margin: 10px 0 8px;
 }
 
-.reading-timer-section .form .login-button,
+.reading-timer-actions > button {
+	align-self: stretch;
+	margin: 0 !important;
+}
+
+.reading-timer-actions .login-button,
 .reading-timer-actions .reading-progress-submit {
 	display: inline-flex;
 	align-items: center;
@@ -35,24 +41,66 @@
 	line-height: 1.2;
 }
 
-.reading-timer-section .form .login-button,
+.reading-timer-actions .login-button,
 .reading-timer-actions .reading-progress-submit {
-	border: 1px solid var(--bookish-plum);
-	background: var(--bookish-rose) !important;
+	border: 1px solid #b94b72 !important;
+	background: #d76f96 !important;
 	box-shadow: none;
-	color: var(--bookish-paper);
+	color: #ffffff !important;
 }
 
-.reading-timer-section .form .login-button:hover,
+.reading-timer-actions .login-button:hover,
 .reading-timer-actions .reading-progress-submit:hover {
-	background: var(--bookish-plum-deep) !important;
+	background: #b94b72 !important;
 	box-shadow: none;
 	transform: none;
 }
 
-.reading-timer-section .form .login-button:active {
+
+.reading-timer-actions .login-button:active,
+.reading-timer-actions .reading-progress-submit:active,
+.reading-timer-save:active {
 	box-shadow: none;
 	transform: none;
+}
+
+.reading-timer-save {
+	width: 100%;
+	min-height: 48px;
+	margin-top: 4px;
+}
+
+.session-visibility-control {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	width: fit-content;
+	cursor: help;
+}
+
+.session-visibility-tooltip {
+	position: absolute;
+	bottom: calc(100% + 8px);
+	left: 0;
+	z-index: 10;
+	width: min(280px, calc(100vw - 48px));
+	padding: 8px 10px;
+	border-radius: 6px;
+	background: var(--bookish-plum-deep);
+	color: #ffffff;
+	font-size: 0.8rem;
+	line-height: 1.35;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(4px);
+	transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.session-visibility-control:hover .session-visibility-tooltip,
+.session-visibility-control:focus-within .session-visibility-tooltip {
+	opacity: 1;
+	transform: translateY(0);
 }
 
 html.dark .reading-timer-display {

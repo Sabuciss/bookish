@@ -17,6 +17,7 @@ class ReadingChallengeSession extends Model
         'elapsed_seconds',
         'pages_read',
         'notes',
+        'is_public',
         'started_at',
         'ended_at',
     ];
@@ -24,6 +25,7 @@ class ReadingChallengeSession extends Model
     protected $casts = [
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
+        'is_public' => 'boolean',
     ];
 
     public function challenge(): BelongsTo

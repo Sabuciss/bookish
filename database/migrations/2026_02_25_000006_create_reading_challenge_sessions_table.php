@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('elapsed_seconds')->nullable();
             $table->unsignedInteger('pages_read');
             $table->string('notes', 500)->nullable();
+            $table->boolean('is_public')->default(false);
             $table->boolean('was_completed')->default(false);
             $table->string('completion_comment', 500)->nullable();
             $table->timestamp('started_at')->nullable();

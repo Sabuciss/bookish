@@ -68,6 +68,7 @@
                             <p><strong>Planots:</strong> {{ $session->planned_minutes }} min</p>
                             <p><strong>Faktiski:</strong> {{ $session->elapsed_seconds ? floor($session->elapsed_seconds / 60) : $session->planned_minutes }} min</p>
                             <p><strong>Izlasits:</strong> {{ $session->pages_read }} lpp</p>
+                            <p><strong>Redzamība:</strong> {{ $session->is_public ? 'Publiska' : 'Privāta' }}</p>
                             @if ($session->notes)
                                 <p class="reading-challenge-notes">{{ $session->notes }}</p>
                             @endif

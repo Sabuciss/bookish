@@ -24,6 +24,7 @@ class StoreReadingChallengeSessionRequest extends FormRequest
             'elapsed_seconds' => ['nullable', 'integer', 'min:0'],
             'pages_read' => ['required', 'integer', 'min:0'],
             'notes' => ['nullable', 'string', 'max:500'],
+            'is_public' => ['required', 'boolean'],
             'started_at' => ['nullable', 'date'],
             'ended_at' => ['nullable', 'date', 'after_or_equal:started_at'],
         ];
