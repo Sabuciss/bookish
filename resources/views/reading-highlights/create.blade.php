@@ -39,8 +39,8 @@
                 </label>
 
                 <input type="hidden" name="is_public" value="0">
-                <label>
-                    <input type="checkbox" name="is_public" value="1" @checked(old('is_public', true))>
+                <label for="highlight-is-public" class="highlight-visibility-control">
+                    <input id="highlight-is-public" type="checkbox" name="is_public" value="1" @checked(old('is_public', true))>
                     Atļaut citiem lietotājiem redzēt šo highlight
                 </label>
 

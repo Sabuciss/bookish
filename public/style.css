@@ -1048,6 +1048,23 @@ textarea:focus {
 	box-shadow: 0 0 0 3px rgba(185, 143, 136, 0.18) !important;
 }
 
+.highlight-visibility-control {
+	display: flex !important;
+	align-items: center;
+	gap: 10px;
+	min-height: 44px;
+	cursor: pointer;
+}
+
+.highlight-visibility-control input[type='checkbox'] {
+	width: 20px;
+	height: 20px;
+	min-height: 20px;
+	margin: 0;
+	flex: 0 0 20px;
+	accent-color: var(--bookish-plum);
+}
+
 input::placeholder,
 textarea::placeholder {
 	color: var(--bookish-muted) !important;
