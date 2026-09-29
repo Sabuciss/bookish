@@ -41,6 +41,11 @@
                 <input type="hidden" name="is_public" value="0">
                 <label for="highlight-is-public" class="highlight-visibility-control">
                     <input id="highlight-is-public" type="checkbox" name="is_public" value="1" @checked(old('is_public', true))>
+                    <span class="highlight-visibility-checkbox" aria-hidden="true"></span>
+                    <span class="highlight-visibility-status" aria-live="polite">
+                        <span class="highlight-visibility-public">Publisks</span>
+                        <span class="highlight-visibility-private">Privāts</span>
+                    </span>
                     Atļaut citiem lietotājiem redzēt šo highlight
                 </label>
 

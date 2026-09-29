@@ -57,12 +57,12 @@
                     <textarea name="notes" rows="3" class="input" placeholder="Ko velies pierakstīt?">{{ old('notes') }}</textarea>
                 </label>
 
-                <label>
-                    <label class="session-visibility-control">
-                    <input type="hidden" name="is_public" value="0">
-                    <input type="checkbox" name="is_public" value="1" aria-describedby="session-visibility-help" @checked(old('is_public', false))>
-                        <span>Publiskot sesiju rezultātu sadaļā</span>
-                        <span id="session-visibility-help" class="session-visibility-tooltip" role="tooltip">Publiska sesija būs redzama sadaļā “Visi”. Ja neatzīmēsi, sesiju redzēsi tikai tu.</span>
+                <input type="hidden" name="is_public" value="0">
+                <label for="session-is-public" class="session-visibility-control">
+                    <input id="session-is-public" type="checkbox" name="is_public" value="1" aria-describedby="session-visibility-help" @checked(old('is_public', false))>
+                    <span class="session-visibility-checkbox" aria-hidden="true"></span>
+                    <span>Publiskot sesiju rezultātu sadaļā</span>
+                    <span id="session-visibility-help" class="session-visibility-tooltip" role="tooltip">Publiska sesija būs redzama sadaļā “Visi”. Ja neatzīmēsi, sesiju redzēsi tikai tu.</span>
                 </label>
 
                     <button type="submit" class="login-button reading-timer-save">Saglabāt sesiju</button>
