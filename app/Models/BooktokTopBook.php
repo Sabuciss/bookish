@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -31,6 +32,15 @@ class BooktokTopBook extends Model
         'google_info_link',
         'google_data_fetched_at',
     ];
+
+    protected function googleThumbnail(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value): ?string => $value && str_starts_with($value, 'http://')
+                ? 'https://' . substr($value, 7)
+                : $value,
+        );
+    }
 
     public function author(): BelongsTo
     {

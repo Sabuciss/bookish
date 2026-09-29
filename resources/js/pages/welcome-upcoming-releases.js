@@ -40,6 +40,8 @@ const escapeBookHtml = (text) => String(text)
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 
+const normalizeCoverUrl = (url) => String(url || '').replace(/^http:\/\//i, 'https://');
+
 const normalizeBookItems = (items) => (items || []).map((entry) => {
     const info = entry.volumeInfo || {};
 
@@ -47,7 +49,7 @@ const normalizeBookItems = (items) => (items || []).map((entry) => {
         volumeId: entry.id || '',
         title: info.title || 'Bez nosaukuma',
         author: Array.isArray(info.authors) ? info.authors.join(', ') : 'Autors nav norādīts',
-        thumbnail: info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail || '',
+        thumbnail: normalizeCoverUrl(info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail || ''),
         publishedDate: info.publishedDate || '',
         infoLink: info.infoLink || info.previewLink || '',
     };

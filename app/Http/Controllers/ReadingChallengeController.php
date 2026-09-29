@@ -162,7 +162,11 @@ class ReadingChallengeController extends Controller
             'user_id' => $request->user()->id,
         ]);
 
-        $request->user()->notify(new ReadingTimerSessionSaved($session));
+        try {
+            $request->user()->notify(new ReadingTimerSessionSaved($session));
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
 
         return redirect()->route('reading-timer.index')
             ->with('status', 'Taimera sesija veiksmīgi saglabāta.');

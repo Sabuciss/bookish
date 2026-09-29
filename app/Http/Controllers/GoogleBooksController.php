@@ -133,7 +133,9 @@ class GoogleBooksController extends Controller
             'categories' => isset($info['categories']) && is_array($info['categories']) ? implode(', ', $info['categories']) : 'Nav norādītas',
             'averageRating' => $info['averageRating'] ?? null,
             'ratingsCount' => $info['ratingsCount'] ?? null,
-            'thumbnail' => $info['imageLinks']['thumbnail'] ?? ($info['imageLinks']['smallThumbnail'] ?? null),
+            'thumbnail' => $this->normalizeThumbnailUrl(
+                $info['imageLinks']['thumbnail'] ?? ($info['imageLinks']['smallThumbnail'] ?? null)
+            ),
             'previewLink' => $info['previewLink'] ?? null,
             'infoLink' => $info['infoLink'] ?? null,
         ];
@@ -162,5 +164,12 @@ class GoogleBooksController extends Controller
                 ]))
                 : url()->previous(),
         ]);
+    }
+
+    private function normalizeThumbnailUrl(?string $url): ?string
+    {
+        return $url && str_starts_with($url, 'http://')
+            ? 'https://' . substr($url, 7)
+            : $url;
     }
 }

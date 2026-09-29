@@ -75,7 +75,7 @@ class BookMetadataService
     public function storedBookData(BooktokTopBook $book): array
     {
         return [
-            'thumbnail' => $book->google_thumbnail,
+            'thumbnail' => $this->normalizeThumbnailUrl($book->google_thumbnail),
             'volume_id' => $book->google_volume_id,
             'page_count' => $book->google_page_count,
             'published_date' => $book->google_published_date,
