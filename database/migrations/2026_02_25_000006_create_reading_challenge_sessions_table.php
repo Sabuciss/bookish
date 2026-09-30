@@ -14,13 +14,13 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->unsignedInteger('planned_minutes');
             $table->unsignedInteger('elapsed_seconds')->nullable();
-            $table->unsignedInteger('pages_read');
-            $table->string('notes', 500)->nullable();
-            $table->boolean('is_public')->default(false);
-            $table->boolean('was_completed')->default(false);
-            $table->string('completion_comment', 500)->nullable();
             $table->timestamp('started_at')->nullable();
             $table->timestamp('ended_at')->nullable();
+            $table->unsignedInteger('pages_read');
+            $table->string('notes', 500)->nullable();
+            $table->boolean('was_completed')->default(false);
+            $table->string('completion_comment', 500)->nullable();
+            $table->boolean('is_public')->default(false);
             $table->timestamps();
         });
     }
