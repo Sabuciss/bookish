@@ -172,4 +172,3 @@ class ReadingChallengeController extends Controller
             ->with('status', 'Taimera sesija veiksmīgi saglabāta.');
     }
 }
-}
