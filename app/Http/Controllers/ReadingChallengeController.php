@@ -157,10 +157,18 @@ class ReadingChallengeController extends Controller
 
     public function storeSession(StoreReadingChallengeSessionRequest $request): RedirectResponse
     {
-        $session = ReadingChallengeSession::create([
-            ...$request->validated(),
-            'user_id' => $request->user()->id,
-        ]);
+        try {
+            $session = ReadingChallengeSession::create([
+                ...$request->validated(),
+                'user_id' => $request->user()->id,
+            ]);
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            // Temporary diagnostic: surface the real DB error on the page instead of a generic 500.
+            return redirect()->route('reading-timer.index')
+                ->with('status', 'KĻŪDA saglabājot sesiju: ' . $exception->getMessage());
+        }
 
         try {
             $request->user()->notify(new ReadingTimerSessionSaved($session));
