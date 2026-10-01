@@ -47,7 +47,7 @@ class BookMetadataService
                 }
 
                 $volumeInfo = $item['volumeInfo'] ?? [];
-                $thumbnail = $this->normalizeThumbnailUrl(
+                $thumbnail = self::normalizeThumbnailUrl(
                     $volumeInfo['imageLinks']['thumbnail']
                         ?? $volumeInfo['imageLinks']['smallThumbnail']
                         ?? null
@@ -75,7 +75,7 @@ class BookMetadataService
     public function storedBookData(BooktokTopBook $book): array
     {
         return [
-            'thumbnail' => $this->normalizeThumbnailUrl($book->google_thumbnail),
+            'thumbnail' => self::normalizeThumbnailUrl($book->google_thumbnail),
             'volume_id' => $book->google_volume_id,
             'page_count' => $book->google_page_count,
             'published_date' => $book->google_published_date,
@@ -120,7 +120,7 @@ class BookMetadataService
                             'id' => $item['id'] ?? null,
                             'title' => $volumeInfo['title'] ?? null,
                             'published_date' => $volumeInfo['publishedDate'] ?? null,
-                            'thumbnail' => $this->normalizeThumbnailUrl(
+                            'thumbnail' => self::normalizeThumbnailUrl(
                                 $volumeInfo['imageLinks']['thumbnail']
                                     ?? $volumeInfo['imageLinks']['smallThumbnail']
                                     ?? null
@@ -167,7 +167,7 @@ class BookMetadataService
         }
     }
 
-    private function normalizeThumbnailUrl(?string $url): ?string
+    public static function normalizeThumbnailUrl(?string $url): ?string
     {
         if (!$url) {
             return null;

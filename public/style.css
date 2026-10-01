@@ -1049,6 +1049,7 @@ textarea:focus {
 }
 
 .highlight-visibility-control {
+	position: relative;
 	display: flex !important;
 	align-items: center;
 	gap: 10px;
@@ -1104,6 +1105,30 @@ textarea:focus {
 .highlight-visibility-control input[type='checkbox']:checked + .highlight-visibility-status .highlight-visibility-private,
 .highlight-visibility-control input[type='checkbox']:not(:checked) + .highlight-visibility-status .highlight-visibility-public {
 	display: none;
+}
+
+.highlight-visibility-tooltip {
+	position: absolute;
+	bottom: calc(100% + 8px);
+	left: 0;
+	z-index: 10;
+	width: min(280px, calc(100vw - 48px));
+	padding: 8px 10px;
+	border-radius: 6px;
+	background: #2a1620;
+	color: #ffffff;
+	font-size: 0.8rem;
+	line-height: 1.35;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(4px);
+	transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.highlight-visibility-control:hover .highlight-visibility-tooltip,
+.highlight-visibility-control:focus-within .highlight-visibility-tooltip {
+	opacity: 1;
+	transform: translateY(0);
 }
 
 input::placeholder,

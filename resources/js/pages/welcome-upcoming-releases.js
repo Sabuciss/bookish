@@ -315,14 +315,9 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
         }));
     };
 
-    const fetchUpcomingBooks = async (searchTerm) => {
-        const queries = [
-            searchTerm,
-            `intitle:${searchTerm}`,
-            `inauthor:${searchTerm}`,
-        ];
+    const fetchBooksForQueries = async (queries, orderBy) => {
         const responses = await Promise.all(queries.map((query) => fetch(
-            `/api/google-books/top?q=${encodeURIComponent(query)}&maxResults=40&orderBy=newest&remote=1`,
+            `/api/google-books/top?q=${encodeURIComponent(query)}&maxResults=40&orderBy=${orderBy}&remote=1`,
         )));
 
         if (responses.some((response) => !response.ok)) {
@@ -337,6 +332,23 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
                 uniqueItems.set(item.id, item);
             }
         });
+
+        return uniqueItems;
+    };
+
+    const fetchUpcomingBooks = async (searchTerm) => {
+        const queries = [
+            searchTerm,
+            `intitle:${searchTerm}`,
+            `inauthor:${searchTerm}`,
+        ];
+
+        let uniqueItems = await fetchBooksForQueries(queries, 'newest');
+
+        // "newest" narrows the match pool first, so a typo can wipe it out; "relevance" tolerates typos better.
+        if (!uniqueItems.size) {
+            uniqueItems = await fetchBooksForQueries([searchTerm], 'relevance');
+        }
 
         return normalizeUpcomingItems([...uniqueItems.values()]);
     };

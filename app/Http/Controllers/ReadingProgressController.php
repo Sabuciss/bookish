@@ -54,13 +54,6 @@ class ReadingProgressController extends Controller
 
     private function buildProgressData(int $userId): array
     {
-
-        $allEntries = ReadingProgress::query()
-            ->where('user_id', $userId)
-            ->latest('reading_date')
-            ->latest('id')
-            ->get();
-
         $progressEntries = ReadingProgress::query()
             ->where('user_id', $userId)
             ->where(function ($query) {
@@ -71,37 +64,7 @@ class ReadingProgressController extends Controller
             ->latest('id')
             ->get();
 
-        $bookSnapshots = [];
-        foreach ($allEntries as $entry) {
-            $key = $entry->google_volume_id ?: mb_strtolower(trim((string) $entry->book_title));
-
-            if (!isset($bookSnapshots[$key])) {
-                $pagesRead = (int) $entry->pages_read;
-                $totalPages = $entry->total_pages ? (int) $entry->total_pages : null;
-
-                if ($totalPages !== null && $pagesRead >= $totalPages) {
-                    $effectiveStatus = 'read';
-                } elseif ($pagesRead <= 0) {
-                    $effectiveStatus = 'want_to_read';
-                } else {
-                    $effectiveStatus = 'in_progress';
-                }
-
-                $bookSnapshots[$key] = [
-                    'entry_id' => $entry->id,
-                    'book_title' => $entry->book_title,
-                    'google_volume_id' => $entry->google_volume_id,
-                    'book_cover_url' => $entry->book_cover_url,
-                    'pages_read' => $pagesRead,
-                    'total_pages' => $totalPages,
-                    'reading_status' => $effectiveStatus,
-                    'emotion' => $entry->emotion,
-                    'reading_date' => $entry->reading_date,
-                    'start_time' => $entry->start_time,
-                    'end_time' => $entry->end_time,
-                ];
-            }
-        }
+        $bookSnapshots = ReadingProgress::latestSnapshotsForUser($userId);
 
         $bookSnapshotsByStatus = [
             'want_to_read' => [],
@@ -121,12 +84,12 @@ class ReadingProgressController extends Controller
 
         return [
             'progressEntries' => $progressEntries,
-            'bookSnapshots' => array_values($bookSnapshots),
+            'bookSnapshots' => $bookSnapshots->values()->all(),
             'bookSnapshotsByStatus' => $bookSnapshotsByStatus,
-            'totalPagesRead' => collect($bookSnapshots)->sum('pages_read'),
+            'totalPagesRead' => $bookSnapshots->sum('pages_read'),
             'totalBooksRead' => count($bookSnapshotsByStatus['read']),
-            'latestPagesByBook' => collect($bookSnapshots)
-                ->mapWithKeys(fn (array $snapshot, string $key) => [$key => (int) $snapshot['pages_read']])
+            'latestPagesByBook' => $bookSnapshots
+                ->map(fn (array $snapshot): int => (int) $snapshot['pages_read'])
                 ->all(),
         ];
     }
@@ -145,12 +108,12 @@ class ReadingProgressController extends Controller
 
         if (!empty($data['total_pages']) && (int) $data['pages_read'] >= (int) $data['total_pages']) {
             $data['pages_read'] = (int) $data['total_pages'];
-            $data['reading_status'] = 'read';
-        } elseif ((int) $data['pages_read'] <= 0) {
-            $data['reading_status'] = 'want_to_read';
-        } else {
-            $data['reading_status'] = 'in_progress';
         }
+
+        $data['reading_status'] = ReadingProgress::deriveReadingStatus(
+            (int) $data['pages_read'],
+            !empty($data['total_pages']) ? (int) $data['total_pages'] : null,
+        );
 
         $existingEntry = null;
 

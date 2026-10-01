@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ReadingProgress;
 use App\Models\BooktokTopBook;
+use App\Services\BookMetadataService;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -133,7 +134,7 @@ class GoogleBooksController extends Controller
             'categories' => isset($info['categories']) && is_array($info['categories']) ? implode(', ', $info['categories']) : 'Nav norādītas',
             'averageRating' => $info['averageRating'] ?? null,
             'ratingsCount' => $info['ratingsCount'] ?? null,
-            'thumbnail' => $this->normalizeThumbnailUrl(
+            'thumbnail' => BookMetadataService::normalizeThumbnailUrl(
                 $info['imageLinks']['thumbnail'] ?? ($info['imageLinks']['smallThumbnail'] ?? null)
             ),
             'previewLink' => $info['previewLink'] ?? null,
@@ -166,10 +167,4 @@ class GoogleBooksController extends Controller
         ]);
     }
 
-    private function normalizeThumbnailUrl(?string $url): ?string
-    {
-        return $url && str_starts_with($url, 'http://')
-            ? 'https://' . substr($url, 7)
-            : $url;
-    }
 }

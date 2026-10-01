@@ -1,6 +1,0 @@
-# šis fails ir vajadzīgs lai railways gadījuma pēc varetu pareizi deployot projektu 
-[phases.build]
-cmds = ["npm ci", "npm run build"]
-
-[start]
-cmd = "export APP_ENV=\"${APP_ENV:-production}\" APP_DEBUG=\"${APP_DEBUG:-false}\" DB_CONNECTION=\"${DB_CONNECTION:-sqlite}\" DB_DATABASE=\"${DB_DATABASE:-$(pwd)/database/database.sqlite}\" SESSION_DRIVER=\"${SESSION_DRIVER:-file}\" CACHE_STORE=\"${CACHE_STORE:-database}\" QUEUE_CONNECTION=\"${QUEUE_CONNECTION:-database}\"; test -n \"$APP_KEY\" || { echo 'APP_KEY must be set in the deployment environment'; exit 1; }; mkdir -p database; touch \"$DB_DATABASE\"; php artisan optimize:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"

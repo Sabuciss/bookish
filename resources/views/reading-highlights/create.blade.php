@@ -40,13 +40,14 @@
 
                 <input type="hidden" name="is_public" value="0">
                 <label for="highlight-is-public" class="highlight-visibility-control">
-                    <input id="highlight-is-public" type="checkbox" name="is_public" value="1" @checked(old('is_public', true))>
+                    <input id="highlight-is-public" type="checkbox" name="is_public" value="1" aria-describedby="highlight-visibility-help" @checked(old('is_public', true))>
                     <span class="highlight-visibility-checkbox" aria-hidden="true"></span>
                     <span class="highlight-visibility-status" aria-live="polite">
                         <span class="highlight-visibility-public">Publisks</span>
                         <span class="highlight-visibility-private">Privāts</span>
                     </span>
-                    Atļaut citiem lietotājiem redzēt šo highlight
+                    Publiskot highlight sadaļā “Visi”
+                    <span id="highlight-visibility-help" class="highlight-visibility-tooltip" role="tooltip">Publisks highlight būs redzams sadaļā “Visi”. Ja neatzīmēsi, to redzēsi tikai tu.</span>
                 </label>
 
                 <button type="submit" class="reading-progress-submit login-button">Saglabāt highlight</button>
