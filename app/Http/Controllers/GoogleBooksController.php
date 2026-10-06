@@ -23,6 +23,8 @@ class GoogleBooksController extends Controller
             'startIndex' => ['nullable', 'integer', 'min:0', 'max:960'],
             'orderBy' => ['nullable', 'in:relevance,newest'],
             'remote' => ['nullable', 'boolean'],
+            'firstPublishedFrom' => ['nullable', 'integer', 'min:1000', 'max:2100'],
+            'firstPublishedTo' => ['nullable', 'integer', 'min:1000', 'max:2100'],
         ]);
 
         $query = $validated['q'];
@@ -30,7 +32,9 @@ class GoogleBooksController extends Controller
         $startIndex = (int) ($validated['startIndex'] ?? 0);
         $orderBy = $validated['orderBy'] ?? 'relevance';
         $remoteOnly = (bool) ($validated['remote'] ?? false);
-        $cacheKey = 'google_books_top_v4_' . md5($query . '_' . $maxResults . '_' . $startIndex . '_' . $orderBy . '_' . (int) $remoteOnly);
+        $firstPublishedFrom = isset($validated['firstPublishedFrom']) ? (int) $validated['firstPublishedFrom'] : null;
+        $firstPublishedTo = isset($validated['firstPublishedTo']) ? (int) $validated['firstPublishedTo'] : null;
+        $cacheKey = 'google_books_top_v6_' . md5($query . '_' . $maxResults . '_' . $startIndex . '_' . $orderBy . '_' . (int) $remoteOnly . '_' . $firstPublishedFrom . '_' . $firstPublishedTo);
 
         $cached = Cache::get($cacheKey);
         if (is_array($cached)) {
@@ -76,9 +80,96 @@ class GoogleBooksController extends Controller
             $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
         }
 
+        if ($remoteOnly && str_starts_with(mb_strtolower(trim($query)), 'subject:')) {
+            $openLibraryItems = $this->openLibraryGenreItems(
+                $query,
+                $maxResults,
+                $startIndex,
+                $firstPublishedFrom,
+                $firstPublishedTo
+            );
+            $googleItems = collect($items);
+            if ($firstPublishedFrom !== null && $firstPublishedTo !== null) {
+                $googleItems = $googleItems->filter(function (array $item) use ($firstPublishedFrom, $firstPublishedTo): bool {
+                    $publishedYear = substr((string) ($item['volumeInfo']['publishedDate'] ?? ''), 0, 4);
+
+                    return ctype_digit($publishedYear)
+                        && (int) $publishedYear >= $firstPublishedFrom
+                        && (int) $publishedYear <= $firstPublishedTo;
+                });
+            }
+
+            $items = $googleItems
+                ->concat($openLibraryItems)
+                ->filter(fn (array $item): bool => filled($item['volumeInfo']['title'] ?? null))
+                ->unique(fn (array $item): string => mb_strtolower(trim($item['volumeInfo']['title'])))
+                ->take($maxResults)
+                ->values()
+                ->all();
+
+            if ($items !== []) {
+                Cache::put($cacheKey, $items, now()->addHours(6));
+            }
+        }
+
         return response()->json([
             'items' => $items,
         ]);
+    }
+
+    private function openLibraryGenreItems(
+        string $query,
+        int $maxResults,
+        int $startIndex,
+        ?int $firstPublishedFrom,
+        ?int $firstPublishedTo
+    ): array {
+        $openLibraryQuery = $query;
+        if ($firstPublishedFrom !== null && $firstPublishedTo !== null) {
+            $openLibraryQuery .= ' AND first_publish_year:[' . $firstPublishedFrom . ' TO ' . $firstPublishedTo . ']';
+        }
+
+        try {
+            $response = Http::connectTimeout(3)->timeout(10)->get(
+                'https://openlibrary.org/search.json',
+                [
+                    'q' => $openLibraryQuery,
+                    'fields' => 'key,title,author_name,first_publish_year,cover_i',
+                    'limit' => $maxResults,
+                    'page' => intdiv($startIndex, max(1, $maxResults)) + 1,
+                ]
+            );
+
+            if (!$response->ok()) {
+                Log::warning('OpenLibrary genre search failed', ['status' => $response->status()]);
+
+                return [];
+            }
+
+            return collect($response->json('docs', []))
+                ->map(function (array $book): array {
+                    $coverId = $book['cover_i'] ?? null;
+                    $key = $book['key'] ?? null;
+                    $volumeInfo = array_filter([
+                        'title' => $book['title'] ?? null,
+                        'authors' => $book['author_name'] ?? null,
+                        'publishedDate' => $book['first_publish_year'] ?? null,
+                        'imageLinks' => $coverId
+                            ? ['thumbnail' => 'https://covers.openlibrary.org/b/id/' . $coverId . '-M.jpg']
+                            : null,
+                        'infoLink' => $key ? 'https://openlibrary.org' . $key : null,
+                    ], fn ($value) => $value !== null && $value !== []);
+
+                    return ['volumeInfo' => $volumeInfo];
+                })
+                ->filter(fn (array $book): bool => filled($book['volumeInfo']['title'] ?? null))
+                ->values()
+                ->all();
+        } catch (\Throwable $e) {
+            Log::warning('OpenLibrary genre search threw an exception', ['message' => $e->getMessage()]);
+
+            return [];
+        }
     }
 
     private function localBooktokItems(int $maxResults, int $startIndex): array

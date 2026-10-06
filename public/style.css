@@ -103,6 +103,12 @@ nav.app-surface-opaque form button:hover {
 	gap: 0;
 }
 
+.book-year-filter {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 180px));
+	gap: 12px;
+}
+
 .bookish-field-group .weekly-genre-select,
 .bookish-field-group .weekly-year-input {
 	width: 100%;

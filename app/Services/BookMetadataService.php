@@ -99,7 +99,7 @@ class BookMetadataService
 
     public function fetchBooksByAuthor(string $author): array
     {
-        $cacheKey = 'booktok_google_author_books_v2_' . md5(mb_strtolower($author));
+        $cacheKey = 'booktok_google_author_books_v3_' . md5(mb_strtolower($author));
 
         $cached = Cache::get($cacheKey);
         if (is_array($cached)) {
@@ -122,16 +122,13 @@ class BookMetadataService
             $response = Http::connectTimeout(3)->timeout(10)
                 ->get('https://www.googleapis.com/books/v1/volumes', $params);
             if (!$response->ok()) {
-                // Don't cache transient failures (e.g. Google 503s) so the next request retries instead of staying empty for hours.
                 Log::warning('Google Books author search failed', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
-
-                return ['books' => [], 'total' => 0];
             }
 
-            $books = collect($response->json('items', []))
+            $googleBooks = collect($response->ok() ? $response->json('items', []) : [])
                 ->map(function (array $item): array {
                     $volumeInfo = $item['volumeInfo'] ?? [];
 
@@ -148,6 +145,11 @@ class BookMetadataService
                     ];
                 })
                 ->filter(fn (array $book): bool => filled($book['title']))
+                ->values()
+                ->all();
+
+            $books = collect($googleBooks)
+                ->concat($this->fetchOpenLibraryBooksByAuthor($author))
                 ->unique(fn (array $book): string => mb_strtolower($book['title']))
                 ->values()
                 ->all();
@@ -163,10 +165,60 @@ class BookMetadataService
 
             return $result;
         } catch (\Throwable $e) {
-            // Don't cache transient failures so the next request retries instead of staying empty for hours.
             Log::warning('Google Books author search threw an exception', ['message' => $e->getMessage()]);
 
-            return ['books' => [], 'total' => 0];
+            $books = $this->fetchOpenLibraryBooksByAuthor($author);
+            $result = [
+                'books' => $books,
+                'total' => count($books),
+            ];
+
+            if ($books !== []) {
+                Cache::put($cacheKey, $result, now()->addHours(12));
+            }
+
+            return $result;
+        }
+    }
+
+    private function fetchOpenLibraryBooksByAuthor(string $author): array
+    {
+        try {
+            $response = Http::connectTimeout(3)->timeout(10)->get(
+                'https://openlibrary.org/search.json',
+                [
+                    'author' => $author,
+                    'fields' => 'key,title,first_publish_year,cover_i',
+                    'limit' => 100,
+                ]
+            );
+
+            if (!$response->ok()) {
+                return [];
+            }
+
+            return collect($response->json('docs', []))
+                ->map(function (array $book): array {
+                    $coverId = $book['cover_i'] ?? null;
+                    $key = $book['key'] ?? null;
+
+                    return [
+                        'id' => null,
+                        'title' => $book['title'] ?? null,
+                        'published_date' => $book['first_publish_year'] ?? null,
+                        'thumbnail' => $coverId
+                            ? 'https://covers.openlibrary.org/b/id/' . $coverId . '-M.jpg'
+                            : null,
+                        'info_link' => $key ? 'https://openlibrary.org' . $key : null,
+                    ];
+                })
+                ->filter(fn (array $book): bool => filled($book['title']))
+                ->values()
+                ->all();
+        } catch (\Throwable $e) {
+            Log::warning('OpenLibrary author search failed', ['message' => $e->getMessage()]);
+
+            return [];
         }
     }
 

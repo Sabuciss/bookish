@@ -29,13 +29,19 @@
             <section class="welcome-card welcome-card--wide">
                 <div class="welcome-section-heading">
                     <div>
-                        <p class="welcome-eyebrow">Izvēlēts Bookish</p>
-                        <h2 class="welcome-card-title">Ieteikumi tev</h2>
+                        <p class="welcome-eyebrow">Žanru grāmatu filtrs</p>
+                        <h2 class="welcome-card-title">Izdošanas gadi</h2>
                     </div>
-                    <span class="welcome-section-note">No Google Books</span>
                 </div>
-                <div id="book-recommendations" class="book-recommendation-grid">
-                    <p class="welcome-card-text">Ielādējam ieteikumus...</p>
+                <div class="book-year-filter">
+                    <div class="bookish-field-group">
+                        <label class="bookish-field-label" for="recommendation-year-from">No gada</label>
+                        <select id="recommendation-year-from" class="weekly-genre-select weekly-year-input"></select>
+                    </div>
+                    <div class="bookish-field-group">
+                        <label class="bookish-field-label" for="recommendation-year-to">Līdz gadam</label>
+                        <select id="recommendation-year-to" class="weekly-genre-select weekly-year-input"></select>
+                    </div>
                 </div>
             </section>
 

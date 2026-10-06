@@ -1,13 +1,13 @@
 const upcomingBookSearchInput = document.getElementById('upcoming-book-search-input');
 const upcomingBookSearch = document.getElementById('upcoming-book-search');
 const upcomingBookSearchResults = document.getElementById('upcoming-book-search-results');
-const bookRecommendations = document.getElementById('book-recommendations');
+const recommendationYearFrom = document.getElementById('recommendation-year-from');
+const recommendationYearTo = document.getElementById('recommendation-year-to');
 const genreSections = document.querySelectorAll('[data-genre]');
 const genreFilterButtons = document.querySelectorAll('[data-genre-filter]');
 const GENRE_ROTATION_INTERVAL_MS = 5 * 60 * 1000;
 const BOOK_RESULTS_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const genreBookCollections = new Map();
-let recommendationBooks = [];
 
 const parsePublishedDate = (rawDate) => {
     const value = String(rawDate || '').trim();
@@ -41,8 +41,6 @@ const escapeBookHtml = (text) => String(text)
     .replace(/'/g, '&#039;');
 
 const normalizeCoverUrl = (url) => String(url || '').replace(/^http:\/\//i, 'https://');
-
-const MIN_RECOMMENDED_YEAR = new Date().getFullYear() - 15;
 
 const extractPublishedYear = (publishedDate) => {
     const match = String(publishedDate || '').match(/^\d{4}/);
@@ -86,8 +84,9 @@ const renderBookCards = (container, items, emptyText, allowReminders = false) =>
     }).join('');
 };
 
-const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12) => {
-    const cacheKey = `book-results-cache-v1-${query}-${orderBy}-${maxResults}`;
+const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12, yearRange = null) => {
+    const yearKey = yearRange ? `${yearRange.from}-${yearRange.to}` : 'all-years';
+    const cacheKey = `book-results-cache-v3-${query}-${orderBy}-${maxResults}-${yearKey}`;
     const cached = localStorage.getItem(cacheKey);
 
     if (cached) {
@@ -101,7 +100,18 @@ const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12) =
         }
     }
 
-    const url = `/api/google-books/top?q=${encodeURIComponent(query)}&maxResults=${maxResults}&orderBy=${orderBy}&remote=1`;
+    const params = new URLSearchParams({
+        q: query,
+        maxResults: String(maxResults),
+        orderBy,
+        remote: '1',
+    });
+    if (yearRange) {
+        params.set('firstPublishedFrom', String(yearRange.from));
+        params.set('firstPublishedTo', String(yearRange.to));
+    }
+
+    const url = `/api/google-books/top?${params}`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -121,33 +131,51 @@ const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12) =
     return items;
 };
 
-const selectGenreBooks = (books, count = 6) => {
-    const recentBooks = books.filter((book) => {
+const selectBooksForYearRange = (books, count = 6) => {
+    const fromYear = Number(recommendationYearFrom?.value) || new Date().getFullYear() - 5;
+    const toYear = Number(recommendationYearTo?.value) || new Date().getFullYear();
+    const matchingBooks = books.filter((book) => {
         const year = extractPublishedYear(book.publishedDate);
-        return year !== null && year >= MIN_RECOMMENDED_YEAR;
+        return year !== null && year >= fromYear && year <= toYear;
     });
-    const pool = recentBooks.length >= count ? recentBooks : books;
 
-    return [...pool].sort(() => Math.random() - 0.5).slice(0, count);
+    return [...matchingBooks].sort(() => Math.random() - 0.5).slice(0, count);
 };
 
 const renderGenreBooks = () => {
     genreBookCollections.forEach((books, container) => {
-        renderBookCards(container, selectGenreBooks(books), 'Šī žanra grāmatas neizdevās atrast.');
+        renderBookCards(container, selectBooksForYearRange(books), 'Šajā gadu diapazonā žanra grāmatas netika atrastas.');
     });
 };
 
-const renderRecommendations = () => {
-    renderBookCards(bookRecommendations, selectGenreBooks(recommendationBooks), 'Ieteikumus neizdevās atrast.');
-};
-
-const loadBookishHighlights = async () => {
-    try {
-        recommendationBooks = await fetchBookResults('subject:fiction', 'relevance');
-        renderRecommendations();
-    } catch {
-        renderBookCards(bookRecommendations, [], 'Google Books ieteikumi īslaicīgi nav pieejami.');
+const initializeYearFilter = () => {
+    if (!recommendationYearFrom || !recommendationYearTo) {
+        return;
     }
+
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear; year >= 1900; year -= 1) {
+        recommendationYearFrom.add(new Option(String(year), String(year)));
+        recommendationYearTo.add(new Option(String(year), String(year)));
+    }
+
+    recommendationYearFrom.value = String(Math.max(1900, currentYear - 5));
+    recommendationYearTo.value = String(currentYear);
+
+    const handleYearChange = (event) => {
+        if (Number(recommendationYearFrom.value) > Number(recommendationYearTo.value)) {
+            if (event.target === recommendationYearFrom) {
+                recommendationYearTo.value = recommendationYearFrom.value;
+            } else {
+                recommendationYearFrom.value = recommendationYearTo.value;
+            }
+        }
+
+        loadGenreSections();
+    };
+
+    recommendationYearFrom.addEventListener('change', handleYearChange);
+    recommendationYearTo.addEventListener('change', handleYearChange);
 };
 
 const loadGenreSections = async () => {
@@ -157,16 +185,22 @@ const loadGenreSections = async () => {
 
     await Promise.all([...genreSections].map(async (section) => {
         const genreBooks = section.querySelector('.book-genre-books');
+        const yearRange = {
+            from: Number(recommendationYearFrom.value),
+            to: Number(recommendationYearTo.value),
+        };
 
         try {
-            const books = await fetchBookResults(section.dataset.query, 'relevance', 12);
+            const books = await fetchBookResults(section.dataset.query, 'relevance', 40, yearRange);
             genreBookCollections.set(genreBooks, books);
-            renderBookCards(genreBooks, selectGenreBooks(books), 'Šī žanra grāmatas neizdevās atrast.');
+            renderBookCards(genreBooks, selectBooksForYearRange(books), 'Šajā gadu diapazonā žanra grāmatas netika atrastas.');
         } catch {
             renderBookCards(genreBooks, [], 'Google Books žanra dati īslaicīgi nav pieejami.');
         }
     }));
 };
+
+initializeYearFilter();
 
 genreFilterButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -183,18 +217,10 @@ genreFilterButtons.forEach((button) => {
     });
 });
 
-if (bookRecommendations) {
-    loadBookishHighlights();
-}
-
 loadGenreSections();
 
 if (genreSections.length) {
     window.setInterval(renderGenreBooks, GENRE_ROTATION_INTERVAL_MS);
-}
-
-if (bookRecommendations) {
-    window.setInterval(renderRecommendations, GENRE_ROTATION_INTERVAL_MS);
 }
 
 const reminderToken = document.querySelector('meta[name="csrf-token"]')?.content;
