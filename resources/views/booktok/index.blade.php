@@ -247,7 +247,12 @@
                                             <img src="{{ $book->google_thumbnail }}" alt="{{ $book->title }} vāks" style="width: 44px; height: 66px; object-fit: cover; border-radius: 6px;">
                                         </a>
                                     @else
-                                        <span>Nav vāka</span>
+                                        <span
+                                            data-book-cover-fallback
+                                            data-book-title="{{ $book->title }}"
+                                            data-book-author="{{ $book->author }}"
+                                            data-book-url="{{ route('booktok.show', $book) }}"
+                                        >Nav vāka</span>
                                     @endif
                                 </td>
                                 <td>

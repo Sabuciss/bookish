@@ -231,47 +231,74 @@ class BooktokTopBookSeeder extends Seeder
     private function fetchGoogleBookData(string $title, string $author): array
     {
         try {
-            $params = [
-                'q' => 'intitle:"' . $title . '" inauthor:"' . $author . '"',
-                'maxResults' => 1,
-                'printType' => 'books',
-            ];
-
             $apiKey = config('services.google_books.api_key');
-            if ($apiKey) {
-                $params['key'] = $apiKey;
+
+            foreach ([$title . ' ' . $author, 'intitle:' . $title] as $query) {
+                $params = [
+                    'q' => $query,
+                    'maxResults' => 10,
+                    'printType' => 'books',
+                ];
+
+                if ($apiKey) {
+                    $params['key'] = $apiKey;
+                }
+
+                $response = Http::connectTimeout(3)
+                    ->timeout(8)
+                    ->get('https://www.googleapis.com/books/v1/volumes', $params);
+
+                if (!$response->ok()) {
+                    continue;
+                }
+
+                $items = $response->json('items', []);
+                $normalizedAuthor = mb_strtolower($author);
+                $normalizedTitle = mb_strtolower($title);
+                $matchingItem = collect($items)->first(function (array $item) use ($normalizedAuthor, $normalizedTitle) {
+                    $volumeInfo = $item['volumeInfo'] ?? [];
+                    $thumbnail = $volumeInfo['imageLinks']['thumbnail']
+                        ?? $volumeInfo['imageLinks']['smallThumbnail']
+                        ?? null;
+
+                    if (!$thumbnail) {
+                        return false;
+                    }
+
+                    $authors = mb_strtolower(implode(' ', $volumeInfo['authors'] ?? []));
+                    $bookTitle = mb_strtolower($volumeInfo['title'] ?? '');
+
+                    return str_contains($authors, $normalizedAuthor)
+                        && (str_contains($bookTitle, $normalizedTitle) || str_contains($normalizedTitle, $bookTitle));
+                });
+
+                if (!$matchingItem) {
+                    continue;
+                }
+
+                $volumeInfo = $matchingItem['volumeInfo'] ?? [];
+                $thumbnail = $volumeInfo['imageLinks']['thumbnail']
+                    ?? $volumeInfo['imageLinks']['smallThumbnail'];
+
+                return array_filter([
+                    'google_thumbnail' => str_starts_with($thumbnail, 'http://')
+                        ? 'https://' . substr($thumbnail, 7)
+                        : $thumbnail,
+                    'google_volume_id' => $matchingItem['id'] ?? null,
+                    'google_page_count' => $volumeInfo['pageCount'] ?? null,
+                    'google_published_date' => $volumeInfo['publishedDate'] ?? null,
+                    'google_publisher' => $volumeInfo['publisher'] ?? null,
+                    'google_categories' => implode(', ', $volumeInfo['categories'] ?? []),
+                    'google_average_rating' => $volumeInfo['averageRating'] ?? null,
+                    'google_ratings_count' => $volumeInfo['ratingsCount'] ?? null,
+                    'google_description' => $volumeInfo['description'] ?? null,
+                    'google_preview_link' => $volumeInfo['previewLink'] ?? null,
+                    'google_info_link' => $volumeInfo['infoLink'] ?? null,
+                    'google_data_fetched_at' => now(),
+                ], fn ($value) => $value !== null && $value !== '');
             }
 
-            $response = Http::connectTimeout(3)
-                ->timeout(8)
-                ->get('https://www.googleapis.com/books/v1/volumes', $params);
-
-            $item = $response->json('items.0');
-            $volumeInfo = is_array($item) ? ($item['volumeInfo'] ?? []) : [];
-            $thumbnail = $volumeInfo['imageLinks']['thumbnail']
-                ?? $volumeInfo['imageLinks']['smallThumbnail']
-                ?? null;
-
-            if (!$thumbnail) {
-                return [];
-            }
-
-            return [
-                'google_thumbnail' => str_starts_with($thumbnail, 'http://')
-                    ? 'https://' . substr($thumbnail, 7)
-                    : $thumbnail,
-                'google_volume_id' => $item['id'] ?? null,
-                'google_page_count' => $volumeInfo['pageCount'] ?? null,
-                'google_published_date' => $volumeInfo['publishedDate'] ?? null,
-                'google_publisher' => $volumeInfo['publisher'] ?? null,
-                'google_categories' => implode(', ', $volumeInfo['categories'] ?? []),
-                'google_average_rating' => $volumeInfo['averageRating'] ?? null,
-                'google_ratings_count' => $volumeInfo['ratingsCount'] ?? null,
-                'google_description' => $volumeInfo['description'] ?? null,
-                'google_preview_link' => $volumeInfo['previewLink'] ?? null,
-                'google_info_link' => $volumeInfo['infoLink'] ?? null,
-                'google_data_fetched_at' => now(),
-            ];
+            return [];
         } catch (\Throwable) {
             return [];
         }

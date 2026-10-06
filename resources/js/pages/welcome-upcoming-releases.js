@@ -42,6 +42,13 @@ const escapeBookHtml = (text) => String(text)
 
 const normalizeCoverUrl = (url) => String(url || '').replace(/^http:\/\//i, 'https://');
 
+const MIN_RECOMMENDED_YEAR = new Date().getFullYear() - 15;
+
+const extractPublishedYear = (publishedDate) => {
+    const match = String(publishedDate || '').match(/^\d{4}/);
+    return match ? Number(match[0]) : null;
+};
+
 const normalizeBookItems = (items) => (items || []).map((entry) => {
     const info = entry.volumeInfo || {};
 
@@ -104,17 +111,25 @@ const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12) =
     const data = await response.json();
     const items = normalizeBookItems(data.items || []);
 
-    localStorage.setItem(cacheKey, JSON.stringify({
-        timestamp: Date.now(),
-        items,
-    }));
+    if (items.length) {
+        localStorage.setItem(cacheKey, JSON.stringify({
+            timestamp: Date.now(),
+            items,
+        }));
+    }
 
     return items;
 };
 
-const selectGenreBooks = (books, count = 6) => [...books]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, count);
+const selectGenreBooks = (books, count = 6) => {
+    const recentBooks = books.filter((book) => {
+        const year = extractPublishedYear(book.publishedDate);
+        return year !== null && year >= MIN_RECOMMENDED_YEAR;
+    });
+    const pool = recentBooks.length >= count ? recentBooks : books;
+
+    return [...pool].sort(() => Math.random() - 0.5).slice(0, count);
+};
 
 const renderGenreBooks = () => {
     genreBookCollections.forEach((books, container) => {
@@ -309,6 +324,10 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
     };
 
     const writeUpcomingCache = (searchTerm, items) => {
+        if (!items.length) {
+            return;
+        }
+
         localStorage.setItem(getUpcomingCacheKey(searchTerm), JSON.stringify({
             timestamp: Date.now(),
             items,
@@ -318,16 +337,14 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
     const fetchBooksForQueries = async (queries, orderBy) => {
         const responses = await Promise.all(queries.map((query) => fetch(
             `/api/google-books/top?q=${encodeURIComponent(query)}&maxResults=40&orderBy=${orderBy}&remote=1`,
+        ).catch(() => null)));
+
+        const payloads = await Promise.all(responses.map((response) => (
+            response && response.ok ? response.json().catch(() => null) : null
         )));
-
-        if (responses.some((response) => !response.ok)) {
-            throw new Error('Google Books API error');
-        }
-
-        const payloads = await Promise.all(responses.map((response) => response.json()));
         const uniqueItems = new Map();
 
-        payloads.flatMap((data) => data.items || []).forEach((item) => {
+        payloads.filter(Boolean).flatMap((data) => data.items || []).forEach((item) => {
             if (item.id && !uniqueItems.has(item.id)) {
                 uniqueItems.set(item.id, item);
             }
@@ -343,12 +360,14 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
             `inauthor:${searchTerm}`,
         ];
 
-        let uniqueItems = await fetchBooksForQueries(queries, 'newest');
+        // "newest" (added to catalog) is unreliable on its own (often 0 results or transient errors),
+        // so always merge it with "relevance", which reliably surfaces an author's/title's actual books.
+        const [newestItems, relevanceItems] = await Promise.all([
+            fetchBooksForQueries(queries, 'newest'),
+            fetchBooksForQueries(queries, 'relevance'),
+        ]);
 
-        // "newest" narrows the match pool first, so a typo can wipe it out; "relevance" tolerates typos better.
-        if (!uniqueItems.size) {
-            uniqueItems = await fetchBooksForQueries([searchTerm], 'relevance');
-        }
+        const uniqueItems = new Map([...newestItems, ...relevanceItems]);
 
         return normalizeUpcomingItems([...uniqueItems.values()]);
     };
@@ -364,7 +383,7 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
         upcomingBookSearchResults.innerHTML = '<p class="welcome-card-text">Ielādējam gaidāmos izdevumus...</p>';
 
         let items = readUpcomingCache(searchTerm);
-        if (!items) {
+        if (!items || !items.length) {
             items = await fetchUpcomingBooks(searchTerm);
             writeUpcomingCache(searchTerm, items);
         }

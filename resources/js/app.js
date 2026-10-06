@@ -5,6 +5,7 @@ import './pages/reading-challenges';
 import './pages/welcome-upcoming-releases';
 import './pages/release-calendar';
 import './pages/listing-book-search';
+import './pages/booktok-covers';
 
 import { initDrawerNavigation } from './ui/navigation';
 import { initThemeToggle } from './ui/theme';

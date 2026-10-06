@@ -32,36 +32,44 @@ class GoogleBooksController extends Controller
         $remoteOnly = (bool) ($validated['remote'] ?? false);
         $cacheKey = 'google_books_top_v4_' . md5($query . '_' . $maxResults . '_' . $startIndex . '_' . $orderBy . '_' . (int) $remoteOnly);
 
+        $cached = Cache::get($cacheKey);
+        if (is_array($cached)) {
+            return response()->json(['items' => $cached]);
+        }
+
         try {
-            $items = Cache::remember($cacheKey, now()->addHours(6), function () use ($query, $maxResults, $startIndex, $orderBy, $remoteOnly) {
-                $params = [
-                    'q' => $query,
-                    'orderBy' => $orderBy,
-                    'maxResults' => $maxResults,
-                    'startIndex' => $startIndex,
-                    'printType' => 'books',
-                ];
+            $params = [
+                'q' => $query,
+                'orderBy' => $orderBy,
+                'maxResults' => $maxResults,
+                'startIndex' => $startIndex,
+                'printType' => 'books',
+            ];
 
-                $apiKey = config('services.google_books.api_key');
-                if (!empty($apiKey)) {
-                    $params['key'] = $apiKey;
-                }
+            $apiKey = config('services.google_books.api_key');
+            if (!empty($apiKey)) {
+                $params['key'] = $apiKey;
+            }
 
-                $response = Http::connectTimeout(3)->timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
+            $response = Http::connectTimeout(3)->timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
 
-                if (!$response->ok()) {
-                    Log::warning('Google Books top request failed', [
-                        'status' => $response->status(),
-                        'body' => $response->body(),
-                    ]);
+            if (!$response->ok()) {
+                // Don't cache transient failures (e.g. Google 503s) so the next request retries instead of staying empty for hours.
+                Log::warning('Google Books top request failed', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
 
-                    return $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
-                }
-
+                $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
+            } else {
                 $items = $response->json('items', []);
 
-                return $items ?: ($remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex));
-            });
+                if (!$items) {
+                    $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
+                } else {
+                    Cache::put($cacheKey, $items, now()->addHours(6));
+                }
+            }
         } catch (ConnectionException $e) {
             Log::warning('Google Books top request threw a connection exception', ['message' => $e->getMessage()]);
 
