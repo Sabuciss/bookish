@@ -89,7 +89,7 @@ class BooktokTopController extends Controller
         }
 
         $authorBooks = $selectedAuthor !== null
-            ? $this->fetchGoogleBooksByAuthor($selectedAuthor)
+            ? $this->authorBibliography($selectedAuthor)
             : ['books' => [], 'total' => 0];
 
         $booktokAuthors = $books
@@ -251,5 +251,46 @@ class BooktokTopController extends Controller
     private function fetchGoogleBooksByAuthor(string $author): array
     {
         return $this->bookMetadata->fetchBooksByAuthor($author);
+    }
+
+    /**
+     * Author bibliography, falling back to our own curated books when the remote
+     * Google Books lookup fails or returns nothing (e.g. on hosts without reliable
+     * outbound access to the Google Books API).
+     */
+    private function authorBibliography(string $author): array
+    {
+        $remoteBooks = collect($this->fetchGoogleBooksByAuthor($author)['books'] ?? [])
+            ->map(fn (array $book): array => [
+                ...$book,
+                'url' => !empty($book['id'])
+                    ? route('books.show', ['volumeId' => $book['id']])
+                    : ($book['info_link'] ?: null),
+            ]);
+
+        $localBooks = BooktokTopBook::query()
+            ->where('author', 'like', '%' . $author . '%')
+            ->orderBy('rank_position')
+            ->get()
+            ->map(fn (BooktokTopBook $book): array => [
+                'id' => $book->google_volume_id,
+                'title' => $book->title,
+                'published_date' => $book->published_year,
+                'thumbnail' => $book->google_thumbnail,
+                'info_link' => null,
+                'url' => route('booktok.show', $book),
+            ]);
+
+        // Local (BookTok top) entries take precedence so the link stays on our own book page, not Google's.
+        $books = $localBooks
+            ->concat($remoteBooks)
+            ->unique(fn (array $book): string => mb_strtolower(trim((string) $book['title'])))
+            ->values()
+            ->all();
+
+        return [
+            'books' => $books,
+            'total' => count($books),
+        ];
     }
 }

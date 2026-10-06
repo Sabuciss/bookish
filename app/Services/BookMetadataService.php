@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\BooktokTopBook;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class BookMetadataService
 {
@@ -29,6 +30,11 @@ class BookMetadataService
                     ->get('https://www.googleapis.com/books/v1/volumes', $params);
 
                 if (!$response->ok()) {
+                    Log::warning('Google Books API request failed', [
+                        'status' => $response->status(),
+                        'body' => $response->body(),
+                    ]);
+
                     return $this->fallbackBookData($title, $author);
                 }
 
@@ -66,7 +72,9 @@ class BookMetadataService
                     'preview_link' => $volumeInfo['previewLink'] ?? null,
                     'info_link' => $volumeInfo['infoLink'] ?? null,
                 ];
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
+                Log::warning('Google Books API request threw an exception', ['message' => $e->getMessage()]);
+
                 return $this->fallbackBookData($title, $author);
             }
         });
@@ -93,54 +101,73 @@ class BookMetadataService
     {
         $cacheKey = 'booktok_google_author_books_v2_' . md5(mb_strtolower($author));
 
-        return Cache::remember($cacheKey, now()->addHours(12), function () use ($author): array {
-            $params = [
-                'q' => 'inauthor:"' . $author . '"',
-                'maxResults' => 40,
-                'orderBy' => 'relevance',
-                'printType' => 'books',
-            ];
-            $apiKey = config('services.google_books.api_key');
-            if (!empty($apiKey)) {
-                $params['key'] = $apiKey;
-            }
+        $cached = Cache::get($cacheKey);
+        if (is_array($cached)) {
+            return $cached;
+        }
 
-            try {
-                $response = Http::connectTimeout(3)->timeout(10)
-                    ->get('https://www.googleapis.com/books/v1/volumes', $params);
-                if (!$response->ok()) {
-                    return ['books' => [], 'total' => 0];
-                }
+        $params = [
+            // Quoted multi-word inauthor values return 0 results from Google Books, unlike unquoted ones.
+            'q' => 'inauthor:' . $author,
+            'maxResults' => 40,
+            'orderBy' => 'relevance',
+            'printType' => 'books',
+        ];
+        $apiKey = config('services.google_books.api_key');
+        if (!empty($apiKey)) {
+            $params['key'] = $apiKey;
+        }
 
-                $books = collect($response->json('items', []))
-                    ->map(function (array $item): array {
-                        $volumeInfo = $item['volumeInfo'] ?? [];
+        try {
+            $response = Http::connectTimeout(3)->timeout(10)
+                ->get('https://www.googleapis.com/books/v1/volumes', $params);
+            if (!$response->ok()) {
+                // Don't cache transient failures (e.g. Google 503s) so the next request retries instead of staying empty for hours.
+                Log::warning('Google Books author search failed', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
 
-                        return [
-                            'id' => $item['id'] ?? null,
-                            'title' => $volumeInfo['title'] ?? null,
-                            'published_date' => $volumeInfo['publishedDate'] ?? null,
-                            'thumbnail' => self::normalizeThumbnailUrl(
-                                $volumeInfo['imageLinks']['thumbnail']
-                                    ?? $volumeInfo['imageLinks']['smallThumbnail']
-                                    ?? null
-                            ),
-                            'info_link' => $volumeInfo['infoLink'] ?? null,
-                        ];
-                    })
-                    ->filter(fn (array $book): bool => filled($book['title']))
-                    ->unique(fn (array $book): string => mb_strtolower($book['title']))
-                    ->values()
-                    ->all();
-
-                return [
-                    'books' => $books,
-                    'total' => count($books),
-                ];
-            } catch (\Throwable) {
                 return ['books' => [], 'total' => 0];
             }
-        });
+
+            $books = collect($response->json('items', []))
+                ->map(function (array $item): array {
+                    $volumeInfo = $item['volumeInfo'] ?? [];
+
+                    return [
+                        'id' => $item['id'] ?? null,
+                        'title' => $volumeInfo['title'] ?? null,
+                        'published_date' => $volumeInfo['publishedDate'] ?? null,
+                        'thumbnail' => self::normalizeThumbnailUrl(
+                            $volumeInfo['imageLinks']['thumbnail']
+                                ?? $volumeInfo['imageLinks']['smallThumbnail']
+                                ?? null
+                        ),
+                        'info_link' => $volumeInfo['infoLink'] ?? null,
+                    ];
+                })
+                ->filter(fn (array $book): bool => filled($book['title']))
+                ->unique(fn (array $book): string => mb_strtolower($book['title']))
+                ->values()
+                ->all();
+
+            $result = [
+                'books' => $books,
+                'total' => count($books),
+            ];
+
+            if ($books !== []) {
+                Cache::put($cacheKey, $result, now()->addHours(12));
+            }
+
+            return $result;
+        } catch (\Throwable $e) {
+            // Don't cache transient failures so the next request retries instead of staying empty for hours.
+            Log::warning('Google Books author search threw an exception', ['message' => $e->getMessage()]);
+
+            return ['books' => [], 'total' => 0];
+        }
     }
 
     private function fallbackBookData(string $title, string $author): ?array
@@ -159,10 +186,19 @@ class BookMetadataService
             );
             $coverId = $response->json('docs.0.cover_i');
 
-            return $response->ok() && $coverId
-                ? 'https://covers.openlibrary.org/b/id/' . $coverId . '-M.jpg'
-                : null;
-        } catch (\Throwable) {
+            if (!$response->ok() || !$coverId) {
+                Log::warning('OpenLibrary cover lookup failed', [
+                    'status' => $response->status(),
+                    'has_cover_id' => (bool) $coverId,
+                ]);
+
+                return null;
+            }
+
+            return 'https://covers.openlibrary.org/b/id/' . $coverId . '-M.jpg';
+        } catch (\Throwable $e) {
+            Log::warning('OpenLibrary cover lookup threw an exception', ['message' => $e->getMessage()]);
+
             return null;
         }
     }

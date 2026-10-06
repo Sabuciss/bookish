@@ -253,7 +253,9 @@
                                 <td>
                                     <a href="{{ route('booktok.show', $book) }}">{{ $book->title }}</a>
                                 </td>
-                                <td>{{ $book->author }}</td>
+                                <td>
+                                    <a href="{{ request()->fullUrlWithQuery(['view' => 'authors', 'author' => $book->author]) }}">{{ $book->author }}</a>
+                                </td>
                                 <td>{{ $book->published_year ?? '—' }}</td>
                                 <td>
                                     @auth

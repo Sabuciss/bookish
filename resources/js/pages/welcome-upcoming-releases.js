@@ -258,7 +258,7 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
 
     const renderUpcomingItems = (items, searchTerm) => {
         if (!items.length) {
-            upcomingBookSearchResults.innerHTML = `<p class="welcome-card-text">Meklējumam <strong>${escapeHtml(searchTerm)}</strong> drīzumā iznākošas grāmatas netika atrastas.</p>`;
+            upcomingBookSearchResults.innerHTML = `<p class="welcome-card-text">Meklējumam <strong>${escapeHtml(searchTerm)}</strong> drīzumā iznākošas grāmatas netika atrastas. Iespējams, Google Books vēl nav publicējis šīs grāmatas datus.</p>`;
             return;
         }
 
@@ -379,11 +379,10 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
             }));
         const upcoming = datedItems
             .filter((entry) => entry.parsedDate && entry.parsedDate >= today)
-            .sort((a, b) => a.parsedDate - b.parsedDate);
-        const results = (upcoming.length ? upcoming : datedItems)
+            .sort((a, b) => a.parsedDate - b.parsedDate)
             .slice(0, 10);
 
-        renderUpcomingItems(results, searchTerm);
+        renderUpcomingItems(upcoming, searchTerm);
     };
 
     const handleLoad = () => {

@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class GoogleBooksController extends Controller
@@ -49,6 +50,11 @@ class GoogleBooksController extends Controller
                 $response = Http::connectTimeout(3)->timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
 
                 if (!$response->ok()) {
+                    Log::warning('Google Books top request failed', [
+                        'status' => $response->status(),
+                        'body' => $response->body(),
+                    ]);
+
                     return $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
                 }
 
@@ -56,7 +62,9 @@ class GoogleBooksController extends Controller
 
                 return $items ?: ($remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex));
             });
-        } catch (ConnectionException) {
+        } catch (ConnectionException $e) {
+            Log::warning('Google Books top request threw a connection exception', ['message' => $e->getMessage()]);
+
             $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
         }
 
