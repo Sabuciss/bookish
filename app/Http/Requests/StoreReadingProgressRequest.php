@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class StoreReadingProgressRequest extends FormRequest
@@ -17,11 +18,18 @@ class StoreReadingProgressRequest extends FormRequest
     {
         return [
             'entry_id' => ['nullable', 'integer'],
+            'challenge_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('reading_challenges', 'id')->where(fn ($query) => $query
+                    ->where('user_id', $this->user()?->id)
+                    ->where('challenge_type', 'pages')),
+            ],
             'book_title' => ['required', 'string', 'max:255'],
             'google_volume_id' => ['nullable', 'string', 'max:120'],
             'book_cover_url' => ['nullable', 'url', 'max:2048'],
-            'pages_read' => ['required', 'integer', 'min:0'],
-            'total_pages' => ['nullable', 'integer', 'min:1'],
+            'pages_read' => ['required', 'integer', 'min:0', 'max:100000'],
+            'total_pages' => ['nullable', 'integer', 'min:1', 'max:100000'],
             'reading_status' => ['nullable', 'in:want_to_read,in_progress,read'],
             'emotion' => ['required', 'string', 'max:255'],
             'reading_date' => ['required', 'date'],
@@ -54,6 +62,19 @@ class StoreReadingProgressRequest extends FormRequest
 
             try {
                 $readingDate = Carbon::parse($readingDateInput);
+                $challengeId = $this->input('challenge_id');
+                if ($challengeId && ! $validator->errors()->has('challenge_id')) {
+                    $challenge = \App\Models\ReadingChallenge::query()
+                        ->where('user_id', $this->user()?->id)
+                        ->find($challengeId);
+
+                    $challengeDate = $readingDate->toDateString();
+                    if ($challenge && ($challengeDate < $challenge->start_date->toDateString()
+                        || $challengeDate > $challenge->end_date->toDateString())) {
+                        $validator->errors()->add('challenge_id', 'Lasīšanas datumam jābūt izaicinājuma periodā.');
+                    }
+                }
+
                 $today = now()->startOfDay();
 
                 if ($readingDate->greaterThan($today)) {
@@ -73,6 +94,12 @@ class StoreReadingProgressRequest extends FormRequest
                     if ($endAt->greaterThan($now)) {
                         $validator->errors()->add('end_time', 'Beigu laiks nevar būt nākotnē.');
                     }
+                }
+
+                $startAt = Carbon::createFromFormat('Y-m-d H:i', $readingDate->toDateString() . ' ' . $startTimeInput);
+                $endAt = Carbon::createFromFormat('Y-m-d H:i', $readingDate->toDateString() . ' ' . $endTimeInput);
+                if ($startAt->diffInMinutes($endAt) > 720) {
+                    $validator->errors()->add('end_time', 'Vienas lasīšanas sesijas ilgums nevar pārsniegt 12 stundas.');
                 }
             } catch (\Throwable $exception) {
                 // Date/time format validation is handled by the base rules.

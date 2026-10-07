@@ -6,6 +6,10 @@
             <h1>{{ $listing ? 'Labot sludinājumu' : ($listingType === 'exchange' ? 'Piedāvāt grāmatu apmaiņai' : 'Pievienot grāmatu pārdošanai') }}</h1>
             <p>{{ $listingType === 'exchange' ? 'Norādi, ko piedāvā un kādu grāmatu vēlētos saņemt pretī.' : 'Norādi galveno informāciju, lai citi lasītāji varētu saprast, ko piedāvā.' }}</p>
 
+            @if (session('status'))
+                <div class="reading-progress-alert reading-progress-alert-success">{{ session('status') }}</div>
+            @endif
+
             @if ($errors->any())
                 <div class="reading-progress-alert reading-progress-alert-error">
                     <ul class="reading-progress-errors-list">
@@ -16,6 +20,10 @@
                 </div>
             @endif
 
+            @if ($listing && $listingLocked)
+                <div class="reading-progress-alert reading-progress-alert-success">Darījums ir pieņemts vai pabeigts. Sludinājuma noteikumi ir bloķēti.</div>
+                <a href="{{ route($listingType === 'exchange' ? 'book-exchange.index' : 'book-listings.index') }}" class="book-detail-back">Atpakaļ pie sludinājumiem</a>
+            @else
             <form action="{{ $listing ? route('book-listings.update', $listing) : route('book-listings.store') }}" method="POST" class="book-listing-form">
                 @csrf
                 @if ($listing)
@@ -85,6 +93,14 @@
                 </label>
                 <button type="submit" class="reading-progress-submit">{{ $listing ? 'Saglabāt izmaiņas' : ($listingType === 'exchange' ? 'Publicēt apmaiņas piedāvājumu' : 'Publicēt sludinājumu') }}</button>
             </form>
+            @if ($listing)
+                <form method="POST" action="{{ route('book-listings.destroy', $listing) }}" style="margin-top: 12px;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="book-listing-secondary-action">Dzēst sludinājumu</button>
+                </form>
+            @endif
+            @endif
         </section>
     </div>
 </x-layout>

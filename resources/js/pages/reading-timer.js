@@ -1,108 +1,154 @@
+const timerForm = document.getElementById('reading-timer-form');
 const timerMinutesInput = document.getElementById('timer-minutes');
 const timerDisplay = document.getElementById('reading-timer-display');
 const timerStartButton = document.getElementById('timer-start');
 const timerPauseButton = document.getElementById('timer-pause');
 const timerResetButton = document.getElementById('timer-reset');
-const timerElapsedSecondsInput = document.getElementById('timer-elapsed-seconds');
-const timerStartedAtInput = document.getElementById('timer-started-at');
-const timerEndedAtInput = document.getElementById('timer-ended-at');
+const timerSaveButton = document.getElementById('timer-save');
+const timerError = document.getElementById('timer-error');
 
-if (timerMinutesInput && timerDisplay && timerStartButton && timerPauseButton && timerResetButton) {
+if (timerForm && timerMinutesInput && timerDisplay && timerStartButton && timerPauseButton && timerResetButton) {
+    let sessionId = null;
+    let elapsedSeconds = 0;
+    let activeSince = null;
     let timerInterval = null;
-    let remainingSeconds = 0;
-    let totalSeconds = 0;
-    let isPaused = false;
 
-    const formatTimer = (seconds) => {
-        const minutes = Math.floor(seconds / 60);
-        const secs = seconds % 60;
+    const sessionUrl = (template) => template.replace('__SESSION__', String(sessionId));
+    const csrfToken = timerForm.querySelector('input[name="_token"]').value;
 
-        return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    };
+    const currentElapsedSeconds = () => elapsedSeconds + (activeSince ? Math.floor((Date.now() - activeSince) / 1000) : 0);
 
     const updateTimerDisplay = () => {
-        timerDisplay.textContent = formatTimer(remainingSeconds);
+        const plannedSeconds = Math.max(0, Number(timerMinutesInput.value || 0) * 60);
+        const remainingSeconds = Math.max(0, plannedSeconds - currentElapsedSeconds());
+        const minutes = Math.floor(remainingSeconds / 60);
+        const seconds = remainingSeconds % 60;
+        timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     };
 
-    const stopTimer = () => {
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
+    const setRunningState = (running) => {
+        timerStartButton.textContent = running ? 'Darbojas' : (sessionId ? 'Turpināt' : 'Starts');
+        timerStartButton.disabled = running;
+        timerPauseButton.disabled = !running;
+        timerResetButton.disabled = Boolean(sessionId);
+        timerMinutesInput.disabled = Boolean(sessionId);
+        timerForm.querySelector('#timer-challenge').disabled = Boolean(sessionId);
+        timerSaveButton.disabled = !sessionId;
+    };
+
+    const send = async (url, data = {}) => {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify(data),
+        });
+        const result = await response.json();
+
+        if (!response.ok) {
+            const messages = Object.values(result.errors || {}).flat();
+            throw new Error(messages[0] || result.message || 'Taimeri darbību neizdevās saglabāt.');
         }
+
+        return result;
     };
 
-    const setFromInputMinutes = () => {
-        const minutes = Number(timerMinutesInput.value || 0);
-        totalSeconds = Math.max(0, minutes * 60);
-        remainingSeconds = totalSeconds;
+    const showError = (error) => {
+        timerError.textContent = error.message;
+        timerError.hidden = false;
+    };
+
+    const startDisplayInterval = () => {
+        window.clearInterval(timerInterval);
+        timerInterval = window.setInterval(updateTimerDisplay, 1000);
         updateTimerDisplay();
     };
 
-    setFromInputMinutes();
+    timerStartButton.addEventListener('click', async () => {
+        timerError.hidden = true;
 
-    timerMinutesInput.addEventListener('change', () => {
-        if (!timerInterval) {
-            setFromInputMinutes();
+        try {
+            if (!sessionId) {
+                const result = await send(timerForm.action, {
+                    planned_minutes: Number(timerMinutesInput.value),
+                    challenge_id: timerForm.querySelector('#timer-challenge').value || null,
+                });
+                sessionId = result.id;
+                elapsedSeconds = result.elapsedSeconds;
+            } else {
+                const result = await send(sessionUrl(timerForm.dataset.resumeUrl));
+                elapsedSeconds = result.elapsedSeconds;
+            }
+
+            activeSince = Date.now();
+            setRunningState(true);
+            startDisplayInterval();
+        } catch (error) {
+            showError(error);
         }
     });
 
-    timerStartButton.addEventListener('click', () => {
-        if (timerInterval) {
-            return;
-        }
+    timerPauseButton.addEventListener('click', async () => {
+        timerError.hidden = true;
 
-        if (!isPaused) {
-            setFromInputMinutes();
-            if (timerStartedAtInput) {
-                timerStartedAtInput.value = new Date().toISOString();
-            }
-        }
-
-        isPaused = false;
-        timerInterval = window.setInterval(() => {
-            if (remainingSeconds > 0) {
-                remainingSeconds -= 1;
-                updateTimerDisplay();
-
-                if (timerElapsedSecondsInput) {
-                    timerElapsedSecondsInput.value = String(totalSeconds - remainingSeconds);
-                }
-
-                return;
-            }
-
-            stopTimer();
-
-            if (timerEndedAtInput) {
-                timerEndedAtInput.value = new Date().toISOString();
-            }
-
-            alert('Laiks beidzās!');
-        }, 1000);
-    });
-
-    timerPauseButton.addEventListener('click', () => {
-        if (timerInterval) {
-            stopTimer();
-            isPaused = true;
+        try {
+            const result = await send(sessionUrl(timerForm.dataset.pauseUrl));
+            elapsedSeconds = result.elapsedSeconds;
+            activeSince = null;
+            window.clearInterval(timerInterval);
+            setRunningState(false);
+            updateTimerDisplay();
+        } catch (error) {
+            showError(error);
         }
     });
 
     timerResetButton.addEventListener('click', () => {
-        stopTimer();
-        isPaused = false;
-        setFromInputMinutes();
+        window.clearInterval(timerInterval);
+        elapsedSeconds = 0;
+        activeSince = null;
+        updateTimerDisplay();
+    });
 
-        if (timerElapsedSecondsInput) {
-            timerElapsedSecondsInput.value = '';
+    timerForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        timerError.hidden = true;
+
+        if (!sessionId) {
+            showError(new Error('Vispirms palaid taimeri.'));
+            return;
         }
 
-        if (timerStartedAtInput) {
-            timerStartedAtInput.value = '';
-        }
-
-        if (timerEndedAtInput) {
-            timerEndedAtInput.value = '';
+        try {
+            const result = await send(sessionUrl(timerForm.dataset.completeUrl), {
+                pages_read: Number(timerForm.querySelector('[name="pages_read"]').value),
+                notes: timerForm.querySelector('[name="notes"]').value,
+                is_public: timerForm.querySelector('#session-is-public').checked,
+            });
+            window.location.assign(result.redirect);
+        } catch (error) {
+            showError(error);
         }
     });
+
+    if (timerForm.dataset.activeSessionId) {
+        sessionId = Number(timerForm.dataset.activeSessionId);
+        elapsedSeconds = Number(timerForm.dataset.activeElapsed || 0);
+        const isRunning = timerForm.dataset.activeStatus === 'running';
+        activeSince = isRunning ? Date.now() : null;
+        setRunningState(isRunning);
+
+        if (isRunning) {
+            startDisplayInterval();
+        } else {
+            updateTimerDisplay();
+        }
+    } else {
+        timerPauseButton.disabled = true;
+        timerSaveButton.disabled = true;
+        updateTimerDisplay();
+    }
 }

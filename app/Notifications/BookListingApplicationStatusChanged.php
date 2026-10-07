@@ -25,13 +25,16 @@ class BookListingApplicationStatusChanged extends Notification
     public function toArray(object $notifiable): array
     {
         $this->application->loadMissing('listing');
+        $listing = $this->application->listing;
 
         return [
             'type' => 'book_listing_application_status_changed',
             'status' => $this->status,
             'reason' => $this->reason,
-            'title' => $this->application->listing->book_title,
-            'listing_id' => $this->application->listing->id,
+            'application_id' => $this->application->id,
+            'title' => $listing->book_title,
+            'listing_id' => $listing->id,
+            'url' => $listing->notificationUrl('book-application-' . $this->application->id),
         ];
     }
 }

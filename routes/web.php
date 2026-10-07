@@ -33,8 +33,10 @@ Route::get('/books/{volumeId}', [GoogleBooksController::class, 'show'])
     ->middleware('throttle:120,1')
     ->name('books.show');
 Route::get('/book-listings', [BookListingController::class, 'index'])
+        ->middleware('throttle:120,1')
     ->name('book-listings.index');
 Route::get('/book-exchange', [BookListingController::class, 'index'])
+        ->middleware('throttle:120,1')
     ->name('book-exchange.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -46,13 +48,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('book-listings.edit');
     Route::patch('/book-listings/{bookListing}', [BookListingController::class, 'update'])
         ->name('book-listings.update');
+    Route::delete('/book-listings/{bookListing}', [BookListingController::class, 'destroy'])
+        ->name('book-listings.destroy');
     Route::post('/book-listings', [BookListingController::class, 'store'])
         ->name('book-listings.store');
     Route::post('/book-listings/{bookListing}/apply', [BookListingController::class, 'apply'])
+        ->middleware('throttle:10,1')
         ->name('book-listings.apply');
+    Route::delete('/book-listings/{bookListing}/applications/{application}', [BookListingController::class, 'withdrawApplication'])
+        ->name('book-listings.applications.destroy');
     Route::patch('/book-listings/{bookListing}/applications/{application}', [BookListingController::class, 'updateApplication'])
         ->name('book-listings.applications.update');
+    Route::patch('/book-listings/{bookListing}/applications/{application}/details', [BookListingController::class, 'updateApplicantApplication'])
+        ->name('book-listings.applications.details.update');
+    Route::patch('/book-listings/{bookListing}/applications/{application}/complete', [BookListingController::class, 'completeApplication'])
+        ->name('book-listings.applications.complete');
     Route::post('/book-listings/{bookListing}/applications/{application}/messages', [BookListingController::class, 'sendMessage'])
+        ->middleware('throttle:20,1')
         ->name('book-listings.applications.messages.store');
     Route::get('/reading-shelf', [ReadingProgressController::class, 'showBookshelf'])
         ->name('reading-shelf.show');
@@ -60,6 +72,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('reading-progress.index');
     Route::post('/reading-progress', [ReadingProgressController::class, 'storeProgressEntry'])
         ->name('reading-progress.store');
+    Route::delete('/reading-progress/{entryId}', [ReadingProgressController::class, 'destroy'])
+        ->name('reading-progress.destroy');
     Route::post('/reading-progress/want-to-read', [ReadingProgressController::class, 'storeWantToRead'])
         ->name('reading-progress.want-to-read.store');
     Route::post('/book-release-reminders', [BookReleaseReminderController::class, 'store'])
@@ -74,13 +88,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('book-release-reminders.destroy');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])
         ->name('notifications.read-all');
+    Route::get('/notifications/{notification}', [NotificationController::class, 'open'])
+        ->name('notifications.open');
+    Route::get('/book-release-reminders/{reminder}/open', [BookReleaseReminderController::class, 'open'])
+        ->name('book-release-reminders.open');
 
     Route::get('/reading-highlights/create', [ReadingHighlightController::class, 'create'])
         ->name('reading-highlights.create');
     Route::get('/reading-highlights', [ReadingHighlightController::class, 'index'])
+        ->middleware('throttle:120,1')
         ->name('reading-highlights.index');
     Route::post('/reading-highlights', [ReadingHighlightController::class, 'store'])
+        ->middleware('throttle:10,1')
         ->name('reading-highlights.store');
+    Route::get('/reading-highlights/{highlight}/edit', [ReadingHighlightController::class, 'edit'])
+        ->name('reading-highlights.edit');
+    Route::patch('/reading-highlights/{highlight}', [ReadingHighlightController::class, 'update'])
+        ->name('reading-highlights.update');
+    Route::delete('/reading-highlights/{highlight}', [ReadingHighlightController::class, 'destroy'])
+        ->name('reading-highlights.destroy');
 
     Route::get('/reading-challenges', [ReadingChallengeController::class, 'index'])
         ->name('reading-challenges.index');
@@ -90,13 +116,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('reading-challenges.edit');
     Route::patch('/reading-challenges/{challenge}', [ReadingChallengeController::class, 'update'])
         ->name('reading-challenges.update');
+    Route::delete('/reading-challenges/{challenge}', [ReadingChallengeController::class, 'destroy'])
+        ->name('reading-challenges.destroy');
 
     Route::get('/reading-timer', [ReadingChallengeController::class, 'timer'])
         ->name('reading-timer.index');
     Route::get('/reading-challenges/results', [ReadingChallengeController::class, 'results'])
         ->name('reading-challenges.results');
-    Route::post('/reading-challenges/sessions', [ReadingChallengeController::class, 'storeSession'])
-        ->name('reading-challenges.sessions.store');
+    Route::post('/reading-timer/sessions', [ReadingChallengeController::class, 'startTimer'])
+        ->name('reading-timer.sessions.start');
+    Route::post('/reading-timer/sessions/{session}/pause', [ReadingChallengeController::class, 'pauseTimer'])
+        ->name('reading-timer.sessions.pause');
+    Route::post('/reading-timer/sessions/{session}/resume', [ReadingChallengeController::class, 'resumeTimer'])
+        ->name('reading-timer.sessions.resume');
+    Route::post('/reading-timer/sessions/{session}/complete', [ReadingChallengeController::class, 'completeTimer'])
+        ->name('reading-timer.sessions.complete');
+    Route::delete('/reading-timer/sessions/{session}', [ReadingChallengeController::class, 'destroyTimer'])
+        ->name('reading-timer.sessions.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

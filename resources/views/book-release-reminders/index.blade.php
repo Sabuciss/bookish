@@ -3,7 +3,11 @@
         <h1>Izdošanas kalendārs</h1>
         <p>Te redzamas grāmatas, kurām esi iestatījis atgādinājumu, sakārtotas pēc izdošanas datuma.</p>
 
-        <script id="release-calendar-reminders" type="application/json">@json($reminders->map(fn ($reminder) => ['date' => $reminder->release_date->toDateString(), 'title' => $reminder->title]))</script>
+        @if (session('status'))
+            <div class="reading-progress-alert reading-progress-alert-success">{{ session('status') }}</div>
+        @endif
+
+        <script id="release-calendar-reminders" type="application/json">@json($calendarEvents)</script>
 
         <section class="uiverse-container release-calendar-layout">
             <div class="release-calendar-list">
@@ -34,6 +38,7 @@
                         </article>
                     @endforeach
                 </div>
+                <div class="reading-progress-pagination">{{ $reminders->links() }}</div>
             @endif
             </div>
 

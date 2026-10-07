@@ -46,7 +46,7 @@
                     <p><strong>Sesijas:</strong> {{ $totalSessions }}</p>
                 </article>
                 <article class="reading-challenge-card">
-                    <p><strong>Kopejas minutes:</strong> {{ $totalMinutes }}</p>
+                    <p><strong>Kopejais laiks:</strong> {{ \App\Models\ReadingChallengeSession::formatDuration($totalElapsedSeconds) }}</p>
                 </article>
                 <article class="reading-challenge-card">
                     <p><strong>Kopejas lapas:</strong> {{ $totalPages }}</p>
@@ -64,9 +64,12 @@
                     @foreach ($sessions as $session)
                         <article class="reading-challenge-card">
                             <p><strong>Lietotajs:</strong> {{ $session->user?->name ?? 'Nezinams lietotajs' }}</p>
+                            @if ($session->challenge)
+                                <p><strong>Izaicinājums:</strong> {{ $session->challenge->title }}</p>
+                            @endif
                             <p><strong>Datums:</strong> {{ optional($session->created_at)->format('Y-m-d H:i') }}</p>
                             <p><strong>Planots:</strong> {{ $session->planned_minutes }} min</p>
-                            <p><strong>Faktiski:</strong> {{ $session->elapsed_seconds ? floor($session->elapsed_seconds / 60) : $session->planned_minutes }} min</p>
+                            <p><strong>Faktiski:</strong> {{ is_null($session->elapsed_seconds) ? 'Nav zināms' : \App\Models\ReadingChallengeSession::formatDuration($session->elapsed_seconds) }}</p>
                             <p><strong>Izlasits:</strong> {{ $session->pages_read }} lpp</p>
                             <p><strong>Redzamība:</strong> {{ $session->is_public ? 'Publiska' : 'Privāta' }}</p>
                             @if ($session->notes)

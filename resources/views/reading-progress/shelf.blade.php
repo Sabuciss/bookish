@@ -111,6 +111,7 @@
                                     <a
                                         href="{{ route('reading-progress.index', [
                                             'entry_id' => $snapshot['entry_id'] ?? '',
+                                            'challenge_id' => $snapshot['challenge_id'] ?? '',
                                             'book_title' => $snapshot['book_title'],
                                             'google_volume_id' => $snapshot['google_volume_id'] ?? '',
                                             'book_cover_url' => $snapshot['book_cover_url'] ?? '',
@@ -126,6 +127,11 @@
                                         style="display: inline-block; text-decoration: none;"
                                     >{{ $btnLabel }}</a>
                                 @endif
+                                <form method="POST" action="{{ route('reading-progress.destroy', $snapshot['entry_id']) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="book-listing-secondary-action">Noņemt no plaukta</button>
+                                </form>
                             </article>
                         @empty
                             <p class="rp-snapshot-meta">Šeit vēl nav grāmatu.</p>
@@ -133,6 +139,7 @@
                     </div>
                 @endforeach
             </div>
+            <div class="reading-progress-pagination">{{ $bookSnapshotsPaginator->links() }}</div>
         </section>
     </div>
 </x-layout>

@@ -58,6 +58,7 @@
                                     <th>No cikiem</th>
                                     <th>Līdz cikiem</th>
                                     <th>Ilgums</th>
+                                    <th>Darbības</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -126,11 +127,33 @@
                                         <td>{{ $entry->start_time ? \Illuminate\Support\Carbon::parse($entry->start_time)->format('H:i') : '-' }}</td>
                                         <td>{{ $entry->end_time ? \Illuminate\Support\Carbon::parse($entry->end_time)->format('H:i') : '-' }}</td>
                                         <td>{{ $entry->duration_minutes }} min</td>
+                                        <td>
+                                            <a href="{{ route('reading-progress.index', [
+                                                'entry_id' => $entry->id,
+                                                'challenge_id' => $entry->challenge_id,
+                                                'book_title' => $entry->book_title,
+                                                'google_volume_id' => $entry->google_volume_id,
+                                                'book_cover_url' => $entry->book_cover_url,
+                                                'pages_read' => $entry->pages_read,
+                                                'total_pages' => $entry->total_pages,
+                                                'reading_status' => $entry->reading_status,
+                                                'emotion' => $entry->emotion,
+                                                'reading_date' => $entry->reading_date->toDateString(),
+                                                'start_time' => \Illuminate\Support\Carbon::parse($entry->start_time)->format('H:i'),
+                                                'end_time' => \Illuminate\Support\Carbon::parse($entry->end_time)->format('H:i'),
+                                            ]) }}" class="reading-progress-submit">Rediģēt</a>
+                                            <form method="POST" action="{{ route('reading-progress.destroy', $entry->id) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="book-listing-secondary-action">Dzēst</button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
+                    <div class="reading-progress-pagination">{{ $progressEntries->links() }}</div>
                 @endif
             </section>
 
@@ -171,6 +194,18 @@
                     <label class="rp-book-title-field">
                         Grāmata
                         <input type="text" name="book_title" id="book_title" maxlength="255" value="{{ old('book_title', $prefill['book_title'] ?? '') }}" required class="reading-progress-input input">
+                    </label>
+
+                    <label>
+                        Lapušu izaicinājums (nav obligāti)
+                        <select name="challenge_id" class="reading-progress-input input">
+                            <option value="">Bez izaicinājuma</option>
+                            @foreach ($challenges as $challenge)
+                                <option value="{{ $challenge->id }}" @selected((string) old('challenge_id', $prefill['challenge_id'] ?? '') === (string) $challenge->id)>
+                                    {{ $challenge->title }} ({{ $challenge->target_value }} lpp)
+                                </option>
+                            @endforeach
+                        </select>
                     </label>
 
                     <div id="selected-book-preview" class="rp-book-preview" style="display: none;">

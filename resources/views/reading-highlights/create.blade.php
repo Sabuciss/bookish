@@ -1,7 +1,7 @@
 <x-layout>
     <div class="reading-progress-page">
-        <h1>Izveidot highlight</h1>
-        <p>Pievieno savu jauno citātu vai piezīmi atsevišķā izveides lapā.</p>
+        <h1>{{ $highlight ? 'Rediģēt highlight' : 'Izveidot highlight' }}</h1>
+        <p>{{ $highlight ? 'Atjauno savu citātu vai piezīmi.' : 'Pievieno savu jauno citātu vai piezīmi atsevišķā izveides lapā.' }}</p>
 
         @if ($errors->any())
             <div class="reading-progress-alert reading-progress-alert-error">
@@ -18,29 +18,32 @@
         </div>
 
         <section class="reading-progress-editor uiverse-container">
-            <h2 class="uiverse-heading">Pievienot highlight</h2>
+            <h2 class="uiverse-heading">{{ $highlight ? 'Rediģēt highlight' : 'Pievienot highlight' }}</h2>
 
-            <form action="{{ route('reading-highlights.store') }}" method="POST" class="reading-progress-form form">
+            <form action="{{ $highlight ? route('reading-highlights.update', $highlight) : route('reading-highlights.store') }}" method="POST" class="reading-progress-form form">
                 @csrf
+                @if ($highlight)
+                    @method('PATCH')
+                @endif
 
                 <label>
                     Kas to teica?
-                    <input type="text" name="character" maxlength="255" value="{{ old('character') }}" class="reading-progress-input input" placeholder="Piemēram, varonis vai autors">
+                    <input type="text" name="character" maxlength="255" value="{{ old('character', $highlight?->character) }}" class="reading-progress-input input" placeholder="Piemēram, varonis vai autors">
                 </label>
 
                 <label>
                     Grāmata
-                    <input type="text" name="book_title" maxlength="255" value="{{ old('book_title') }}" class="reading-progress-input input" placeholder="Grāmatas nosaukums">
+                    <input type="text" name="book_title" maxlength="255" value="{{ old('book_title', $highlight?->book_title) }}" class="reading-progress-input input" placeholder="Grāmatas nosaukums">
                 </label>
 
                 <label>
                     Kas tika teikts?
-                    <textarea name="quote_text" rows="5" maxlength="5000" required class="reading-progress-input input">{{ old('quote_text') }}</textarea>
+                    <textarea name="quote_text" rows="5" maxlength="5000" required class="reading-progress-input input">{{ old('quote_text', $highlight?->quote_text) }}</textarea>
                 </label>
 
                 <input type="hidden" name="is_public" value="0">
                 <label for="highlight-is-public" class="highlight-visibility-control">
-                    <input id="highlight-is-public" type="checkbox" name="is_public" value="1" aria-describedby="highlight-visibility-help" @checked(old('is_public', true))>
+                    <input id="highlight-is-public" type="checkbox" name="is_public" value="1" aria-describedby="highlight-visibility-help" @checked(old('is_public', $highlight?->is_public ?? true))>
                     <span class="highlight-visibility-checkbox" aria-hidden="true"></span>
                     <span class="highlight-visibility-status" aria-live="polite">
                         <span class="highlight-visibility-public">Publisks</span>
@@ -50,7 +53,7 @@
                     <span id="highlight-visibility-help" class="highlight-visibility-tooltip" role="tooltip">Publisks highlight būs redzams sadaļā “Visi”. Ja neatzīmēsi, to redzēsi tikai tu.</span>
                 </label>
 
-                <button type="submit" class="reading-progress-submit login-button">Saglabāt highlight</button>
+                <button type="submit" class="reading-progress-submit login-button">{{ $highlight ? 'Saglabāt izmaiņas' : 'Saglabāt highlight' }}</button>
             </form>
         </section>
     </div>

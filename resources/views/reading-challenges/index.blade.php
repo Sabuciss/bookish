@@ -50,12 +50,19 @@
                                 @if ($challenge->completion_comment)
                                     <p class="reading-challenge-notes"><strong>Komentārs:</strong> {{ $challenge->completion_comment }}</p>
                                 @endif
+                                <p>Progress: <strong>{{ $challenge->completion_value ?? 0 }} / {{ $challenge->target_value }} {{ $challenge->challenge_type === 'pages' ? 'lpp' : 'min' }}</strong></p>
                                 <p>
                                     <a href="{{ route('reading-challenges.edit', $challenge->id) }}" class="reading-progress-submit" style="text-decoration: none;">Atjaunot</a>
                                 </p>
+                                <form method="POST" action="{{ route('reading-challenges.destroy', $challenge->id) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="book-listing-secondary-action">Dzēst izaicinājumu</button>
+                                </form>
                             </article>
                         @endforeach
                     </div>
+                    <div>{{ $challenges->links() }}</div>
                 @endif
             </section>
 
@@ -101,19 +108,6 @@
                     <label>
                         Piezīmes (nav obligāti)
                         <textarea name="notes" rows="3" class="input" placeholder="Papildu piezīmes">{{ old('notes', $editingChallenge->notes ?? '') }}</textarea>
-                    </label>
-
-                    <label>
-                        Statuss
-                        <select name="is_completed" class="input">
-                            <option value="0" @selected((string) old('is_completed', (int) ($editingChallenge->is_completed ?? false)) === '0')>Procesā</option>
-                            <option value="1" @selected((string) old('is_completed', (int) ($editingChallenge->is_completed ?? false)) === '1')>Izdarīts</option>
-                        </select>
-                    </label>
-
-                    <label>
-                        Progresa komentārs (nav obligāti)
-                        <textarea name="completion_comment" rows="2" class="input" placeholder="Piemēram: izlasīju 35 lapas">{{ old('completion_comment', $editingChallenge->completion_comment ?? '') }}</textarea>
                     </label>
 
                     <button type="submit" class="login-button">{{ $isEditing ? 'Atjaunot izaicinājumu' : 'Saglabāt izaicinājumu' }}</button>

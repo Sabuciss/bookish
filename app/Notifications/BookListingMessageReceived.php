@@ -22,11 +22,14 @@ class BookListingMessageReceived extends Notification
     public function toArray(object $notifiable): array
     {
         $this->message->loadMissing('application.listing');
+        $listing = $this->message->application->listing;
 
         return [
             'type' => 'book_listing_message_received',
-            'listing_id' => $this->message->application->listing->id,
-            'title' => $this->message->application->listing->book_title,
+            'listing_id' => $listing->id,
+            'application_id' => $this->message->application->id,
+            'title' => $listing->book_title,
+            'url' => $listing->notificationUrl('book-message-' . $this->message->id),
         ];
     }
 }

@@ -20,13 +20,32 @@ class ReadingChallengeSession extends Model
         'is_public',
         'started_at',
         'ended_at',
+        'active_started_at',
+        'timer_status',
     ];
 
     protected $casts = [
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
+        'active_started_at' => 'datetime',
+        'elapsed_seconds' => 'integer',
+        'pages_read' => 'integer',
         'is_public' => 'boolean',
     ];
+
+    public static function formatDuration(int $seconds): string
+    {
+        $seconds = max(0, $seconds);
+        $hours = intdiv($seconds, 3600);
+        $minutes = intdiv($seconds % 3600, 60);
+        $remainingSeconds = $seconds % 60;
+
+        if ($hours > 0) {
+            return sprintf('%d h %02d min %02d s', $hours, $minutes, $remainingSeconds);
+        }
+
+        return sprintf('%d min %02d s', $minutes, $remainingSeconds);
+    }
 
     public function challenge(): BelongsTo
     {

@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ReadingProgress extends Model
 {
@@ -57,13 +59,44 @@ class ReadingProgress extends Model
         return 'in_progress';
     }
 
-    /**
-     * Latest snapshot per distinct book (by google_volume_id, falling back to book_title) for a user,
-     * keyed by that same identifier. Resolved at the database level to avoid loading the full history.
-     *
-     * @return \Illuminate\Support\Collection<string, array>
-     */
-    public static function latestSnapshotsForUser(int $userId): \Illuminate\Support\Collection
+    public static function latestSnapshotsPageForUser(int $userId, int $perPage = 50): LengthAwarePaginator
+    {
+        return static::latestSnapshotQueryForUser($userId)
+            ->latest('reading_date')
+            ->latest('id')
+            ->paginate($perPage)
+            ->through(fn (self $entry): array => self::snapshotArray($entry));
+    }
+
+    public static function latestSnapshotStatsForUser(int $userId): object
+    {
+        return static::latestSnapshotQueryForUser($userId)
+            ->selectRaw('COUNT(*) as books_on_shelf, COALESCE(SUM(pages_read), 0) as pages_read')
+            ->selectRaw('COALESCE(SUM(CASE WHEN total_pages IS NOT NULL AND pages_read >= total_pages THEN 1 ELSE 0 END), 0) as books_read')
+            ->selectRaw('COALESCE(SUM(CASE WHEN pages_read > 0 AND (total_pages IS NULL OR pages_read < total_pages) THEN 1 ELSE 0 END), 0) as books_in_progress')
+            ->selectRaw('COALESCE(SUM(CASE WHEN pages_read <= 0 THEN 1 ELSE 0 END), 0) as books_want_to_read')
+            ->first();
+    }
+
+    /** @return array<string, int> */
+    public static function latestPageCountsForUser(int $userId): array
+    {
+        $query = static::latestSnapshotQueryForUser($userId);
+
+        $pageCounts = (clone $query)
+            ->whereNotNull('google_volume_id')
+            ->get(['google_volume_id', 'pages_read'])
+            ->mapWithKeys(fn (self $entry): array => [$entry->google_volume_id => (int) $entry->pages_read]);
+
+        $titlePageCounts = (clone $query)
+            ->whereNull('google_volume_id')
+            ->get(['book_title', 'pages_read'])
+            ->mapWithKeys(fn (self $entry): array => [mb_strtolower(trim($entry->book_title)) => (int) $entry->pages_read]);
+
+        return $pageCounts->union($titlePageCounts)->all();
+    }
+
+    private static function latestSnapshotQueryForUser(int $userId): Builder
     {
         $latestGoogleEntryIds = static::query()
             ->selectRaw('MAX(id)')
@@ -89,26 +122,27 @@ class ReadingProgress extends Model
                         $query->whereNull('google_volume_id')
                             ->whereIn('id', $latestTitleEntryIds);
                     });
-            })
-            ->get()
-            ->keyBy(fn (self $entry): string => $entry->google_volume_id ?: mb_strtolower(trim((string) $entry->book_title)))
-            ->map(function (self $entry): array {
-                $pagesRead = (int) $entry->pages_read;
-                $totalPages = $entry->total_pages ? (int) $entry->total_pages : null;
-
-                return [
-                    'entry_id' => $entry->id,
-                    'book_title' => $entry->book_title,
-                    'google_volume_id' => $entry->google_volume_id,
-                    'book_cover_url' => $entry->book_cover_url,
-                    'pages_read' => $pagesRead,
-                    'total_pages' => $totalPages,
-                    'reading_status' => self::deriveReadingStatus($pagesRead, $totalPages),
-                    'emotion' => $entry->emotion,
-                    'reading_date' => $entry->reading_date,
-                    'start_time' => $entry->start_time,
-                    'end_time' => $entry->end_time,
-                ];
             });
+    }
+
+    private static function snapshotArray(self $entry): array
+    {
+        $pagesRead = (int) $entry->pages_read;
+        $totalPages = is_null($entry->total_pages) ? null : (int) $entry->total_pages;
+
+        return [
+            'entry_id' => $entry->id,
+            'challenge_id' => $entry->challenge_id,
+            'book_title' => $entry->book_title,
+            'google_volume_id' => $entry->google_volume_id,
+            'book_cover_url' => $entry->book_cover_url,
+            'pages_read' => $pagesRead,
+            'total_pages' => $totalPages,
+            'reading_status' => self::deriveReadingStatus($pagesRead, $totalPages),
+            'emotion' => $entry->emotion,
+            'reading_date' => $entry->reading_date,
+            'start_time' => $entry->start_time,
+            'end_time' => $entry->end_time,
+        ];
     }
 }

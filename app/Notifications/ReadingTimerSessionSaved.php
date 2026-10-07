@@ -25,9 +25,14 @@ class ReadingTimerSessionSaved extends Notification
             'type' => 'reading_timer_session_saved',
             'session_id' => $this->session->id,
             'pages_read' => $this->session->pages_read,
-            'elapsed_minutes' => $this->session->elapsed_seconds
-                ? (int) floor($this->session->elapsed_seconds / 60)
-                : (int) $this->session->planned_minutes,
+            'url' => route('reading-challenges.results', [
+                'scope' => 'mine',
+                'period' => 'all',
+                'session_id' => $this->session->id,
+            ]),
+            'elapsed_minutes' => is_null($this->session->elapsed_seconds)
+                ? null
+                : (int) floor($this->session->elapsed_seconds / 60),
         ];
     }
 }

@@ -7,8 +7,10 @@ use App\Models\ReadingHighlight;
 use App\Models\ReadingProgress;
 use App\Models\BookListing;
 use App\Models\User;
+use App\Notifications\BookListingApplicationStatusChanged;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -57,11 +59,46 @@ class AdminController extends Controller
         return to_route('admin.dashboard')->with('status', 'Izcēlums dzēsts.');
     }
 
-    public function destroyBookListing(BookListing $bookListing): RedirectResponse
+    public function destroyBookListing(Request $request, BookListing $bookListing): RedirectResponse
     {
-        $bookListing->delete();
+        $result = DB::transaction(function () use ($request, $bookListing): string {
+            $lockedListing = BookListing::query()
+                ->lockForUpdate()
+                ->findOrFail($bookListing->id);
 
-        return to_route('admin.dashboard')->with('status', 'Grāmatas sludinājums dzēsts.');
+            if ($lockedListing->applications()->whereIn('status', ['accepted', 'completed'])->exists()) {
+                return 'blocked';
+            }
+
+            if ($lockedListing->applications()->exists()) {
+                $pendingApplications = $lockedListing->applications()
+                    ->where('status', 'pending')
+                    ->with('user')
+                    ->get();
+
+                foreach ($pendingApplications as $application) {
+                    $application->transitionTo('cancelled', (int) $request->user()->id, 'admin_withdrawn');
+                    $application->user?->notify(new BookListingApplicationStatusChanged($application, 'cancelled', 'admin_withdrawn'));
+                }
+
+                $lockedListing->update(['availability' => 'unavailable']);
+
+                return 'withdrawn';
+            }
+
+            DB::table('notifications')->where('data->listing_id', $lockedListing->id)->delete();
+            $lockedListing->delete();
+
+            return 'deleted';
+        });
+
+        if ($result === 'blocked') {
+            return back()->with('status', 'Sludinājumu ar pieņemtu darījumu nevar dzēst.');
+        }
+
+        return to_route('admin.dashboard')->with('status', $result === 'withdrawn'
+            ? 'Sludinājums atsaukts, pieteikumu vēsture saglabāta.'
+            : 'Grāmatas sludinājums dzēsts.');
     }
 
     public function destroyUser(Request $request, User $user): RedirectResponse

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('release_date');
             $table->string('info_link')->nullable();
             $table->timestamp('notified_at')->nullable();
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
 
             $table->unique(['user_id', 'google_volume_id']);

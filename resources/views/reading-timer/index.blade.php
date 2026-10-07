@@ -27,12 +27,28 @@
         <section class="reading-timer-section uiverse-container">
             <h2 class="uiverse-heading">Lasīšanas taimeris</h2>
 
-            <form action="{{ route('reading-challenges.sessions.store') }}" method="POST" class="form" id="reading-timer-form">
+            <form action="{{ route('reading-timer.sessions.start') }}" method="POST" class="form" id="reading-timer-form"
+                data-active-session-id="{{ $activeSession?->id ?? '' }}"
+                data-active-status="{{ $activeSession?->timer_status ?? '' }}"
+                data-active-elapsed="{{ $activeElapsedSeconds }}"
+                data-pause-url="{{ route('reading-timer.sessions.pause', ['session' => '__SESSION__']) }}"
+                data-resume-url="{{ route('reading-timer.sessions.resume', ['session' => '__SESSION__']) }}"
+                data-complete-url="{{ route('reading-timer.sessions.complete', ['session' => '__SESSION__']) }}">
                 @csrf
 
                 <label>
+                    Izaicinājums (nav obligāti)
+                    <select name="challenge_id" id="timer-challenge" class="input">
+                        <option value="">Bez izaicinājuma</option>
+                        @foreach ($challenges as $challenge)
+                            <option value="{{ $challenge->id }}" @selected($activeSession?->challenge_id === $challenge->id)>{{ $challenge->title }} ({{ $challenge->target_value }} min)</option>
+                        @endforeach
+                    </select>
+                </label>
+
+                <label>
                     Uzliec laiku (minūtēs)
-                    <input type="number" min="1" max="1440" name="planned_minutes" id="timer-minutes" value="{{ old('planned_minutes', 25) }}" class="input" required>
+                    <input type="number" min="1" max="1440" name="planned_minutes" id="timer-minutes" value="{{ old('planned_minutes', $activeSession?->planned_minutes ?? 25) }}" class="input" required>
                 </label>
 
                 <div class="reading-timer-display" id="reading-timer-display">25:00</div>
@@ -43,13 +59,11 @@
                     <button type="button" id="timer-reset" class="reading-progress-submit">Reset</button>
                 </div>
 
-                <input type="hidden" name="elapsed_seconds" id="timer-elapsed-seconds" value="{{ old('elapsed_seconds') }}">
-                <input type="hidden" name="started_at" id="timer-started-at" value="{{ old('started_at') }}">
-                <input type="hidden" name="ended_at" id="timer-ended-at" value="{{ old('ended_at') }}">
+                <p id="timer-error" class="reading-progress-alert reading-progress-alert-error" role="alert" hidden></p>
 
                 <label>
                     Cik lpp izlasīji šajā laikā
-                    <input type="number" min="0" name="pages_read" value="{{ old('pages_read') }}" class="input" required>
+                    <input type="number" min="0" max="2000" name="pages_read" value="{{ old('pages_read') }}" class="input" required>
                 </label>
 
                 <label>
@@ -65,8 +79,16 @@
                     <span id="session-visibility-help" class="session-visibility-tooltip" role="tooltip">Publiska sesija būs redzama sadaļā “Visi”. Ja neatzīmēsi, sesiju redzēsi tikai tu.</span>
                 </label>
 
-                    <button type="submit" class="login-button reading-timer-save">Saglabāt sesiju</button>
+                <button type="submit" class="login-button reading-timer-save" id="timer-save">Saglabāt sesiju</button>
             </form>
+
+            @if ($activeSession)
+                <form method="POST" action="{{ route('reading-timer.sessions.destroy', $activeSession->id) }}" class="reading-timer-cancel-form">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="book-listing-secondary-action">Atcelt taimera sesiju</button>
+                </form>
+            @endif
 
             <h3>Pēdējās sesijas</h3>
             @if ($sessions->isEmpty())
@@ -75,10 +97,18 @@
                 <div class="reading-challenges-cards">
                     @foreach ($sessions as $session)
                         <article class="reading-challenge-card">
+                            @if ($session->challenge)
+                                <p><strong>Izaicinājums:</strong> {{ $session->challenge->title }}</p>
+                            @endif
                             <p><strong>Plānots:</strong> {{ $session->planned_minutes }} min</p>
-                            <p><strong>Faktiski:</strong> {{ $session->elapsed_seconds ? floor($session->elapsed_seconds / 60) : $session->planned_minutes }} min</p>
+                            <p><strong>Faktiski:</strong> {{ is_null($session->elapsed_seconds) ? 'Nav zināms' : \App\Models\ReadingChallengeSession::formatDuration($session->elapsed_seconds) }}</p>
                             <p><strong>Izlasīts:</strong> {{ $session->pages_read }} lpp</p>
                             <p><strong>Redzamība:</strong> {{ $session->is_public ? 'Publiska' : 'Privāta' }}</p>
+                            <form method="POST" action="{{ route('reading-timer.sessions.destroy', $session->id) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="book-listing-secondary-action">Dzēst sesiju</button>
+                            </form>
                             @if ($session->notes)
                                 <p class="reading-challenge-notes">{{ $session->notes }}</p>
                             @endif

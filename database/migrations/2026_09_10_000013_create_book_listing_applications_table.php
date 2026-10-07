@@ -15,6 +15,8 @@ return new class extends Migration
             $table->string('offered_book_title')->nullable();
             $table->text('message')->nullable();
             $table->string('status', 20)->default('pending');
+            $table->json('listing_snapshot')->nullable();
+            $table->json('status_history')->nullable();
             $table->timestamps();
             $table->unique(['book_listing_id', 'user_id']);
         });

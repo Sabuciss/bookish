@@ -8,6 +8,7 @@ use App\Models\BooktokFavoriteAuthor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -19,14 +20,14 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         $userId = (int) $request->user()->id;
-        $bookSnapshots = ReadingProgress::latestSnapshotsForUser($userId);
+        $snapshotStats = ReadingProgress::latestSnapshotStatsForUser($userId);
 
         $profileStats = [
-            'booksRead' => $bookSnapshots->where('reading_status', 'read')->count(),
-            'pagesRead' => $bookSnapshots->sum('pages_read'),
-            'booksOnShelf' => $bookSnapshots->count(),
-            'booksInProgress' => $bookSnapshots->where('reading_status', 'in_progress')->count(),
-            'booksWantToRead' => $bookSnapshots->where('reading_status', 'want_to_read')->count(),
+            'booksRead' => (int) $snapshotStats->books_read,
+            'pagesRead' => (int) $snapshotStats->pages_read,
+            'booksOnShelf' => (int) $snapshotStats->books_on_shelf,
+            'booksInProgress' => (int) $snapshotStats->books_in_progress,
+            'booksWantToRead' => (int) $snapshotStats->books_want_to_read,
             'favoriteAuthors' => BooktokFavoriteAuthor::query()
                 ->where('user_id', $userId)
                 ->count(),
@@ -65,9 +66,9 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        Auth::logout();
+        DB::transaction(fn () => $user->delete());
 
-        $user->delete();
+        Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

@@ -13,18 +13,32 @@ class SendBookReleaseReminders extends Command
 
     public function handle(): int
     {
-        $reminders = BookReleaseReminder::query()
+        $sentCount = 0;
+
+        BookReleaseReminder::query()
             ->whereNull('notified_at')
             ->whereDate('release_date', '<=', today())
             ->with('user')
-            ->get();
+            ->chunkById(100, function ($reminders) use (&$sentCount): void {
+                foreach ($reminders as $reminder) {
+                    $notificationExists = $reminder->user->notifications()
+                        ->where('type', BookReleaseAvailable::class)
+                        ->where('data->reminder_id', $reminder->id)
+                        ->exists();
 
-        foreach ($reminders as $reminder) {
-            $reminder->user->notify(new BookReleaseAvailable($reminder));
-            $reminder->update(['notified_at' => now()]);
-        }
+                    if (! $notificationExists) {
+                        $reminder->user->notify(new BookReleaseAvailable($reminder));
+                    }
 
-        $this->info('Sent ' . $reminders->count() . ' release reminder(s).');
+                    $reminder->update([
+                        'notified_at' => now(),
+                        'read_at' => now(),
+                    ]);
+                    $sentCount++;
+                }
+            });
+
+        $this->info('Sent ' . $sentCount . ' release reminder(s).');
 
         return self::SUCCESS;
     }

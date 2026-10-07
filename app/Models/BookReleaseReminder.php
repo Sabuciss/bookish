@@ -23,6 +23,7 @@ class BookReleaseReminder extends Model
         return [
             'release_date' => 'date',
             'notified_at' => 'datetime',
+            'read_at' => 'datetime',
         ];
     }
 

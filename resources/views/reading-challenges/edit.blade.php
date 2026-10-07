@@ -1,7 +1,7 @@
 <x-layout>
     <div class="reading-challenges-page">
         <h1>Atjaunot izaicinājumu</h1>
-        <p>Atjauno izaicinājuma mērķi, periodu, statusu un komentāru.</p>
+        <p>Atjauno izaicinājuma mērķi, periodu vai piezīmes.</p>
 
         @if (session('status'))
             <div class="reading-progress-alert reading-progress-alert-success">
@@ -59,19 +59,6 @@
                 <label>
                     Piezīmes (nav obligāti)
                     <textarea name="notes" rows="3" class="input" placeholder="Papildu piezīmes">{{ old('notes', $challenge->notes) }}</textarea>
-                </label>
-
-                <label>
-                    Statuss
-                    <select name="is_completed" class="input">
-                        <option value="0" @selected((string) old('is_completed', (int) $challenge->is_completed) === '0')>Procesā</option>
-                        <option value="1" @selected((string) old('is_completed', (int) $challenge->is_completed) === '1')>Izdarīts</option>
-                    </select>
-                </label>
-
-                <label>
-                    Progresa komentārs (nav obligāti)
-                    <textarea name="completion_comment" rows="2" class="input" placeholder="Piemēram: izlasīju 35 lapas">{{ old('completion_comment', $challenge->completion_comment) }}</textarea>
                 </label>
 
                 <button type="submit" class="login-button">Saglabāt izmaiņas</button>

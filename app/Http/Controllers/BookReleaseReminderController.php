@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookReleaseReminder;
+use App\Notifications\BookReleaseAvailable;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -11,15 +13,24 @@ class BookReleaseReminderController extends Controller
 {
     public function index(Request $request): View
     {
-        $reminders = BookReleaseReminder::query()
+        $remindersQuery = BookReleaseReminder::query()
             ->where('user_id', (int) $request->user()->id)
             ->whereNull('notified_at')
             ->whereDate('release_date', '>=', today())
-            ->orderBy('release_date')
-            ->get();
+            ->orderBy('release_date');
+
+        $calendarEvents = (clone $remindersQuery)
+            ->get(['release_date', 'title'])
+            ->map(fn (BookReleaseReminder $reminder): array => [
+                'date' => $reminder->release_date->toDateString(),
+                'title' => $reminder->title,
+            ])
+            ->all();
+        $reminders = $remindersQuery->paginate(20)->withQueryString();
 
         return view('book-release-reminders.index', [
             'reminders' => $reminders,
+            'calendarEvents' => $calendarEvents,
         ]);
     }
 
@@ -46,8 +57,14 @@ class BookReleaseReminderController extends Controller
                 'info_link' => $data['info_link'] ?? null,
                 'cover_url' => $data['cover_url'] ?? null,
                 'notified_at' => null,
+                'read_at' => null,
             ]
         );
+
+        $request->user()->notifications()
+            ->where('type', BookReleaseAvailable::class)
+            ->where('data->reminder_id', $reminder->id)
+            ->delete();
 
         return response()->json([
             'message' => 'Paziņojums iestatīts.',
@@ -55,17 +72,35 @@ class BookReleaseReminderController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, string $volumeId): JsonResponse
+    public function destroy(Request $request, string $volumeId): JsonResponse|RedirectResponse
     {
-        BookReleaseReminder::query()
+        $reminder = BookReleaseReminder::query()
             ->where('user_id', (int) $request->user()->id)
             ->where('google_volume_id', $volumeId)
-            ->delete();
+            ->first();
+
+        if ($reminder) {
+            $request->user()->notifications()
+                ->where('type', BookReleaseAvailable::class)
+                ->where('data->reminder_id', $reminder->id)
+                ->delete();
+            $reminder->delete();
+        }
 
         if (! $request->expectsJson()) {
             return redirect()->back()->with('status', 'Paziņojums noņemts.');
         }
 
         return response()->json(['message' => 'Paziņojums noņemts.']);
+    }
+
+    public function open(Request $request, int $reminderId): RedirectResponse
+    {
+        $reminder = BookReleaseReminder::query()
+            ->where('user_id', (int) $request->user()->id)
+            ->findOrFail($reminderId);
+        $reminder->update(['read_at' => now()]);
+
+        return redirect()->to($reminder->info_link ?: route('books.show', $reminder->google_volume_id));
     }
 }

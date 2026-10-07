@@ -17,7 +17,21 @@ class BookReleaseAvailable extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
+    }
+
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'type' => 'book_release_available',
+            'reminder_id' => $this->reminder->id,
+            'google_volume_id' => $this->reminder->google_volume_id,
+            'title' => $this->reminder->title,
+            'author' => $this->reminder->author,
+            'release_date' => $this->reminder->release_date->toDateString(),
+            'cover_url' => $this->reminder->cover_url,
+            'url' => $this->reminder->info_link ?: route('books.show', $this->reminder->google_volume_id),
+        ];
     }
 
     public function toMail(object $notifiable): MailMessage

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreReadingProgressRequest;
+use App\Models\ReadingChallenge;
 use App\Models\ReadingProgress;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,10 +15,11 @@ class ReadingProgressController extends Controller
     public function showBookshelf(): View
     {
         $userId = (int) auth()->id();
-        $data = $this->buildProgressData($userId);
+        $data = $this->buildProgressData($userId, true);
 
         return view('reading-progress.shelf', [
             'bookSnapshots' => $data['bookSnapshots'],
+            'bookSnapshotsPaginator' => $data['bookSnapshotsPaginator'],
             'bookSnapshotsByStatus' => $data['bookSnapshotsByStatus'],
             'totalPagesRead' => $data['totalPagesRead'],
             'totalBooksRead' => $data['totalBooksRead'],
@@ -41,6 +43,7 @@ class ReadingProgressController extends Controller
             'reading_date' => (string) $request->query('reading_date', now()->toDateString()),
             'start_time' => (string) $request->query('start_time', '00:00'),
             'end_time' => (string) $request->query('end_time', '00:01'),
+            'challenge_id' => (string) $request->query('challenge_id', ''),
         ];
 
         $prefill['is_edit_mode'] = !empty($prefill['entry_id']) || !empty($prefill['book_title']);
@@ -48,11 +51,27 @@ class ReadingProgressController extends Controller
         return view('reading-progress.index', [
             'progressEntries' => $data['progressEntries'],
             'latestPagesByBook' => $data['latestPagesByBook'],
+            'challenges' => ReadingChallenge::query()
+                ->where('user_id', $userId)
+                ->where('challenge_type', 'pages')
+                ->where(function ($query) use ($userId): void {
+                    $query->where(function ($query): void {
+                        $query->whereDate('start_date', '<=', now()->toDateString())
+                            ->whereDate('end_date', '>=', now()->toDateString())
+                            ->where('is_completed', false);
+                    })->orWhereIn('id', ReadingProgress::query()
+                        ->select('challenge_id')
+                        ->where('user_id', $userId)
+                        ->whereNotNull('challenge_id'));
+                })
+                ->orderBy('end_date')
+                ->limit(50)
+                ->get(['id', 'title', 'target_value']),
             'prefill' => $prefill,
         ]);
     }
 
-    private function buildProgressData(int $userId): array
+    private function buildProgressData(int $userId, bool $includeBookSnapshots = false): array
     {
         $progressEntries = ReadingProgress::query()
             ->where('user_id', $userId)
@@ -62,9 +81,16 @@ class ReadingProgressController extends Controller
             })
             ->latest('reading_date')
             ->latest('id')
-            ->get();
+            ->paginate(25)
+            ->withQueryString();
 
-        $bookSnapshots = ReadingProgress::latestSnapshotsForUser($userId);
+        $bookSnapshotsPaginator = $includeBookSnapshots
+            ? ReadingProgress::latestSnapshotsPageForUser($userId)
+            : null;
+        $bookSnapshots = $bookSnapshotsPaginator?->getCollection() ?? collect();
+        $snapshotStats = $includeBookSnapshots
+            ? ReadingProgress::latestSnapshotStatsForUser($userId)
+            : null;
 
         $bookSnapshotsByStatus = [
             'want_to_read' => [],
@@ -85,12 +111,11 @@ class ReadingProgressController extends Controller
         return [
             'progressEntries' => $progressEntries,
             'bookSnapshots' => $bookSnapshots->values()->all(),
+            'bookSnapshotsPaginator' => $bookSnapshotsPaginator,
             'bookSnapshotsByStatus' => $bookSnapshotsByStatus,
-            'totalPagesRead' => $bookSnapshots->sum('pages_read'),
-            'totalBooksRead' => count($bookSnapshotsByStatus['read']),
-            'latestPagesByBook' => $bookSnapshots
-                ->map(fn (array $snapshot): int => (int) $snapshot['pages_read'])
-                ->all(),
+            'totalPagesRead' => (int) ($snapshotStats->pages_read ?? 0),
+            'totalBooksRead' => (int) ($snapshotStats->books_read ?? 0),
+            'latestPagesByBook' => ReadingProgress::latestPageCountsForUser($userId),
         ];
     }
 
@@ -132,17 +157,42 @@ class ReadingProgressController extends Controller
             );
         }
 
+        $wasUpdate = $existingEntry !== null;
+        $previousChallengeId = $existingEntry?->challenge_id;
+
         if ($existingEntry) {
             $existingEntry->update($data);
+        } else {
+            $existingEntry = ReadingProgress::create($data);
+        }
 
+        foreach (array_unique(array_filter([$previousChallengeId, $existingEntry->challenge_id])) as $challengeId) {
+            $challenge = ReadingChallenge::query()
+                ->where('user_id', $request->user()->id)
+                ->find($challengeId);
+
+            $challenge?->refreshCompletionFromProgress();
+        }
+
+        if ($wasUpdate) {
             return redirect()->route('reading-shelf.show')
                 ->with('status', 'Lasīšanas progress tika atjaunināts.');
         }
 
-        ReadingProgress::create($data);
-
         return redirect()->route('reading-progress.index')
             ->with('status', 'Lasīšanas progress veiksmīgi saglabāts.');
+    }
+
+    public function destroy(Request $request, int $entryId): RedirectResponse
+    {
+        $entry = ReadingProgress::query()
+            ->where('user_id', $request->user()->id)
+            ->findOrFail($entryId);
+        $challenge = $entry->challenge;
+        $entry->delete();
+        $challenge?->refreshCompletionFromProgress();
+
+        return to_route('reading-shelf.show')->with('status', 'Lasīšanas ieraksts dzēsts.');
     }
 
     public function storeWantToRead(Request $request): RedirectResponse

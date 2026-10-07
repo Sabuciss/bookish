@@ -43,9 +43,20 @@
                                 <span class="highlight-character">{{ $highlight->is_public ? 'Publisks' : 'Privāts' }}</span>
                                 <span class="highlight-character">Autors: {{ $highlight->user?->name ?? 'Nezināms lietotājs' }}</span>
                             </div>
+                            @if ($highlight->user_id === auth()->id())
+                                <div class="highlight-owner-actions">
+                                    <a href="{{ route('reading-highlights.edit', $highlight) }}" class="reading-progress-submit">Rediģēt</a>
+                                    <form method="POST" action="{{ route('reading-highlights.destroy', $highlight) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="book-listing-secondary-action">Dzēst</button>
+                                    </form>
+                                </div>
+                            @endif
                         </div>
                     @endforeach
                 </div>
+                <div class="reading-progress-pagination">{{ $highlights->links() }}</div>
             @endif
         </section>
     </div>

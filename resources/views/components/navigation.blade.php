@@ -13,31 +13,28 @@
     <div class="flex items-center gap-3">
       @auth
         @php
-          $releaseReminders = Auth::user()->bookReleaseReminders()
+          $currentUser = Auth::user();
+          $unreadNotifications = $currentUser->unreadNotifications()
+            ->latest()
+            ->limit(20)
+            ->get();
+          $databaseNotificationCount = $currentUser->unreadNotifications()->count();
+          $releaseReminders = $currentUser->bookReleaseReminders()
             ->whereNotNull('notified_at')
+            ->whereNull('read_at')
             ->latest('notified_at')
+            ->limit(10)
             ->get();
-          $listingNotifications = Auth::user()->notifications()
-            ->where('type', \App\Notifications\BookListingApplicationReceived::class)
+          $releaseReminderCount = $currentUser->bookReleaseReminders()
+            ->whereNotNull('notified_at')
             ->whereNull('read_at')
-            ->latest()
-            ->get();
-          $listingStatusNotifications = Auth::user()->notifications()
-            ->where('type', \App\Notifications\BookListingApplicationStatusChanged::class)
-            ->whereNull('read_at')
-            ->latest()
-            ->get();
-          $listingMessageNotifications = Auth::user()->notifications()
-            ->where('type', \App\Notifications\BookListingMessageReceived::class)
-            ->whereNull('read_at')
-            ->latest()
-            ->get();
-          $latestTimerNotification = Auth::user()->notifications()
-            ->where('type', \App\Notifications\ReadingTimerSessionSaved::class)
-            ->whereNull('read_at')
-            ->latest()
-            ->first();
-          $notificationCount = $releaseReminders->count() + $listingNotifications->count() + $listingStatusNotifications->count() + $listingMessageNotifications->count() + (int) (bool) $latestTimerNotification;
+            ->count();
+          $notificationCount = $databaseNotificationCount + $releaseReminderCount;
+          $listingNotifications = $unreadNotifications->where('type', \App\Notifications\BookListingApplicationReceived::class);
+          $listingStatusNotifications = $unreadNotifications->where('type', \App\Notifications\BookListingApplicationStatusChanged::class);
+          $listingMessageNotifications = $unreadNotifications->where('type', \App\Notifications\BookListingMessageReceived::class);
+          $timerNotifications = $unreadNotifications->where('type', \App\Notifications\ReadingTimerSessionSaved::class);
+          $releaseNotifications = $unreadNotifications->where('type', \App\Notifications\BookReleaseAvailable::class);
         @endphp
         <div class="book-notification" x-data="{ open: false }">
           <button type="button" class="book-notification-button" @click="open = !open" :aria-expanded="open.toString()" aria-label="Atvērt paziņojumus">
@@ -59,7 +56,7 @@
             @endif
             @foreach($listingNotifications as $notification)
               <div class="book-notification-item">
-                <a class="book-notification-link" href="{{ route('book-listings.index') }}">
+                <a class="book-notification-link" href="{{ route('notifications.open', $notification->id) }}">
                   <span class="book-notification-cover">!</span>
                   <span>
                     <strong>Jauns pieteikums</strong>
@@ -70,12 +67,18 @@
             @endforeach
             @foreach($listingStatusNotifications as $notification)
               <div class="book-notification-item">
-                <a class="book-notification-link" href="{{ route('book-listings.index') }}">
+                <a class="book-notification-link" href="{{ route('notifications.open', $notification->id) }}">
                   <span class="book-notification-cover">!</span>
                   <span>
                     @if($notification->data['status'] === 'accepted')
                       <strong>Pieteikums pieņemts</strong>
                       <small>Tavs piedāvājums par “{{ $notification->data['title'] }}” ir pieņemts.</small>
+                    @elseif($notification->data['status'] === 'completed')
+                      <strong>Darījums pabeigts</strong>
+                      <small>Darījums par “{{ $notification->data['title'] }}” ir atzīmēts kā pabeigts.</small>
+                    @elseif($notification->data['status'] === 'cancelled')
+                      <strong>Darījums atcelts</strong>
+                      <small>Darījums par “{{ $notification->data['title'] }}” ir atcelts.</small>
                     @elseif(($notification->data['reason'] ?? 'rejected') === 'unavailable')
                       <strong>Grāmata vairs nav pieejama</strong>
                       <small>Pieteikums par “{{ $notification->data['title'] }}” ir noraidīts.</small>
@@ -89,7 +92,7 @@
             @endforeach
             @foreach($listingMessageNotifications as $notification)
               <div class="book-notification-item">
-                <a class="book-notification-link" href="{{ route('book-listings.index') }}">
+                <a class="book-notification-link" href="{{ route('notifications.open', $notification->id) }}">
                   <span class="book-notification-cover">Z</span>
                   <span>
                     <strong>Jauna ziņa par sludinājumu</strong>
@@ -98,27 +101,45 @@
                 </a>
               </div>
             @endforeach
-            @if($latestTimerNotification)
+            @foreach($timerNotifications as $notification)
               <div class="book-notification-item">
-                <a class="book-notification-link" href="{{ route('reading-challenges.results') }}">
+                <a class="book-notification-link" href="{{ route('notifications.open', $notification->id) }}">
                   <span class="book-notification-cover">T</span>
                   <span>
                     <strong>Laika sesija saglabāta</strong>
-                    <small>{{ $latestTimerNotification->data['elapsed_minutes'] }} min, {{ $latestTimerNotification->data['pages_read'] }} lpp</small>
-                    <small>Atvērt visu rezultātu kopsavilkumu</small>
+                    <small>{{ $notification->data['elapsed_minutes'] ?? 'Nezināms' }} min, {{ $notification->data['pages_read'] ?? 0 }} lpp</small>
+                    <small>Atvērt šo sesiju</small>
                   </span>
                 </a>
               </div>
-            @endif
-            @if($releaseReminders->count())
+            @endforeach
+            @foreach($releaseNotifications as $notification)
+              <div class="book-notification-item">
+                <a class="book-notification-link" href="{{ route('notifications.open', $notification->id) }}">
+                  @if($notification->data['cover_url'] ?? null)
+                    <img class="book-notification-cover" src="{{ $notification->data['cover_url'] }}" alt="{{ $notification->data['title'] }} vāks">
+                  @else
+                    <span class="book-notification-cover">{{ mb_strtoupper(mb_substr($notification->data['title'] ?? 'G', 0, 1)) }}</span>
+                  @endif
+                  <span>
+                    <strong>{{ $notification->data['title'] ?? 'Grāmata ir iznākusi' }}</strong>
+                    <small>{{ ($notification->data['author'] ?? null) ?: 'Autors nav norādīts' }}</small>
+                    @if($notification->data['release_date'] ?? null)
+                      <small>Izlaista: {{ \Illuminate\Support\Carbon::parse($notification->data['release_date'])->format('d.m.Y') }}</small>
+                    @endif
+                  </span>
+                </a>
+              </div>
+            @endforeach
+            @if($releaseReminderCount)
               <div class="book-notification-heading">
                 <strong>Izlaistās grāmatas</strong>
-                <span>{{ $releaseReminders->count() }}</span>
+                <span>{{ $releaseReminderCount }}</span>
               </div>
             @endif
             @foreach($releaseReminders as $reminder)
               <div class="book-notification-item">
-                <a class="book-notification-link" href="{{ $reminder->info_link ?: route('booktok.index') }}" target="{{ $reminder->info_link ? '_blank' : '_self' }}" rel="noopener noreferrer">
+                <a class="book-notification-link" href="{{ route('book-release-reminders.open', $reminder->id) }}">
                   @if($reminder->cover_url)
                     <img class="book-notification-cover" src="{{ $reminder->cover_url }}" alt="{{ $reminder->title }} vāks">
                   @else

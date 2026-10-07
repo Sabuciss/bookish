@@ -4,13 +4,39 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Models\BookListing;
 
 class NotificationController extends Controller
 {
     public function markAllAsRead(Request $request): RedirectResponse
     {
-        $request->user()->unreadNotifications->markAsRead();
+        $user = $request->user();
+        $user->unreadNotifications()->update(['read_at' => now()]);
+        $user->bookReleaseReminders()
+            ->whereNotNull('notified_at')
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
 
         return back();
+    }
+
+    public function open(Request $request, string $notificationId): RedirectResponse
+    {
+        $notification = $request->user()->notifications()->findOrFail($notificationId);
+        $notification->markAsRead();
+
+        $url = $notification->data['url'] ?? null;
+        if (! $url && isset($notification->data['listing_id'])) {
+            $url = BookListing::query()->find($notification->data['listing_id'])?->notificationUrl();
+        }
+        if (! $url && isset($notification->data['session_id'])) {
+            $url = route('reading-challenges.results', [
+                'scope' => 'mine',
+                'period' => 'all',
+                'session_id' => $notification->data['session_id'],
+            ]);
+        }
+
+        return redirect()->to($url ?: route('dashboard'));
     }
 }
