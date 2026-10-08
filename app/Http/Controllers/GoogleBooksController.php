@@ -32,6 +32,7 @@ class GoogleBooksController extends Controller
         $startIndex = (int) ($validated['startIndex'] ?? 0);
         $orderBy = $validated['orderBy'] ?? 'relevance';
         $remoteOnly = (bool) ($validated['remote'] ?? false);
+        $isGenreQuery = $remoteOnly && str_starts_with(mb_strtolower(trim($query)), 'subject:');
         $firstPublishedFrom = isset($validated['firstPublishedFrom']) ? (int) $validated['firstPublishedFrom'] : null;
         $firstPublishedTo = isset($validated['firstPublishedTo']) ? (int) $validated['firstPublishedTo'] : null;
         $cacheKey = 'google_books_top_v6_' . md5($query . '_' . $maxResults . '_' . $startIndex . '_' . $orderBy . '_' . (int) $remoteOnly . '_' . $firstPublishedFrom . '_' . $firstPublishedTo);
@@ -40,6 +41,8 @@ class GoogleBooksController extends Controller
         if (is_array($cached)) {
             return response()->json(['items' => $cached]);
         }
+
+        $providerError = null;
 
         try {
             $params = [
@@ -64,10 +67,12 @@ class GoogleBooksController extends Controller
                     'body' => $response->body(),
                 ]);
 
-                if ($remoteOnly) {
+                $providerError = $response->status() === 429 ? 'rate_limited' : 'provider_unavailable';
+
+                if ($remoteOnly && ! $isGenreQuery) {
                     return response()->json([
                         'items' => [],
-                        'error' => $response->status() === 429 ? 'rate_limited' : 'provider_unavailable',
+                        'error' => $providerError,
                     ], $response->status() === 429 ? 429 : 503);
                 }
 
@@ -84,17 +89,19 @@ class GoogleBooksController extends Controller
         } catch (ConnectionException $e) {
             Log::warning('Google Books top request threw a connection exception', ['message' => $e->getMessage()]);
 
-            if ($remoteOnly) {
+            $providerError = 'provider_unavailable';
+
+            if ($remoteOnly && ! $isGenreQuery) {
                 return response()->json([
                     'items' => [],
-                    'error' => 'provider_unavailable',
+                    'error' => $providerError,
                 ], 503);
             }
 
             $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
         }
 
-        if ($remoteOnly && str_starts_with(mb_strtolower(trim($query)), 'subject:')) {
+        if ($isGenreQuery) {
             $openLibraryItems = $this->openLibraryGenreItems(
                 $query,
                 $maxResults,
@@ -123,6 +130,13 @@ class GoogleBooksController extends Controller
 
             if ($items !== []) {
                 Cache::put($cacheKey, $items, now()->addHours(6));
+            }
+
+            if ($providerError && $items === []) {
+                return response()->json([
+                    'items' => [],
+                    'error' => $providerError,
+                ], $providerError === 'rate_limited' ? 429 : 503);
             }
         }
 

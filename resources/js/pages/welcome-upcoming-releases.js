@@ -84,9 +84,8 @@ const renderBookCards = (container, items, emptyText, allowReminders = false) =>
     }).join('');
 };
 
-const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12, yearRange = null) => {
-    const yearKey = yearRange ? `${yearRange.from}-${yearRange.to}` : 'all-years';
-    const cacheKey = `book-results-cache-v3-${query}-${orderBy}-${maxResults}-${yearKey}`;
+const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12) => {
+    const cacheKey = `book-results-cache-v4-${query}-${orderBy}-${maxResults}`;
     const cached = localStorage.getItem(cacheKey);
 
     if (cached) {
@@ -106,10 +105,6 @@ const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12, y
         orderBy,
         remote: '1',
     });
-    if (yearRange) {
-        params.set('firstPublishedFrom', String(yearRange.from));
-        params.set('firstPublishedTo', String(yearRange.to));
-    }
 
     const url = `/api/google-books/top?${params}`;
     const response = await fetch(url);
@@ -121,12 +116,10 @@ const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12, y
     const data = await response.json();
     const items = normalizeBookItems(data.items || []);
 
-    if (items.length) {
-        localStorage.setItem(cacheKey, JSON.stringify({
-            timestamp: Date.now(),
-            items,
-        }));
-    }
+    localStorage.setItem(cacheKey, JSON.stringify({
+        timestamp: Date.now(),
+        items,
+    }));
 
     return items;
 };
@@ -179,25 +172,51 @@ const initializeYearFilter = () => {
 };
 
 const loadGenreSections = async () => {
-    if (!genreSections.length) {
+    genreSections.forEach((section) => {
+        const genreBooks = section.querySelector('.book-genre-books');
+        const books = genreBookCollections.get(genreBooks);
+
+        if (books) {
+            renderBookCards(genreBooks, selectBooksForYearRange(books), 'Šajā gadu diapazonā žanra grāmatas netika atrastas.');
+        }
+    });
+};
+
+const genreLoadQueue = [];
+let isLoadingGenre = false;
+
+const enqueueGenreLoad = (section) => {
+    if (section.dataset.loaded === 'true' || section.dataset.loading === 'true') {
         return;
     }
 
-    await Promise.all([...genreSections].map(async (section) => {
-        const genreBooks = section.querySelector('.book-genre-books');
-        const yearRange = {
-            from: Number(recommendationYearFrom.value),
-            to: Number(recommendationYearTo.value),
-        };
+    section.dataset.loading = 'true';
+    genreLoadQueue.push(section);
 
-        try {
-            const books = await fetchBookResults(section.dataset.query, 'relevance', 40, yearRange);
-            genreBookCollections.set(genreBooks, books);
-            renderBookCards(genreBooks, selectBooksForYearRange(books), 'Šajā gadu diapazonā žanra grāmatas netika atrastas.');
-        } catch {
-            renderBookCards(genreBooks, [], 'Google Books žanra dati īslaicīgi nav pieejami.');
+    if (isLoadingGenre) {
+        return;
+    }
+
+    isLoadingGenre = true;
+    void (async () => {
+        while (genreLoadQueue.length) {
+            const queuedSection = genreLoadQueue.shift();
+            const genreBooks = queuedSection.querySelector('.book-genre-books');
+
+            try {
+                const books = await fetchBookResults(queuedSection.dataset.query, 'relevance', 20);
+                genreBookCollections.set(genreBooks, books);
+                renderBookCards(genreBooks, selectBooksForYearRange(books), 'Šajā gadu diapazonā žanra grāmatas netika atrastas.');
+            } catch {
+                renderBookCards(genreBooks, [], 'Google Books žanra dati īslaicīgi nav pieejami.');
+            } finally {
+                queuedSection.dataset.loading = 'false';
+                queuedSection.dataset.loaded = 'true';
+            }
         }
-    }));
+
+        isLoadingGenre = false;
+    })();
 };
 
 initializeYearFilter();
@@ -217,7 +236,20 @@ genreFilterButtons.forEach((button) => {
     });
 });
 
-loadGenreSections();
+if ('IntersectionObserver' in window) {
+    const genreObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                genreObserver.unobserve(entry.target);
+                enqueueGenreLoad(entry.target);
+            }
+        });
+    }, { rootMargin: '200px 0px' });
+
+    genreSections.forEach((section) => genreObserver.observe(section));
+} else {
+    genreSections.forEach(enqueueGenreLoad);
+}
 
 if (genreSections.length) {
     window.setInterval(renderGenreBooks, GENRE_ROTATION_INTERVAL_MS);
