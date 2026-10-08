@@ -119,7 +119,7 @@
                         </a>
                         @auth
                             @if (in_array($author['name'], $favoriteAuthors, true))
-                                <form action="{{ route('booktok.favorite-authors.destroy', ['author' => $author['name']]) }}" method="POST">
+                                <form action="{{ route('booktok.favorite-authors.destroy', ['author' => $author['id']]) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="booktok-favorite-button is-favorite" aria-label="Noņemt {{ $author['name'] }} no favorītiem" title="Noņemt no favorītiem">♥</button>
@@ -127,7 +127,7 @@
                             @else
                                 <form action="{{ route('booktok.favorite-authors.store') }}" method="POST">
                                     @csrf
-                                    <input type="hidden" name="author" value="{{ $author['name'] }}">
+                                    <input type="hidden" name="author_id" value="{{ $author['id'] }}">
                                     <button type="submit" class="booktok-favorite-button" aria-label="Pievienot {{ $author['name'] }} favorītiem" title="Pievienot favorītiem">♡</button>
                                 </form>
                             @endif
@@ -250,7 +250,7 @@
                                         <span
                                             data-book-cover-fallback
                                             data-book-title="{{ $book->title }}"
-                                            data-book-author="{{ $book->author }}"
+                                            data-book-author="{{ $book->authorName() }}"
                                             data-book-url="{{ route('booktok.show', $book) }}"
                                         >Nav vāka</span>
                                     @endif
@@ -259,7 +259,7 @@
                                     <a href="{{ route('booktok.show', $book) }}">{{ $book->title }}</a>
                                 </td>
                                 <td>
-                                    <a href="{{ request()->fullUrlWithQuery(['view' => 'authors', 'author' => $book->author]) }}">{{ $book->author }}</a>
+                                    <a href="{{ request()->fullUrlWithQuery(['view' => 'authors', 'author' => $book->authorName()]) }}">{{ $book->authorName() }}</a>
                                 </td>
                                 <td>{{ $book->published_year ?? '—' }}</td>
                                 <td>

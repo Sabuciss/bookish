@@ -324,7 +324,7 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
         }).join('');
     };
 
-    const getUpcomingCacheKey = (searchTerm) => `upcoming-book-search-cache-v1-${searchTerm.toLowerCase()}`;
+    const getUpcomingCacheKey = (searchTerm) => `upcoming-book-search-cache-v2-${searchTerm.toLowerCase()}`;
 
     const readUpcomingCache = (searchTerm) => {
         const raw = localStorage.getItem(getUpcomingCacheKey(searchTerm));
@@ -360,42 +360,23 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
         }));
     };
 
-    const fetchBooksForQueries = async (queries, orderBy) => {
-        const responses = await Promise.all(queries.map((query) => fetch(
-            `/api/google-books/top?q=${encodeURIComponent(query)}&maxResults=40&orderBy=${orderBy}&remote=1`,
-        ).catch(() => null)));
-
-        const payloads = await Promise.all(responses.map((response) => (
-            response && response.ok ? response.json().catch(() => null) : null
-        )));
-        const uniqueItems = new Map();
-
-        payloads.filter(Boolean).flatMap((data) => data.items || []).forEach((item) => {
-            if (item.id && !uniqueItems.has(item.id)) {
-                uniqueItems.set(item.id, item);
-            }
-        });
-
-        return uniqueItems;
-    };
-
     const fetchUpcomingBooks = async (searchTerm) => {
-        const queries = [
-            searchTerm,
-            `intitle:${searchTerm}`,
-            `inauthor:${searchTerm}`,
-        ];
+        const params = new URLSearchParams({
+            q: searchTerm,
+            maxResults: '40',
+            orderBy: 'relevance',
+            remote: '1',
+        });
+        const response = await fetch(`/api/google-books/top?${params}`);
+        const data = await response.json().catch(() => ({}));
 
-        // "newest" (added to catalog) is unreliable on its own (often 0 results or transient errors),
-        // so always merge it with "relevance", which reliably surfaces an author's/title's actual books.
-        const [newestItems, relevanceItems] = await Promise.all([
-            fetchBooksForQueries(queries, 'newest'),
-            fetchBooksForQueries(queries, 'relevance'),
-        ]);
+        if (!response.ok) {
+            const error = new Error(data.error || 'provider_unavailable');
+            error.code = data.error || 'provider_unavailable';
+            throw error;
+        }
 
-        const uniqueItems = new Map([...newestItems, ...relevanceItems]);
-
-        return normalizeUpcomingItems([...uniqueItems.values()]);
+        return normalizeUpcomingItems(data.items || []);
     };
 
     const loadUpcomingReleases = async () => {
@@ -431,8 +412,11 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
     };
 
     const handleLoad = () => {
-        loadUpcomingReleases().catch(() => {
-            upcomingBookSearchResults.innerHTML = '<p class="welcome-card-text">Neizdevās ielādēt datus no Google Books API.</p>';
+        loadUpcomingReleases().catch((error) => {
+            const message = error?.code === 'rate_limited'
+                ? 'Google Books pieprasījumu limits ir sasniegts. Pamēģini vēlāk.'
+                : 'Google Books pašlaik nav pieejams. Pamēģini vēlāk.';
+            upcomingBookSearchResults.innerHTML = `<p class="welcome-card-text">${message}</p>`;
         });
     };
 

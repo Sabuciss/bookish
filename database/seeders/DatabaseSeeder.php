@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Database\Seeders\BooktokTopBookSeeder;
 use Database\Seeders\ReadingHighlightSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -17,20 +16,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::query()->updateOrCreate(
-            ['email' => 'admin@gmail.com'],
-            [
-                'name' => 'Admin',
-                'password' => bcrypt('password'),
-                'role' => 'admin',
-                'email_verified_at' => now(),
-            ]
-        );
-
         $this->call([
             BooktokTopBookSeeder::class,
             ReadingHighlightSeeder::class,
         ]);
-
     }
 }

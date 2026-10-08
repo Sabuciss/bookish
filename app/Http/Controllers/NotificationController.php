@@ -12,10 +12,6 @@ class NotificationController extends Controller
     {
         $user = $request->user();
         $user->unreadNotifications()->update(['read_at' => now()]);
-        $user->bookReleaseReminders()
-            ->whereNotNull('notified_at')
-            ->whereNull('read_at')
-            ->update(['read_at' => now()]);
 
         return back();
     }
@@ -24,6 +20,12 @@ class NotificationController extends Controller
     {
         $notification = $request->user()->notifications()->findOrFail($notificationId);
         $notification->markAsRead();
+
+        if (isset($notification->data['reminder_id'])) {
+            $request->user()->bookReleaseReminders()
+                ->whereKey($notification->data['reminder_id'])
+                ->update(['read_at' => now()]);
+        }
 
         $url = $notification->data['url'] ?? null;
         if (! $url && isset($notification->data['listing_id'])) {

@@ -9,6 +9,7 @@ use App\Models\ReadingProgress;
 use App\Services\BookMetadataService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class BooktokTopController extends Controller
@@ -34,10 +35,17 @@ class BooktokTopController extends Controller
         $selectedView = $request->query('view', 'books') === 'authors' ? 'authors' : 'books';
         $selectedFavoriteAuthors = $request->boolean('favorite_authors');
         $favoriteAuthors = $request->user()
-            ? $request->user()->booktokFavoriteAuthors()->pluck('author')->all()
+            ? $request->user()->booktokFavoriteAuthors()
+                ->with('author:id,name')
+                ->get()
+                ->map(fn (BooktokFavoriteAuthor $favorite) => $favorite->authorName())
+                ->filter()
+                ->values()
+                ->all()
             : [];
 
         $booksQuery = BooktokTopBook::query()
+            ->with('author:id,name')
             ->orderBy('rank_position')
             ;
 
@@ -46,7 +54,7 @@ class BooktokTopController extends Controller
         }
 
         if ($selectedAuthor !== null) {
-            $booksQuery->where('author', 'like', '%' . $selectedAuthor . '%');
+            $booksQuery->whereHas('author', fn ($query) => $query->where('name', 'like', '%' . $selectedAuthor . '%'));
         }
 
         if ($selectedTitle !== null) {
@@ -54,16 +62,8 @@ class BooktokTopController extends Controller
         }
 
         if ($selectedFavoriteAuthors && $request->user()) {
-            $favoriteAuthorIds = $request->user()->booktokFavoriteAuthors()->pluck('author_id')->filter()->all();
-            $favoriteAuthorNames = $request->user()->booktokFavoriteAuthors()->pluck('author')->filter()->all();
-
-            if ($favoriteAuthorIds !== []) {
-                $booksQuery->whereIn('author_id', $favoriteAuthorIds);
-            } elseif ($favoriteAuthorNames !== []) {
-                $booksQuery->whereIn('author', $favoriteAuthorNames);
-            } else {
-                $booksQuery->whereRaw('0 = 1');
-            }
+            $favoriteAuthorIds = $request->user()->booktokFavoriteAuthors()->pluck('author_id')->all();
+            $booksQuery->whereIn('author_id', $favoriteAuthorIds);
         }
 
         $books = $booksQuery->get();
@@ -93,9 +93,13 @@ class BooktokTopController extends Controller
             : ['books' => [], 'total' => 0];
 
         $booktokAuthors = $books
-            ->groupBy(fn (BooktokTopBook $book) => trim($book->author))
+            ->groupBy(fn (BooktokTopBook $book) => $book->authorName() ?? '')
             ->map(function ($authorBooks, $author) {
+                $firstBook = $authorBooks->first();
+
                 return [
+                    'id' => $firstBook->author_id
+                        ?? Author::query()->where('name', $author)->value('id'),
                     'name' => $author,
                     'book_count' => $authorBooks->count(),
                     'books' => $authorBooks->map(fn (BooktokTopBook $book) => [
@@ -149,20 +153,52 @@ class BooktokTopController extends Controller
     public function addFavoriteAuthor(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'author' => ['required', 'string', 'max:255'],
+            'author_id' => ['required', 'integer', 'exists:authors,id'],
         ]);
 
-        BooktokFavoriteAuthor::query()->firstOrCreate([
-            'user_id' => (int) $request->user()->id,
-            'author' => trim($validated['author']),
-        ]);
+        $author = Author::query()->findOrFail($validated['author_id']);
+        $favoriteQuery = $request->user()->booktokFavoriteAuthors()
+            ->where(function ($query) use ($author): void {
+                $query->where('author_id', $author->id);
+
+                if (Schema::hasColumn('booktok_favorite_authors', 'author')) {
+                    $query->orWhere('author', $author->name);
+                }
+            });
+        $favorite = $favoriteQuery->first();
+
+        if ($favorite) {
+            if (! $favorite->author_id) {
+                $favorite->update(['author_id' => $author->id]);
+            }
+        } else {
+            $attributes = [
+                'user_id' => (int) $request->user()->id,
+                'author_id' => $author->id,
+            ];
+
+            if (Schema::hasColumn('booktok_favorite_authors', 'author')) {
+                $attributes['author'] = $author->name;
+            }
+
+            BooktokFavoriteAuthor::query()->create($attributes);
+        }
 
         return back()->with('status', 'Autors pievienots favorītiem.');
     }
 
-    public function removeFavoriteAuthor(Request $request, string $author): RedirectResponse
+    public function removeFavoriteAuthor(Request $request, Author $author): RedirectResponse
     {
-        $request->user()->booktokFavoriteAuthors()->where('author', $author)->delete();
+        $favorites = $request->user()->booktokFavoriteAuthors()
+            ->where(function ($query) use ($author): void {
+                $query->where('author_id', $author->id);
+
+                if (Schema::hasColumn('booktok_favorite_authors', 'author')) {
+                    $query->orWhere('author', $author->name);
+                }
+            });
+
+        $favorites->delete();
 
         return back()->with('status', 'Autors noņemts no favorītiem.');
     }
@@ -171,7 +207,7 @@ class BooktokTopController extends Controller
     {
         $googleBook = $book->google_data_fetched_at
             ? $this->bookMetadata->storedBookData($book)
-            : $this->bookMetadata->fetchGoogleBookData($book->title, $book->author);
+            : $this->bookMetadata->fetchGoogleBookData($book->title, $book->authorName() ?? '');
         $book->google_thumbnail = $googleBook['thumbnail'] ?? null;
         $book->google_volume_id = $googleBook['volume_id'] ?? null;
         $book->google_page_count = $googleBook['page_count'] ?? null;
@@ -269,7 +305,7 @@ class BooktokTopController extends Controller
             ]);
 
         $localBooks = BooktokTopBook::query()
-            ->where('author', 'like', '%' . $author . '%')
+            ->whereHas('author', fn ($query) => $query->where('name', 'like', '%' . $author . '%'))
             ->orderBy('rank_position')
             ->get()
             ->map(fn (BooktokTopBook $book): array => [

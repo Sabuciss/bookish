@@ -32,7 +32,6 @@ class SendBookReleaseReminders extends Command
 
                     $reminder->update([
                         'notified_at' => now(),
-                        'read_at' => now(),
                     ]);
                     $sentCount++;
                 }

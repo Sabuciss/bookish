@@ -18,12 +18,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('rank_position')->unique();
             $table->string('title');
-            $table->string('author');
-            $table->unsignedBigInteger('author_id')->nullable()->index();
+            $table->foreignId('author_id')->constrained()->restrictOnDelete();
             $table->unsignedSmallInteger('published_year')->nullable()->index();
             $table->timestamps();
-
-            $table->foreign('author_id')->references('id')->on('authors')->nullOnDelete();
         });
     }
 

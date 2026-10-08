@@ -1,59 +1,101 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Bookish
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Bookish is a Laravel application for tracking reading progress, challenges, highlights, book releases, and book listings.
 
-## About Laravel
+## Requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.3 or newer with Laravel's required extensions and `pdo_sqlite` for the default SQLite database.
+- Composer 2.
+- Node.js 20.19+ or 22.12+ and npm (required by Vite 7).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+On Windows, enable `pdo_sqlite` and `sqlite3` in the PHP configuration used by both the web server and CLI. Verify the CLI setup with `php -m`.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Local Setup
 
-## Learning Laravel
+From the project directory, run:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```powershell
+composer run setup
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The setup script installs PHP and JavaScript dependencies, creates `.env` and the SQLite file when needed, generates the application key, runs migrations and baseline seeders, and builds frontend assets. Review `.env` and set `APP_URL` to the URL used by your local server.
 
-## Laravel Sponsors
+Start the application and its local queue worker with:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```powershell
+composer run dev
+```
 
-### Premium Partners
+This starts the Laravel server, queue listener, log viewer, and Vite development server. To start only the web server, use `php artisan serve`; compile production assets with `npm run build`.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+The baseline seeders create the curated BookTok catalog and public sample highlights. They do not create an administrator account or use a known login password. The catalog seed is local and deterministic; it does not make external API requests.
 
-## Contributing
+## Configuration
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+The checked-in `.env.example` uses SQLite, file sessions, database cache and queue, and log mail. Common settings:
 
-## Code of Conduct
+- `APP_NAME`, `APP_ENV`, `APP_DEBUG`, and `APP_URL` identify the deployment. Set `APP_DEBUG=false` in production.
+- `DB_CONNECTION` defaults to `sqlite`. For MySQL, configure `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`.
+- `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`, and `MAIL_FROM_NAME` configure outbound mail. Use a real mail provider in production.
+- `GOOGLE_BOOKS_API_KEY` is optional. It can improve Google Books API quota availability for book metadata and search; keep the value private.
+- `SESSION_DRIVER`, `CACHE_STORE`, and `QUEUE_CONNECTION` control session, cache, and queue backends. The default database cache and queue require the included migrations.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+After changing environment values on a cached deployment, run `php artisan config:clear` before rebuilding the config cache.
 
-## Security Vulnerabilities
+## Administrator Account
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Do not seed an administrator or use a shared default password. Register a personal account through the application, verify its email, then promote that account from Tinker:
 
-## License
+```text
+php artisan tinker
+>>> $admin = App\Models\User::where('email', 'you@example.com')->firstOrFail();
+>>> $admin->forceFill(['role' => 'admin'])->save();
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Use the account's actual email address. Do not commit credentials or put passwords into shell history.
+
+## Queue and Scheduler
+
+The scheduled command `bookish:send-release-reminders` runs daily. In production, keep a queue worker running when using the database queue:
+
+```sh
+php artisan queue:work --tries=1 --timeout=90
+```
+
+Configure the host scheduler to invoke Laravel once per minute:
+
+```cron
+* * * * * cd /path/to/bookish && php artisan schedule:run >> /dev/null 2>&1
+```
+
+On Windows, create a Task Scheduler task that runs `php artisan schedule:run` every minute from the project directory. Check registered schedules with `php artisan schedule:list`.
+
+## Book Data and API
+
+`GOOGLE_BOOKS_API_KEY` is read by the application when calling Google Books. It is not required to migrate or seed the local curated catalog. After seeding, optional metadata enrichment can be run with:
+
+```sh
+php artisan booktok:fetch-google-data
+```
+
+This command needs outbound network access; API results and availability are controlled by Google Books. The Google Books top-books endpoint is registered in `routes/web.php` at `/api/google-books/top`; this project does not currently define a separate `routes/api.php` file.
+
+## Database and Seeders
+
+For a new database, `composer run setup` applies migrations and seeders. For a disposable local database that needs a full rebuild:
+
+```sh
+php artisan migrate:fresh --seed
+```
+
+`migrate:fresh` deletes all database tables and data. Never run it against a database containing user data. Existing installations that already recorded older versions of edited migrations will not automatically receive schema changes from those files; back up the database and prepare a data-preserving schema migration before deploying those changes to an existing installation.
+
+## Tests
+
+Run the test suite with:
+
+```sh
+composer test
+```
+
+The default test database is in-memory SQLite, so the CLI PHP installation must have `pdo_sqlite` enabled.

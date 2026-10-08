@@ -5,6 +5,10 @@ namespace Database\Seeders;
 use App\Models\ReadingHighlight;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ReadingHighlightSeeder extends Seeder
 {
@@ -222,33 +226,43 @@ class ReadingHighlightSeeder extends Seeder
 
     public function run(): void
     {
-        $user = User::query()->firstOrCreate(
-            ['email' => 'seeded-highlights@bookish.local'],
-            [
-                'name' => 'Highlights Library',
-                'password' => bcrypt('seeded-highlights'),
-            ]
-        );
+        $highlights = Validator::make(['highlights' => self::highlights()], [
+            'highlights' => ['required', 'array'],
+            'highlights.*' => ['required', 'array:book_title,character,quote_text'],
+            'highlights.*.book_title' => ['required', 'string', 'max:255'],
+            'highlights.*.character' => ['required', 'string', 'max:255'],
+            'highlights.*.quote_text' => ['required', 'string', 'max:10000'],
+        ])->validate()['highlights'];
 
-        $highlights = self::highlights();
-
-        foreach ($highlights as $highlight) {
-            ReadingHighlight::query()->updateOrCreate(
+        DB::transaction(function () use ($highlights): void {
+            $user = User::query()->updateOrCreate(
+                ['email' => 'seeded-highlights@bookish.local'],
                 [
-                    'user_id'    => $user->id,
-                    'book_title' => $highlight['book_title'],
-                    'character'  => $highlight['character'],
-                    'quote_text' => $highlight['quote_text'],
-                ],
-                [
-                    'is_public' => true,
+                    'name' => 'Highlights Library',
+                    'password' => Hash::make(Str::random(64)),
+                    'role' => 'user',
+                    'email_verified_at' => null,
                 ]
             );
-        }
 
-        ReadingHighlight::query()
-            ->where('user_id', $user->id)
-            ->whereNotIn('quote_text', array_column($highlights, 'quote_text'))
-            ->delete();
+            foreach ($highlights as $highlight) {
+                ReadingHighlight::query()->updateOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'book_title' => trim($highlight['book_title']),
+                        'character' => trim($highlight['character']),
+                        'quote_text' => trim($highlight['quote_text']),
+                    ],
+                    [
+                        'is_public' => true,
+                    ]
+                );
+            }
+
+            ReadingHighlight::query()
+                ->where('user_id', $user->id)
+                ->whereNotIn('quote_text', array_column($highlights, 'quote_text'))
+                ->delete();
+        });
     }
 }

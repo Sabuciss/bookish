@@ -49,7 +49,7 @@ class ReadingChallengeSession extends Model
 
     public function challenge(): BelongsTo
     {
-        return $this->belongsTo(ReadingChallenge::class);
+        return $this->belongsTo(ReadingChallenge::class, 'challenge_id');
     }
 
     public function user(): BelongsTo

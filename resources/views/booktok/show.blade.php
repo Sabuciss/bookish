@@ -25,7 +25,7 @@
                 <div class="book-detail-content">
                     <p class="book-detail-eyebrow">BookTok tops #{{ $book->rank_position }}</p>
                     <h1 class="book-detail-title">{{ $book->title }}</h1>
-                    <p class="book-detail-author">{{ $book->author }}</p>
+                    <p class="book-detail-author">{{ $book->authorName() }}</p>
                     <div class="book-detail-rating">
                         @if(!empty($book->google_average_rating))
                             <span class="book-detail-stars">★★★★★</span>

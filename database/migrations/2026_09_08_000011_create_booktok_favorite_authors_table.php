@@ -11,12 +11,9 @@ return new class extends Migration
         Schema::create('booktok_favorite_authors', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('author');
-            $table->unsignedBigInteger('author_id')->nullable()->index();
+            $table->foreignId('author_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
-            $table->unique(['user_id', 'author']);
-
-            $table->foreign('author_id')->references('id')->on('authors')->nullOnDelete();
+            $table->unique(['user_id', 'author_id']);
         });
     }
 

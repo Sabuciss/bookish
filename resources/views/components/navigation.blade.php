@@ -19,17 +19,7 @@
             ->limit(20)
             ->get();
           $databaseNotificationCount = $currentUser->unreadNotifications()->count();
-          $releaseReminders = $currentUser->bookReleaseReminders()
-            ->whereNotNull('notified_at')
-            ->whereNull('read_at')
-            ->latest('notified_at')
-            ->limit(10)
-            ->get();
-          $releaseReminderCount = $currentUser->bookReleaseReminders()
-            ->whereNotNull('notified_at')
-            ->whereNull('read_at')
-            ->count();
-          $notificationCount = $databaseNotificationCount + $releaseReminderCount;
+          $notificationCount = $databaseNotificationCount;
           $listingNotifications = $unreadNotifications->where('type', \App\Notifications\BookListingApplicationReceived::class);
           $listingStatusNotifications = $unreadNotifications->where('type', \App\Notifications\BookListingApplicationStatusChanged::class);
           $listingMessageNotifications = $unreadNotifications->where('type', \App\Notifications\BookListingMessageReceived::class);
@@ -129,33 +119,6 @@
                     @endif
                   </span>
                 </a>
-              </div>
-            @endforeach
-            @if($releaseReminderCount)
-              <div class="book-notification-heading">
-                <strong>Izlaistās grāmatas</strong>
-                <span>{{ $releaseReminderCount }}</span>
-              </div>
-            @endif
-            @foreach($releaseReminders as $reminder)
-              <div class="book-notification-item">
-                <a class="book-notification-link" href="{{ route('book-release-reminders.open', $reminder->id) }}">
-                  @if($reminder->cover_url)
-                    <img class="book-notification-cover" src="{{ $reminder->cover_url }}" alt="{{ $reminder->title }} vāks">
-                  @else
-                    <span class="book-notification-cover">{{ mb_strtoupper(mb_substr($reminder->title, 0, 1)) }}</span>
-                  @endif
-                  <span>
-                    <strong>{{ $reminder->title }}</strong>
-                    <small>{{ $reminder->author ?: 'Autors nav norādīts' }}</small>
-                    <small>Izlaista: {{ $reminder->release_date->format('d.m.Y') }}</small>
-                  </span>
-                </a>
-                <form method="POST" action="{{ route('book-release-reminders.destroy', $reminder->google_volume_id) }}" class="book-notification-delete-form">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit" class="book-notification-delete" aria-label="Dzēst paziņojumu par {{ $reminder->title }}" title="Dzēst paziņojumu">×</button>
-                </form>
               </div>
             @endforeach
             @if(!$notificationCount)

@@ -18,12 +18,12 @@ class FetchBooktokGoogleData extends Command
 
     public function handle(): int
     {
-        $books = BooktokTopBook::all();
+        $books = BooktokTopBook::query()->with('author:id,name')->get();
         $count = 0;
 
         $this->info('Fetching Google Books data for ' . $books->count() . ' books...');
         $this->withProgressBar($books, function (BooktokTopBook $book) use (&$count) {
-            $metadata = $this->bookMetadata->fetchGoogleBookData($book->title, $book->author);
+            $metadata = $this->bookMetadata->fetchGoogleBookData($book->title, $book->authorName() ?? '');
 
             if (!empty($metadata)) {
                 $book->update([

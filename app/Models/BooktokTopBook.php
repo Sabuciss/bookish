@@ -46,4 +46,19 @@ class BooktokTopBook extends Model
     {
         return $this->belongsTo(Author::class, 'author_id');
     }
+
+    public function authorName(): ?string
+    {
+        $relatedAuthor = $this->getRelation('author');
+        if ($relatedAuthor instanceof Author) {
+            return $relatedAuthor->name;
+        }
+
+        $legacyName = $this->getRawOriginal('author');
+        if (is_string($legacyName) && trim($legacyName) !== '') {
+            return trim($legacyName);
+        }
+
+        return $this->author()->value('name');
+    }
 }

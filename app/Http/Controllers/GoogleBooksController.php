@@ -64,6 +64,13 @@ class GoogleBooksController extends Controller
                     'body' => $response->body(),
                 ]);
 
+                if ($remoteOnly) {
+                    return response()->json([
+                        'items' => [],
+                        'error' => $response->status() === 429 ? 'rate_limited' : 'provider_unavailable',
+                    ], $response->status() === 429 ? 429 : 503);
+                }
+
                 $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
             } else {
                 $items = $response->json('items', []);
@@ -76,6 +83,13 @@ class GoogleBooksController extends Controller
             }
         } catch (ConnectionException $e) {
             Log::warning('Google Books top request threw a connection exception', ['message' => $e->getMessage()]);
+
+            if ($remoteOnly) {
+                return response()->json([
+                    'items' => [],
+                    'error' => 'provider_unavailable',
+                ], 503);
+            }
 
             $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
         }
@@ -175,6 +189,7 @@ class GoogleBooksController extends Controller
     private function localBooktokItems(int $maxResults, int $startIndex): array
     {
         return BooktokTopBook::query()
+            ->with('author:id,name')
             ->orderBy('rank_position')
             ->skip($startIndex)
             ->take($maxResults)
@@ -183,7 +198,7 @@ class GoogleBooksController extends Controller
                 'id' => $book->google_volume_id,
                 'volumeInfo' => array_filter([
                     'title' => $book->title,
-                    'authors' => [$book->author],
+                    'authors' => [$book->authorName()],
                     'publishedDate' => $book->published_year,
                     'categories' => $book->google_categories
                         ? array_map('trim', explode(',', $book->google_categories))

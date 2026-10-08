@@ -36,7 +36,7 @@ class ReadingChallenge extends Model
 
     public function sessions(): HasMany
     {
-        return $this->hasMany(ReadingChallengeSession::class);
+        return $this->hasMany(ReadingChallengeSession::class, 'challenge_id');
     }
 
     public function progressEntries(): HasMany
