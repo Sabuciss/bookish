@@ -88,7 +88,7 @@ For a new database, `composer run setup` applies migrations and seeders. For a d
 php artisan migrate:fresh --seed
 ```
 
-`migrate:fresh` deletes all database tables and data. Never run it against a database containing user data. Existing installations that already recorded older versions of edited migrations will not automatically receive schema changes from those files; back up the database and prepare a data-preserving schema migration before deploying those changes to an existing installation.
+`migrate:fresh` deletes all database tables and data. Never run it against a database containing user data. It rebuilds a disposable database from the existing migrations, including the normalized author relations. Existing installations that already recorded older versions of those migrations keep their legacy columns because Laravel does not rerun recorded migrations; the application remains compatible with them, and rerunning `php artisan db:seed --class=BooktokTopBookSeeder` fills missing author IDs without replacing book metadata. This project does not add a follow-up migration for existing installations.
 
 ## Tests
 

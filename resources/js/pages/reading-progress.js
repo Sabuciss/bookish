@@ -233,8 +233,12 @@ if (root) {
         previewWrap.style.display = 'block';
         previewTitle.textContent = book.title || '';
         previewPages.textContent = book.pageCount
-            ? `Google Books: ${book.pageCount} lpp`
-            : 'Google Books lpp nav norādītas';
+            ? book.pageCountIsEstimate
+                ? `Google Books norāda ${book.pageCount} lpp. Vari labot lauku zemāk.`
+                : `Tavā ierakstā: ${book.pageCount} lpp`
+            : book.pageCountIsEstimate
+                ? 'Google Books lapu skaitu nav norādījis.'
+                : 'Lapu skaits nav norādīts.';
 
         if (book.thumbnail) {
             previewImage.style.display = 'block';
@@ -260,8 +264,10 @@ if (root) {
         volumeIdInput.value = book.id || '';
         coverInput.value = normalizeCoverUrl(book.thumbnail);
 
-        if (book.pageCount) {
-            totalPagesInput.value = String(book.pageCount);
+        if (selectedStatus) {
+            totalPagesInput.value = book.pageCount ? String(book.pageCount) : '';
+        } else {
+            totalPagesInput.value = book.pageCount ? String(book.pageCount) : '';
         }
 
         if (!pagesReadInput.value || Number(pagesReadInput.value) < currentRead) {
@@ -325,7 +331,7 @@ if (root) {
                 ${book.thumbnail ? `<img class="rp-search-cover" src="${normalizeCoverUrl(book.thumbnail)}" alt="${book.title} vāks">` : '<span class="rp-search-cover rp-search-cover-empty" aria-hidden="true">Nav vāka</span>'}
                 <span>
                     <strong>${book.title || 'Bez nosaukuma'}</strong><br>
-                    <span class="rp-book-search-meta">${book.authors || 'Autors nav norādīts'}${book.pageCount ? ` • ${book.pageCount} lpp` : ''}</span>
+                    <span class="rp-book-search-meta">${book.authors || 'Autors nav norādīts'}</span>
                 </span>
             `;
 
@@ -372,6 +378,7 @@ if (root) {
                     title: info.title || '',
                     authors: Array.isArray(info.authors) ? info.authors.join(', ') : '',
                     pageCount: info.pageCount || null,
+                    pageCountIsEstimate: true,
                     thumbnail: normalizeCoverUrl(info.imageLinks && (info.imageLinks.thumbnail || info.imageLinks.smallThumbnail)),
                 };
             });

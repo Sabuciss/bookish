@@ -222,6 +222,7 @@
                     <label class="rp-pages-field">
                         Grāmatas kopējās lpp
                         <input type="number" name="total_pages" id="total_pages" min="1" value="{{ old('total_pages', $prefill['total_pages'] ?? '') }}" class="reading-progress-input input">
+                        <small class="rp-snapshot-meta">Google Books skaits ir orientējošs. Vari to labot, uzspiežot uz šī lauka.</small>
                     </label>
 
                     <label class="rp-pages-field">
