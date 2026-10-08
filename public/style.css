@@ -109,6 +109,42 @@ nav.app-surface-opaque form button:hover {
 	gap: 12px;
 }
 
+.welcome-genres-heading {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+.welcome-genres-heading-tools {
+	display: flex;
+	align-items: flex-end;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+@media (max-width: 640px) {
+	.welcome-genres-heading {
+		align-items: stretch;
+	}
+
+	.welcome-genres-heading > div:first-child {
+		width: 100%;
+		text-align: left;
+	}
+
+	.welcome-genres-heading-tools {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.book-year-filter {
+		flex: 1 1 240px;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
 .bookish-field-group .weekly-genre-select,
 .bookish-field-group .weekly-year-input {
 	width: 100%;

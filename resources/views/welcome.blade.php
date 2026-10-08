@@ -26,32 +26,25 @@
                 </div>
             </article>
 
-            <section class="welcome-card welcome-card--wide">
-                <div class="welcome-section-heading">
+            <section class="welcome-card welcome-card--wide welcome-genres-section">
+                <div class="welcome-section-heading welcome-genres-heading">
                     <div>
                         <p class="welcome-eyebrow">Žanru grāmatu filtrs</p>
-                        <h2 class="welcome-card-title">Izdošanas gadi</h2>
-                    </div>
-                </div>
-                <div class="book-year-filter">
-                    <div class="bookish-field-group">
-                        <label class="bookish-field-label" for="recommendation-year-from">No gada</label>
-                        <select id="recommendation-year-from" class="weekly-genre-select weekly-year-input"></select>
-                    </div>
-                    <div class="bookish-field-group">
-                        <label class="bookish-field-label" for="recommendation-year-to">Līdz gadam</label>
-                        <select id="recommendation-year-to" class="weekly-genre-select weekly-year-input"></select>
-                    </div>
-                </div>
-            </section>
-
-            <section class="welcome-card welcome-card--wide welcome-genres-section">
-                <div class="welcome-section-heading">
-                    <div>
-                        <p class="welcome-eyebrow">Atrodi savu nākamo lasījumu</p>
                         <h2 class="welcome-card-title">Pārlūko pēc žanra</h2>
                     </div>
-                    <span class="welcome-section-note">No Google Books</span>
+                    <div class="welcome-genres-heading-tools">
+                        <div class="book-year-filter">
+                            <div class="bookish-field-group">
+                                <label class="bookish-field-label" for="recommendation-year-from">No gada</label>
+                                <select id="recommendation-year-from" class="weekly-genre-select weekly-year-input"></select>
+                            </div>
+                            <div class="bookish-field-group">
+                                <label class="bookish-field-label" for="recommendation-year-to">Līdz gadam</label>
+                                <select id="recommendation-year-to" class="weekly-genre-select weekly-year-input"></select>
+                            </div>
+                        </div>
+                        <span class="welcome-section-note">No Google Books</span>
+                    </div>
                 </div>
 
                 <div class="book-genre-filter" role="group" aria-label="Izvēlēties grāmatu žanru">
