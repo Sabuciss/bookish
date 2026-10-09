@@ -53,7 +53,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('verification.notice'));
         $response->assertSessionHas('status', 'verification-email-failed');
         $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
     }

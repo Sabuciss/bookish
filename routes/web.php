@@ -16,9 +16,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::view('/privacy-policy', 'legal.privacy')->name('privacy-policy');
+Route::view('/terms', 'legal.terms')->name('terms');
+
 Route::get('/dashboard', function () {
     return redirect()->route('reading-shelf.show');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware('auth')->name('dashboard');
 
 Route::get('/booktok', [BooktokTopController::class, 'index'])
     ->middleware('throttle:120,1')
@@ -39,7 +42,7 @@ Route::get('/book-exchange', [BookListingController::class, 'index'])
         ->middleware('throttle:120,1')
     ->name('book-exchange.index');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/book-listings/create', [BookListingController::class, 'create'])
         ->name('book-listings.create');
     Route::get('/book-exchange/create', [BookListingController::class, 'create'])

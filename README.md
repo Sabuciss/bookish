@@ -36,7 +36,7 @@ The checked-in `.env.example` uses SQLite, file sessions, database cache and que
 
 - `APP_NAME`, `APP_ENV`, `APP_DEBUG`, and `APP_URL` identify the deployment. Set `APP_DEBUG=false` in production.
 - `DB_CONNECTION` defaults to `sqlite`. For MySQL, configure `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`.
-- `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`, and `MAIL_FROM_NAME` configure outbound mail. Use a real mail provider in production.
+- `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`, and `MAIL_FROM_NAME` configure outbound mail. For Railway Gmail API delivery, set `MAIL_MAILER=gmail-api` and provide `GMAIL_OAUTH_CLIENT_ID`, `GMAIL_OAUTH_CLIENT_SECRET`, and `GMAIL_OAUTH_REFRESH_TOKEN` as private environment variables. Enable Gmail API and authorize the `gmail.send` scope for the sender account; do not commit OAuth secrets.
 - `GOOGLE_BOOKS_API_KEY` is optional. It can improve Google Books API quota availability for book metadata and search; keep the value private.
 - `SESSION_DRIVER`, `CACHE_STORE`, and `QUEUE_CONNECTION` control session, cache, and queue backends. The default database cache and queue require the included migrations.
 

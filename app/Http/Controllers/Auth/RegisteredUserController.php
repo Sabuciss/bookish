@@ -46,14 +46,21 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $verificationEmailFailed = false;
+
         try {
             event(new Registered($user));
         } catch (TransportExceptionInterface $exception) {
             report($exception);
-            $request->session()->flash('status', 'verification-email-failed');
+            $verificationEmailFailed = true;
         }
 
         Auth::login($user);
+
+        if ($verificationEmailFailed) {
+            return redirect()->route('verification.notice')
+                ->with('status', 'verification-email-failed');
+        }
 
         return redirect(route('dashboard', absolute: false));
     }
