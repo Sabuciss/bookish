@@ -151,7 +151,7 @@
                     <div class="booktok-author-books-grid">
                         @foreach (($authorBooks['books'] ?? []) as $authorBook)
                             <a
-                                class="booktok-author-book-card"
+                                class="booktok-author-book-card {{ $authorBook['thumbnail'] ? 'has-cover' : 'no-cover' }}"
                                 href="{{ !empty($authorBook['id']) ? route('books.show', ['volumeId' => $authorBook['id'], 'back' => 'booktok', 'view' => $selectedView, 'author' => $selectedAuthor]) : ($authorBook['info_link'] ?: '#') }}"
                                 @if (empty($authorBook['id'])) target="_blank" rel="noopener noreferrer" @endif
                             >
@@ -159,7 +159,7 @@
                                     <img src="{{ $authorBook['thumbnail'] }}" alt="{{ $authorBook['title'] }} vāks">
                                 @endif
                                 <span>
-                                    <strong>{{ $authorBook['title'] }}</strong>
+                                    <strong title="{{ $authorBook['title'] }}">{{ $authorBook['title'] }}</strong>
                                     @if ($authorBook['published_date'])
                                         <small>{{ $authorBook['published_date'] }}</small>
                                     @endif
@@ -186,7 +186,7 @@
             <div class="booktok-author-books-grid">
                 @foreach (($authorBooks['books'] ?? []) as $authorBook)
                     <a
-                        class="booktok-author-book-card"
+                        class="booktok-author-book-card {{ $authorBook['thumbnail'] ? 'has-cover' : 'no-cover' }}"
                         href="{{ !empty($authorBook['id']) ? route('books.show', ['volumeId' => $authorBook['id'], 'back' => 'booktok', 'view' => $selectedView, 'author' => $selectedAuthor]) : ($authorBook['info_link'] ?: '#') }}"
                         @if (empty($authorBook['id'])) target="_blank" rel="noopener noreferrer" @endif
                     >
@@ -194,7 +194,7 @@
                             <img src="{{ $authorBook['thumbnail'] }}" alt="{{ $authorBook['title'] }} vāks">
                         @endif
                         <span>
-                            <strong>{{ $authorBook['title'] }}</strong>
+                            <strong title="{{ $authorBook['title'] }}">{{ $authorBook['title'] }}</strong>
                             @if ($authorBook['published_date'])
                                 <small>{{ $authorBook['published_date'] }}</small>
                             @endif

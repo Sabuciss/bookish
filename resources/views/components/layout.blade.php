@@ -8,8 +8,9 @@
     @include('components.theme-init-script')
     @if (app()->environment('local') || file_exists(public_path('build/manifest.json')))
       @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @else
+      <link rel="stylesheet" href="{{ asset('style.css') }}">
     @endif
-    <link rel="stylesheet" href="{{ asset('style.css') }}">
 </head>
 <body>
   <x-navigation></x-navigation>

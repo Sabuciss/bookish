@@ -344,22 +344,27 @@ nav.app-surface-opaque form button:hover {
 
 .booktok-author-books-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
 	gap: 10px;
 }
 
 .booktok-author-book-card {
 	display: grid;
-	grid-template-columns: 46px minmax(0, 1fr);
+	grid-template-columns: minmax(0, 1fr);
 	gap: 10px;
 	align-items: center;
-	min-height: 66px;
+	min-width: 0;
+	min-height: 92px;
 	padding: 8px;
 	border: 1px solid var(--bookish-line);
 	border-radius: 4px;
 	background: var(--bookish-paper);
 	color: var(--bookish-ink);
 	text-decoration: none;
+}
+
+.booktok-author-book-card.has-cover {
+	grid-template-columns: 46px minmax(0, 1fr);
 }
 
 .booktok-author-book-card:hover {
@@ -381,14 +386,21 @@ nav.app-surface-opaque form button:hover {
 }
 
 .booktok-author-book-card strong {
+	display: -webkit-box;
 	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
+	overflow-wrap: anywhere;
 	font-size: 0.8rem;
-	text-overflow: ellipsis;
+	line-height: 1.25;
 }
 
 .booktok-author-book-card small {
+	overflow-wrap: anywhere;
 	color: var(--bookish-muted);
 	font-size: 0.7rem;
+	line-height: 1.2;
 }
 
 .book-listings-heading {

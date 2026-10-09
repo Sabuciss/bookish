@@ -4,8 +4,10 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
@@ -20,6 +22,28 @@ class EmailVerificationTest extends TestCase
         $response = $this->actingAs($user)->get('/verify-email');
 
         $response->assertStatus(200);
+    }
+
+    public function test_unverified_users_are_redirected_from_verified_routes(): void
+    {
+        $user = User::factory()->unverified()->create();
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertRedirect(route('verification.notice'));
+    }
+
+    public function test_user_can_request_another_verification_email(): void
+    {
+        Notification::fake();
+        $user = User::factory()->unverified()->create();
+
+        $this->actingAs($user)
+            ->post(route('verification.send'))
+            ->assertRedirect()
+            ->assertSessionHas('status', 'verification-link-sent');
+
+        Notification::assertSentTo($user, VerifyEmail::class);
     }
 
     public function test_email_can_be_verified(): void
