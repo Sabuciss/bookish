@@ -114,6 +114,8 @@ class ReadingHighlightTest extends TestCase
         $otherUser = User::factory()->create();
         $highlight = ReadingHighlight::query()->create([
             'user_id' => $owner->id,
+            'book_title' => 'Pārbaudes grāmata',
+            'character' => 'Pārbaudes varonis',
             'quote_text' => 'Sākotnējais teksts',
             'is_public' => false,
         ]);
@@ -168,6 +170,8 @@ class ReadingHighlightTest extends TestCase
         foreach (array_chunk(range(0, $count - 1), 100) as $indices) {
             DB::table('reading_highlights')->insert(array_map(fn (int $index): array => [
                 'user_id' => $user->id,
+                'book_title' => 'Pārbaudes grāmata',
+                'character' => 'Pārbaudes varonis',
                 'quote_text' => 'Highlight ' . $index,
                 'is_public' => true,
                 'created_at' => $now,

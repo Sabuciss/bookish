@@ -19,6 +19,7 @@ class ReadingChallenge extends Model
         'start_date',
         'end_date',
         'notes',
+        'is_failed',
     ];
 
     protected $casts = [
@@ -27,6 +28,7 @@ class ReadingChallenge extends Model
         'is_completed' => 'boolean',
         'completion_date' => 'date',
         'completion_value' => 'integer',
+        'is_failed' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -48,22 +50,24 @@ class ReadingChallenge extends Model
     {
         if ($this->challenge_type === 'pages') {
             $progress = $this->progressEntries()->where('user_id', $this->user_id);
-            $completionValue = (int) (clone $progress)->sum('pages_read');
+            $trackedCompletionValue = (int) (clone $progress)->sum('pages_read');
             $completionDate = (clone $progress)->max('reading_date');
         } else {
             $sessions = $this->sessions()
                 ->where('user_id', $this->user_id)
                 ->where('timer_status', 'completed')
                 ->whereNotNull('elapsed_seconds');
-            $completionValue = intdiv((int) (clone $sessions)->sum('elapsed_seconds'), 60);
+            $trackedCompletionValue = intdiv((int) (clone $sessions)->sum('elapsed_seconds'), 60);
             $completionDate = (clone $sessions)->latest('ended_at')->value('ended_at');
         }
 
-        $isCompleted = $completionValue >= $this->target_value;
+        $isCompleted = $trackedCompletionValue >= $this->target_value;
+        $isFailed = ! $isCompleted && $this->is_failed && $this->end_date->lt(today());
 
         $this->forceFill([
-            'completion_value' => $completionValue,
+            'completion_value' => $trackedCompletionValue,
             'is_completed' => $isCompleted,
+            'is_failed' => $isFailed,
             'completion_date' => $isCompleted ? ($completionDate ?? now()->toDateString()) : null,
         ])->save();
     }

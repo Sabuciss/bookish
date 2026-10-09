@@ -55,4 +55,37 @@ class NotificationTest extends TestCase
         $this->assertNotNull($notification->fresh()->read_at);
         $this->assertNotNull($reminder->fresh()->read_at);
     }
+
+    public function test_marking_all_notifications_as_read_also_marks_release_reminders_as_read(): void
+    {
+        Mail::fake();
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $reminder = BookReleaseReminder::query()->create([
+            'user_id' => $user->id,
+            'google_volume_id' => 'book-3',
+            'title' => 'Trešā grāmata',
+            'release_date' => today(),
+        ]);
+        $otherReminder = BookReleaseReminder::query()->create([
+            'user_id' => $otherUser->id,
+            'google_volume_id' => 'book-4',
+            'title' => 'Ceturtā grāmata',
+            'release_date' => today(),
+        ]);
+
+        $user->notify(new BookReleaseAvailable($reminder));
+        $otherUser->notify(new BookReleaseAvailable($otherReminder));
+        $notification = $user->fresh()->notifications()->firstOrFail();
+        $otherNotification = $otherUser->fresh()->notifications()->firstOrFail();
+
+        $this->actingAs($user)
+            ->post(route('notifications.read-all'))
+            ->assertRedirect();
+
+        $this->assertNotNull($notification->fresh()->read_at);
+        $this->assertNotNull($reminder->fresh()->read_at);
+        $this->assertNull($otherNotification->fresh()->read_at);
+        $this->assertNull($otherReminder->fresh()->read_at);
+    }
 }

@@ -147,7 +147,7 @@ class ReadingChallengeController extends Controller
     public function store(StoreReadingChallengeRequest $request): RedirectResponse
     {
         $challenge = ReadingChallenge::create([
-            ...$request->validated(),
+            ...$request->safe()->except(['mark_as_not_completed']),
             'user_id' => $request->user()->id,
         ]);
         $challenge->refreshCompletionFromProgress();
@@ -162,15 +162,31 @@ class ReadingChallengeController extends Controller
             ->where('user_id', $request->user()->id)
             ->findOrFail($challengeId);
 
-        if ($request->validated('challenge_type') !== $challenge->challenge_type
+        $data = $request->validated();
+        $markAsNotCompleted = (bool) ($data['mark_as_not_completed'] ?? false);
+        unset($data['mark_as_not_completed']);
+
+        if ($data['challenge_type'] !== $challenge->challenge_type
             && ($challenge->sessions()->exists() || $challenge->progressEntries()->exists())) {
             throw ValidationException::withMessages([
                 'challenge_type' => 'Izaicinājuma tipu nevar mainīt pēc progresa piesaistes.',
             ]);
         }
 
-        $challenge->update($request->validated());
-        $challenge->refreshCompletionFromProgress();
+        DB::transaction(function () use ($challenge, $data, $markAsNotCompleted): void {
+            $lockedChallenge = ReadingChallenge::query()->lockForUpdate()->findOrFail($challenge->id);
+            $lockedChallenge->update($data);
+
+            $lockedChallenge->is_failed = $markAsNotCompleted;
+            $lockedChallenge->save();
+            $lockedChallenge->refreshCompletionFromProgress();
+
+            if ($markAsNotCompleted && $lockedChallenge->is_completed) {
+                throw ValidationException::withMessages([
+                    'mark_as_not_completed' => 'Sasniegtu izaicinājumu nevar atzīmēt kā neizpildītu.',
+                ]);
+            }
+        });
 
         return redirect()->route('reading-challenges.index')
             ->with('status', 'Izaicinājums veiksmīgi atjaunots.');

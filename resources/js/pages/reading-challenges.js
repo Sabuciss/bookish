@@ -10,14 +10,15 @@ if (challengeTypeSelect && challengeTargetInput && challengeTargetLabel) {
             challengeTargetLabel.firstChild.textContent = 'Mērķa vērtība (minūtes)';
             challengeTargetInput.placeholder = 'Piemēram: 600 minūtes';
             challengeTargetInput.setAttribute('aria-label', 'Mērķa vērtība minūtēs');
-            return;
+        } else {
+            challengeTargetLabel.firstChild.textContent = 'Mērķa vērtība (lapas)';
+            challengeTargetInput.placeholder = 'Piemēram: 200 lapas';
+            challengeTargetInput.setAttribute('aria-label', 'Mērķa vērtība lapās');
         }
 
-        challengeTargetLabel.firstChild.textContent = 'Mērķa vērtība (lapas)';
-        challengeTargetInput.placeholder = 'Piemēram: 200 lapas';
-        challengeTargetInput.setAttribute('aria-label', 'Mērķa vērtība lapās');
     };
 
     applyTargetMeta();
     challengeTypeSelect.addEventListener('change', applyTargetMeta);
+    challengeTargetInput.addEventListener('input', applyTargetMeta);
 }

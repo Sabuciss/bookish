@@ -46,6 +46,18 @@
                     <input type="number" name="target_value" id="challenge-target-value" min="1" value="{{ old('target_value', $challenge->target_value) }}" required class="input" placeholder="Piemēram: 200 lapas" aria-label="Mērķa vērtība lapās">
                 </label>
 
+                <p>
+                    Aprēķinātais progress:
+                    <strong>{{ $challenge->completion_value ?? 0 }} / {{ $challenge->target_value }} {{ $challenge->challenge_type === 'pages' ? 'lpp' : 'min' }}</strong>
+                </p>
+                <p>
+                    @if ($challenge->challenge_type === 'pages')
+                        <a href="{{ route('reading-progress.index', ['challenge_id' => $challenge->id]) }}">Pievienot lasīšanas ierakstu</a>
+                    @else
+                        <a href="{{ route('reading-timer.index') }}">Atvērt lasīšanas taimeri</a>
+                    @endif
+                </p>
+
                 <label>
                     Sākuma datums
                     <input type="date" name="start_date" value="{{ old('start_date', $challenge->start_date->format('Y-m-d')) }}" required class="input">
@@ -60,6 +72,13 @@
                     Piezīmes (nav obligāti)
                     <textarea name="notes" rows="3" class="input" placeholder="Papildu piezīmes">{{ old('notes', $challenge->notes) }}</textarea>
                 </label>
+
+                @if ($challenge->end_date->lt(today()) && ! $challenge->is_completed)
+                    <label>
+                        <input type="checkbox" name="mark_as_not_completed" value="1" @checked(old('mark_as_not_completed', $challenge->is_failed))>
+                        Atzīmēt kā neizpildītu
+                    </label>
+                @endif
 
                 <button type="submit" class="login-button">Saglabāt izmaiņas</button>
                 <a href="{{ route('reading-challenges.index') }}" class="reading-progress-submit" style="display: inline-block; text-decoration: none; margin-top: 8px;">Atpakaļ uz izaicinājumiem</a>

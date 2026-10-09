@@ -44,15 +44,13 @@ After changing environment values on a cached deployment, run `php artisan confi
 
 ## Administrator Account
 
-Do not seed an administrator or use a shared default password. Register a personal account through the application, verify its email, then promote that account from Tinker:
+Do not seed an administrator or use a shared default password. Register a personal account through the application and verify its email. From the project directory, promote that account with:
 
-```text
-php artisan tinker
->>> $admin = App\Models\User::where('email', 'you@example.com')->firstOrFail();
->>> $admin->forceFill(['role' => 'admin'])->save();
+```sh
+php artisan bookish:make-admin you@example.com
 ```
 
-Use the account's actual email address. Do not commit credentials or put passwords into shell history.
+Replace the address with the account's actual email, then sign in with that account. Do not commit credentials or put passwords into shell history.
 
 ## Queue and Scheduler
 
@@ -88,7 +86,7 @@ For a new database, `composer run setup` applies migrations and seeders. For a d
 php artisan migrate:fresh --seed
 ```
 
-`migrate:fresh` deletes all database tables and data. Never run it against a database containing user data. It rebuilds a disposable database from the existing migrations, including the normalized author relations. Existing installations that already recorded older versions of those migrations keep their legacy columns because Laravel does not rerun recorded migrations; the application remains compatible with them, and rerunning `php artisan db:seed --class=BooktokTopBookSeeder` fills missing author IDs without replacing book metadata. This project does not add a follow-up migration for existing installations.
+`migrate:fresh` deletes all database tables and data. Never run it against a database containing user data. The manual challenge progress and failed-status columns are part of the original challenge table migration, so they are created for new databases. Laravel does not rerun an edited migration on an existing database; check that both columns exist before using the feature, and add them manually if they are missing. Older installations may still have legacy author columns because Laravel does not rerun recorded migrations; the application remains compatible with them, and rerunning `php artisan db:seed --class=BooktokTopBookSeeder` fills missing author IDs without replacing book metadata.
 
 ## Tests
 

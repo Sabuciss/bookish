@@ -41,7 +41,7 @@
                                 </p>
                                 <p>
                                     Statuss:
-                                    <strong>{{ $challenge->is_completed ? 'Izdarīts' : 'Procesā' }}</strong>
+                                    <strong>{{ $challenge->is_completed ? 'Izdarīts' : ($challenge->is_failed ? 'Nav izpildīts' : ($challenge->end_date->lt(today()) ? 'Termiņš beidzies' : 'Procesā')) }}</strong>
                                 </p>
                                 <p>Periods: {{ $challenge->start_date->format('Y-m-d') }} līdz {{ $challenge->end_date->format('Y-m-d') }}</p>
                                 @if ($challenge->notes)
@@ -50,7 +50,14 @@
                                 @if ($challenge->completion_comment)
                                     <p class="reading-challenge-notes"><strong>Komentārs:</strong> {{ $challenge->completion_comment }}</p>
                                 @endif
-                                <p>Progress: <strong>{{ $challenge->completion_value ?? 0 }} / {{ $challenge->target_value }} {{ $challenge->challenge_type === 'pages' ? 'lpp' : 'min' }}</strong></p>
+                                <p>Aprēķinātais progress: <strong>{{ $challenge->completion_value ?? 0 }} / {{ $challenge->target_value }} {{ $challenge->challenge_type === 'pages' ? 'lpp' : 'min' }}</strong></p>
+                                <p>
+                                    @if ($challenge->challenge_type === 'pages')
+                                        <a href="{{ route('reading-progress.index', ['challenge_id' => $challenge->id]) }}">Pievienot lasīšanas ierakstu</a>
+                                    @else
+                                        <a href="{{ route('reading-timer.index') }}">Atvērt lasīšanas taimeri</a>
+                                    @endif
+                                </p>
                                 <p>
                                     <a href="{{ route('reading-challenges.edit', $challenge->id) }}" class="reading-progress-submit" style="text-decoration: none;">Atjaunot</a>
                                 </p>
@@ -109,6 +116,13 @@
                         Piezīmes (nav obligāti)
                         <textarea name="notes" rows="3" class="input" placeholder="Papildu piezīmes">{{ old('notes', $editingChallenge->notes ?? '') }}</textarea>
                     </label>
+
+                    @if ($isEditing && $editingChallenge->end_date->lt(today()) && ! $editingChallenge->is_completed)
+                        <label>
+                            <input type="checkbox" name="mark_as_not_completed" value="1" @checked(old('mark_as_not_completed', $editingChallenge->is_failed))>
+                            Atzīmēt kā neizpildītu
+                        </label>
+                    @endif
 
                     <button type="submit" class="login-button">{{ $isEditing ? 'Atjaunot izaicinājumu' : 'Saglabāt izaicinājumu' }}</button>
                     @if ($isEditing)
