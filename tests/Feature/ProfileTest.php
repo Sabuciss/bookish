@@ -38,7 +38,7 @@ class ProfileTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect(route('verification.notice'));
 
         $user->refresh();
 
@@ -49,6 +49,25 @@ class ProfileTest extends TestCase
 
         $this->get(route('dashboard'))
             ->assertRedirect(route('verification.notice'));
+    }
+
+    public function test_profile_email_change_shows_a_message_when_verification_email_fails(): void
+    {
+        Notification::shouldReceive('send')
+            ->once()
+            ->andThrow(new \Symfony\Component\Mailer\Exception\TransportException('SMTP unavailable.'));
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->patch('/profile', [
+                'name' => $user->name,
+                'email' => 'new-address@example.com',
+            ])
+            ->assertRedirect(route('verification.notice'))
+            ->assertSessionHas('status', 'verification-email-failed');
+
+        $this->assertNull($user->fresh()->email_verified_at);
+        $this->assertSame('new-address@example.com', $user->fresh()->email);
     }
 
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class ProfileController extends Controller
 {
@@ -55,7 +56,17 @@ class ProfileController extends Controller
         $user->save();
 
         if ($emailChanged) {
-            $user->sendEmailVerificationNotification();
+            try {
+                $user->sendEmailVerificationNotification();
+            } catch (TransportExceptionInterface $exception) {
+                report($exception);
+
+                return redirect()->route('verification.notice')
+                    ->with('status', 'verification-email-failed');
+            }
+
+            return redirect()->route('verification.notice')
+                ->with('status', 'verification-link-sent');
         }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
