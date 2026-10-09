@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Tests\TestCase;
 
 class EmailVerificationTest extends TestCase
@@ -44,6 +45,20 @@ class EmailVerificationTest extends TestCase
             ->assertSessionHas('status', 'verification-link-sent');
 
         Notification::assertSentTo($user, VerifyEmail::class);
+    }
+
+    public function test_failed_resend_shows_a_message_instead_of_a_server_error(): void
+    {
+        Notification::shouldReceive('send')
+            ->once()
+            ->andThrow(new TransportException('SMTP unavailable.'));
+        $user = User::factory()->unverified()->create();
+
+        $this->actingAs($user)
+            ->from(route('verification.notice'))
+            ->post(route('verification.send'))
+            ->assertRedirect(route('verification.notice'))
+            ->assertSessionHas('status', 'verification-email-failed');
     }
 
     public function test_email_can_be_verified(): void
