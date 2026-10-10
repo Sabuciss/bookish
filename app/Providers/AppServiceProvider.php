@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Mail\Transport\GmailApiTransport;
+use App\Mail\Transport\ResendApiTransport;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,12 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Mail::extend('gmail-api', function (array $config): GmailApiTransport {
-            return new GmailApiTransport(
-                config('services.gmail_api.client_id'),
-                config('services.gmail_api.client_secret'),
-                config('services.gmail_api.refresh_token'),
-            );
+        Mail::extend('resend-api', function (array $config): ResendApiTransport {
+            return new ResendApiTransport(config('services.resend.key'));
         });
     }
 }

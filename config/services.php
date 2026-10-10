@@ -18,6 +18,10 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    'resend' => [
+        'key' => env('RESEND_API_KEY'),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
@@ -33,12 +37,6 @@ return [
 
     'google_books' => [
         'api_key' => env('GOOGLE_BOOKS_API_KEY'),
-    ],
-
-    'gmail_api' => [
-        'client_id' => env('GMAIL_OAUTH_CLIENT_ID'),
-        'client_secret' => env('GMAIL_OAUTH_CLIENT_SECRET'),
-        'refresh_token' => env('GMAIL_OAUTH_REFRESH_TOKEN'),
     ],
 
 ];

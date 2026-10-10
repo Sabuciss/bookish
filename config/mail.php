@@ -29,7 +29,7 @@ return [
     | when delivering an email. You may specify which one you're using for
     | your mailers below. You may also add additional mailers if needed.
     |
-    | Supported: "smtp", "gmail-api", "sendmail", "mailgun", "ses", "ses-v2",
+    | Supported: "smtp", "resend-api", "sendmail", "mailgun", "ses", "ses-v2",
     |            "postmark", "log", "array",
     |            "failover", "roundrobin"
     |
@@ -49,8 +49,8 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
-        'gmail-api' => [
-            'transport' => 'gmail-api',
+        'resend-api' => [
+            'transport' => 'resend-api',
         ],
 
         'ses' => [

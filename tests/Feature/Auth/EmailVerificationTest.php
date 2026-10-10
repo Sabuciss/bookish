@@ -2,15 +2,17 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Mail\Transport\GmailApiTransport;
+use App\Mail\Transport\ResendApiTransport;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Http\Client\Request as HttpRequest;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mime\Email;
 use Tests\TestCase;
@@ -28,33 +30,37 @@ class EmailVerificationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_gmail_api_transport_sends_base64url_encoded_message_through_its_sender(): void
+    public function test_resend_transport_sends_mail_through_the_https_api(): void
     {
-        $encodedMessage = null;
-        $transport = new GmailApiTransport('client-id', 'client-secret', 'refresh-token', function (string $raw) use (&$encodedMessage): string {
-            $encodedMessage = $raw;
-
-            return 'gmail-message-id';
-        });
+        Http::fake([
+            'https://api.resend.com/emails' => Http::response(['id' => 'resend-message-id'], 200),
+        ]);
+        $transport = new ResendApiTransport('re_test_api_key');
         $email = (new Email())
-            ->from('bookish@example.com')
+            ->from('Bookish <noreply@bookish.lv>')
             ->to('reader@example.com')
             ->subject('Verify Email Address')
             ->text('Please verify your email.');
 
         $sentMessage = $transport->send($email);
-        $base64Message = strtr($encodedMessage, '-_', '+/');
-        $decodedMessage = base64_decode($base64Message.str_repeat('=', (4 - strlen($base64Message) % 4) % 4), true);
 
-        $this->assertIsString($decodedMessage);
-        $this->assertStringContainsString('Subject: Verify Email Address', $decodedMessage);
-        $this->assertSame('gmail-message-id', $sentMessage->getMessageId());
-        $this->assertSame('gmail-api', (string) $transport);
+        Http::assertSent(function (HttpRequest $request): bool {
+            $data = $request->data();
+
+            return $request->url() === 'https://api.resend.com/emails'
+                && $request->hasHeader('Authorization')
+                && str_contains($data['from'] ?? '', 'noreply@bookish.lv')
+                && ($data['to'] ?? null) === ['reader@example.com']
+                && ($data['subject'] ?? null) === 'Verify Email Address'
+                && ($data['text'] ?? null) === 'Please verify your email.';
+        });
+        $this->assertSame('resend-message-id', $sentMessage->getMessageId());
+        $this->assertSame('resend-api', (string) $transport);
     }
 
-    public function test_gmail_api_transport_requires_oauth_credentials(): void
+    public function test_resend_transport_requires_an_api_key(): void
     {
-        $transport = new GmailApiTransport(null, null, null);
+        $transport = new ResendApiTransport(null);
         $email = (new Email())
             ->from('bookish@example.com')
             ->to('reader@example.com')
@@ -62,26 +68,18 @@ class EmailVerificationTest extends TestCase
             ->text('Please verify your email.');
 
         $this->expectException(TransportException::class);
-        $this->expectExceptionMessage('Gmail API OAuth credentials are not configured.');
+        $this->expectExceptionMessage('Resend API key is not configured.');
 
         $transport->send($email);
     }
 
-    public function test_gmail_api_transport_is_registered_with_laravel(): void
+    public function test_resend_api_transport_is_registered_with_laravel(): void
     {
-        $this->assertTrue(class_exists(\Google\Client::class));
-        $this->assertTrue(class_exists(\Google\Service\Gmail::class));
-        $this->assertTrue(class_exists(\Google\Service\Gmail\Message::class));
+        config(['services.resend.key' => 're_test_api_key']);
 
-        config([
-            'services.gmail_api.client_id' => 'client-id',
-            'services.gmail_api.client_secret' => 'client-secret',
-            'services.gmail_api.refresh_token' => 'refresh-token',
-        ]);
+        $transport = app('mail.manager')->createSymfonyTransport(['transport' => 'resend-api']);
 
-        $transport = app('mail.manager')->createSymfonyTransport(['transport' => 'gmail-api']);
-
-        $this->assertInstanceOf(GmailApiTransport::class, $transport);
+        $this->assertInstanceOf(ResendApiTransport::class, $transport);
     }
 
     public function test_unverified_users_can_use_the_app_and_are_told_to_verify_in_their_profile(): void
