@@ -48,7 +48,7 @@ class ProfileTest extends TestCase
         Notification::assertSentTo($user, VerifyEmail::class);
 
         $this->get(route('dashboard'))
-            ->assertRedirect(route('reading-shelf.show'));
+            ->assertRedirect(route('verification.notice'));
     }
 
     public function test_profile_email_change_shows_a_message_when_verification_email_fails(): void

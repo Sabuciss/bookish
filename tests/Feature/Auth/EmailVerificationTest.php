@@ -82,18 +82,18 @@ class EmailVerificationTest extends TestCase
         $this->assertInstanceOf(ResendApiTransport::class, $transport);
     }
 
-    public function test_unverified_users_can_use_the_app_and_are_told_to_verify_in_their_profile(): void
+    public function test_unverified_users_are_redirected_to_verify_before_using_the_app(): void
     {
         $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)
             ->get(route('dashboard'))
-            ->assertRedirect(route('reading-shelf.show'));
+            ->assertRedirect(route('verification.notice'));
 
-        $this->get(route('reading-shelf.show'))->assertOk();
+        $this->get(route('reading-shelf.show'))
+            ->assertRedirect(route('verification.notice'));
         $this->get(route('profile.edit'))
-            ->assertOk()
-            ->assertSeeText('Tavs e-pasts vēl nav verificēts.');
+            ->assertRedirect(route('verification.notice'));
     }
 
     public function test_unverified_admin_still_cannot_open_admin_dashboard(): void
