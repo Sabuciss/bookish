@@ -15,7 +15,7 @@
 <body>
   <x-navigation></x-navigation>
 
-  <main class="p-4 bookish-main {{ request()->routeIs('reading-progress.index') ? 'bookish-main--wide' : '' }}">
+  <main class="bookish-main {{ request()->routeIs('reading-progress.index') ? 'bookish-main--wide' : '' }}">
     {{ $slot }}
   </main>
 </body>
