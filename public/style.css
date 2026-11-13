@@ -923,14 +923,25 @@ nav.app-surface-opaque form button:hover {
 }
 
 .book-listing-secondary-action {
-	padding: 8px 12px;
+	padding: 10px 14px;
 	border: 1px solid var(--bookish-line);
 	border-radius: 8px;
-	background: transparent;
-	color: var(--bookish-muted);
-	font-size: 0.75rem;
-	font-weight: 700;
+	background: var(--bookish-cream);
+	color: var(--bookish-ink);
+	font-size: 0.8rem;
+	font-weight: 600;
 	cursor: pointer;
+	transition: all 0.2s ease;
+	display: inline-block;
+	margin-top: 8px;
+}
+
+.book-listing-secondary-action:hover {
+	background: var(--bookish-soft);
+	border-color: var(--bookish-rose);
+	color: var(--bookish-ink);
+	transform: translateY(-2px);
+	box-shadow: 0 2px 8px rgba(185, 143, 136, 0.15);
 }
 
 .book-listing-apply-login {
