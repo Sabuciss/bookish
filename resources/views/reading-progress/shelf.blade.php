@@ -13,15 +13,15 @@
             <a href="{{ route('reading-progress.index') }}" class="reading-progress-submit" style="text-decoration: none; display: inline-block;">Pievienot lasīšanas progresu</a>
         </div>
 
-        <section class="reading-progress-overview uiverse-container" style="margin-bottom: 1rem;">
+        <section class="reading-progress-overview uiverse-container u-mb-16">
             <p class="welcome-eyebrow">Tavs lasīšanas kopsavilkums</p>
             <h2 class="uiverse-heading">Kopā izlasīts: {{ number_format($totalPagesRead, 0, ',', ' ') }} lappuses</h2>
             <h2 class="uiverse-heading">Kopā izlasītas: {{ $totalBooksRead }} {{ $totalBooksRead === 1 ? 'grāmata' : 'grāmatas' }}</h2>
         </section>
 
-        <section class="reading-progress-overview uiverse-container" style="margin-bottom: 1rem;">
+        <section class="reading-progress-overview uiverse-container u-mb-16">
             <h2 class="uiverse-heading">Plaukti: Gribu izlasīt / Lasu / Izlasītas</h2>
-            <div style="display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); align-items: start;">
+            <div class="rp-shelf-columns">
                 @php
                     $statusColumns = [
                         'want_to_read' => 'Gribu izlasīt',
@@ -65,9 +65,9 @@
                             @endphp
 
                             <article class="rp-snapshot-article">
-                                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+                                <div class="u-row-center u-mb-8">
                                     @if (!empty($snapshot['book_cover_url']))
-                                        <img src="{{ $snapshot['book_cover_url'] }}" alt="{{ $snapshot['book_title'] }} vāks" style="width: 46px; height: 68px; object-fit: cover; border-radius: 8px;">
+                                        <img src="{{ $snapshot['book_cover_url'] }}" alt="{{ $snapshot['book_title'] }} vāks" class="rp-snapshot-cover">
                                     @endif
                                     <div>
                                         <strong>{{ $snapshot['book_title'] }}</strong>
@@ -95,11 +95,11 @@
                                 </div>
 
                                 @if ($percent !== null)
-                                    <div style="margin-bottom: 8px;">
-                                        <div style="height: 8px; border-radius: 999px; background: var(--bookish-line); overflow: hidden;">
-                                            <div style="height: 100%; width: {{ $percent }}%; background: linear-gradient(90deg, var(--bookish-plum-deep), var(--bookish-rose));"></div>
+                                    <div class="u-mb-8">
+                                        <div class="rp-mini-track">
+                                            <div class="rp-mini-fill" style="width: {{ $percent }}%;"></div>
                                         </div>
-                                        <div class="rp-snapshot-meta" style="margin-top: 4px;">{{ $percent }}%</div>
+                                        <div class="rp-snapshot-meta u-mt-4">{{ $percent }}%</div>
                                     </div>
                                 @endif
 
@@ -115,8 +115,7 @@
                                                 'entry_id' => $snapshot['entry_id'],
                                                 'session' => 'new',
                                             ]) }}"
-                                            class="login-button"
-                                            style="text-decoration: none;"
+                                            class="login-button u-no-underline"
                                         >{{ $btnLabel }}</a>
                                     @endif
                                     <form method="POST" action="{{ route('reading-progress.destroy', $snapshot['entry_id']) }}" style="display: inline;">

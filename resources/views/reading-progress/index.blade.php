@@ -209,11 +209,11 @@
 
                     <div id="selected-book-preview" class="rp-book-preview" style="display: none;">
                         <div class="rp-selected-book-inner">
-                            <img id="selected-book-image" src="" alt="Izvēlētās grāmatas vāks" style="width: 60px; height: 88px; object-fit: cover; border-radius: 8px; display: none;">
+                            <img id="selected-book-image" src="" alt="Izvēlētās grāmatas vāks" class="rp-selected-cover" style="display: none;">
                             <div>
                                 <strong id="selected-book-title"></strong>
                                 <div id="selected-book-pages" class="rp-snapshot-meta"></div>
-                                <button type="button" id="change-book-btn" class="login-button" style="margin-top: 8px;">Nomainīt grāmatu</button>
+                                <button type="button" id="change-book-btn" class="login-button u-mt-8">Nomainīt grāmatu</button>
                             </div>
                         </div>
                     </div>

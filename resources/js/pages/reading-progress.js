@@ -10,7 +10,6 @@ if (root) {
     const coverInput = document.getElementById('book_cover_url');
     const titleInput = document.getElementById('book_title');
     const statusInput = document.getElementById('reading_status');
-    const statusTags = Array.from(document.querySelectorAll('.status-tag'));
     const totalPagesInput = document.getElementById('total_pages');
     const pagesReadInput = document.getElementById('pages_read');
     const previewWrap = document.getElementById('selected-book-preview');
@@ -18,7 +17,6 @@ if (root) {
     const previewTitle = document.getElementById('selected-book-title');
     const previewPages = document.getElementById('selected-book-pages');
     const changeBookBtn = document.getElementById('change-book-btn');
-    const loadBookButtons = Array.from(document.querySelectorAll('.js-load-book'));
     const datePicker = document.getElementById('reading-date-picker');
     const dateDisplay = document.getElementById('reading-date-display');
     const dateOpenButton = document.getElementById('reading-date-open');
@@ -271,23 +269,10 @@ if (root) {
 
     const normalizeCoverUrl = (url) => String(url || '').replace(/^http:\/\//i, 'https://');
 
-    const syncStatusTags = () => {
-        if (!statusInput || !statusTags.length) {
-            return;
-        }
-
-        statusTags.forEach((tag) => {
-            tag.classList.toggle('selected', tag.dataset.status === statusInput.value);
-        });
-    };
-
     const setStatus = (status) => {
-        if (!statusInput) {
-            return;
+        if (statusInput) {
+            statusInput.value = status;
         }
-
-        statusInput.value = status;
-        syncStatusTags();
     };
 
     const syncStatusWithPages = () => {
@@ -379,25 +364,6 @@ if (root) {
         }
     };
 
-    const loadExistingBook = (button) => {
-        const { dataset } = button;
-
-        applyBookSelection({
-            id: dataset.googleVolumeId || '',
-            title: dataset.bookTitle || '',
-            pageCount: dataset.totalPages ? Number(dataset.totalPages) : null,
-            thumbnail: dataset.bookCoverUrl || '',
-        }, dataset.readingStatus || 'in_progress');
-
-        if (pagesReadInput) {
-            pagesReadInput.value = dataset.pagesRead || '0';
-        }
-
-        if (statusEl) {
-            statusEl.textContent = 'Esošās grāmatas dati ielādēti formā. Vari veikt update.';
-        }
-    };
-
     const renderResults = (books) => {
         if (!resultsEl || !statusEl) {
             return;
@@ -416,13 +382,30 @@ if (root) {
             const button = document.createElement('button');
             button.type = 'button';
             button.className = 'rp-book-search-result';
-            button.innerHTML = `
-                ${book.thumbnail ? `<img class="rp-search-cover" src="${normalizeCoverUrl(book.thumbnail)}" alt="${book.title} vāks">` : '<span class="rp-search-cover rp-search-cover-empty" aria-hidden="true">Nav vāka</span>'}
-                <span>
-                    <strong>${book.title || 'Bez nosaukuma'}</strong><br>
-                    <span class="rp-book-search-meta">${book.authors || 'Autors nav norādīts'}</span>
-                </span>
-            `;
+            // Dati nāk no ārēja API → veidojam ar DOM un textContent (bez innerHTML), lai novērstu XSS.
+            if (book.thumbnail) {
+                const cover = document.createElement('img');
+                cover.className = 'rp-search-cover';
+                cover.src = normalizeCoverUrl(book.thumbnail);
+                cover.alt = `${book.title || 'Grāmatas'} vāks`;
+                cover.loading = 'lazy';
+                button.append(cover);
+            } else {
+                const emptyCover = document.createElement('span');
+                emptyCover.className = 'rp-search-cover rp-search-cover-empty';
+                emptyCover.setAttribute('aria-hidden', 'true');
+                emptyCover.textContent = 'Nav vāka';
+                button.append(emptyCover);
+            }
+
+            const info = document.createElement('span');
+            const title = document.createElement('strong');
+            title.textContent = book.title || 'Bez nosaukuma';
+            const meta = document.createElement('span');
+            meta.className = 'rp-book-search-meta';
+            meta.textContent = book.authors || 'Autors nav norādīts';
+            info.append(title, document.createElement('br'), meta);
+            button.append(info);
 
             button.addEventListener('click', () => applyBookSelection(book));
             resultsEl.appendChild(button);
@@ -484,17 +467,6 @@ if (root) {
         }
     };
 
-    loadBookButtons.forEach((button) => {
-        button.addEventListener('click', () => loadExistingBook(button));
-    });
-
-    statusTags.forEach((tag) => {
-        tag.addEventListener('click', () => {
-            setStatus(tag.dataset.status || 'in_progress');
-            updateLivePreview();
-        });
-    });
-
     // Emotion picker – multi-select
     const emotionInput = document.getElementById('emotion_input');
     const emotionTags = Array.from(document.querySelectorAll('.emotion-tag'));
@@ -519,7 +491,6 @@ if (root) {
     pagesReadInput?.addEventListener('input', updateLivePreview);
     totalPagesInput?.addEventListener('input', updateLivePreview);
 
-    syncStatusTags();
     syncStatusWithPages();
     updateLivePreview();
 

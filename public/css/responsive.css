@@ -59,77 +59,6 @@
 		margin: 12px auto;
 	}
 
-	.weekly-top-controls {
-		flex-direction: column;
-		align-items: stretch;
-	}
-
-	.booktok-page .weekly-top-controls {
-		gap: 10px;
-	}
-
-	.booktok-page .bookish-field-group {
-		flex: 0 1 auto;
-	}
-
-	.booktok-page .bookish-field-label {
-		margin-bottom: 3px;
-	}
-
-	.booktok-page .booktok-filter-submit {
-		margin-top: 0;
-	}
-
-	.booktok-page {
-		width: 100%;
-		min-width: 0;
-		margin-top: 12px;
-	}
-
-	.booktok-page > h1 {
-		max-width: 100%;
-		font-size: clamp(1.9rem, 8vw, 3rem);
-		line-height: 1.1;
-		overflow-wrap: anywhere;
-	}
-
-	.booktok-page > p {
-		max-width: 100%;
-		line-height: 1.45;
-		overflow-wrap: anywhere;
-	}
-
-	.booktok-page > .uiverse-container {
-		min-width: 0;
-		padding: 14px;
-	}
-
-	.booktok-view-switcher {
-		width: 100%;
-		min-width: 0;
-		flex-wrap: wrap;
-		gap: 6px;
-	}
-
-	.booktok-view-button {
-		min-width: 0;
-		flex: 1 1 0;
-		padding: 8px 10px;
-		font-size: 0.7rem;
-		text-align: center;
-	}
-
-	.booktok-section-heading {
-		align-items: flex-start;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	.booktok-section-count {
-		max-width: 100%;
-		overflow-wrap: anywhere;
-	}
-
 	.release-calendar-layout {
 		grid-template-columns: 1fr;
 	}
@@ -190,10 +119,6 @@
 		width: 100%;
 	}
 
-	.reading-progress-table {
-		min-width: 700px;
-	}
-
 	.highlight-grid {
 		grid-template-columns: 1fr;
 	}
@@ -239,145 +164,7 @@
 	}
 }
 
-@media (min-width: 641px) and (max-width: 1024px) {
-	.booktok-page .reading-progress-history {
-		overflow: hidden;
-	}
-
-	.booktok-page .reading-progress-table {
-		table-layout: fixed;
-		min-width: 0;
-		width: 100%;
-	}
-
-	.booktok-page .reading-progress-table th,
-	.booktok-page .reading-progress-table td {
-		padding: 8px;
-		overflow-wrap: anywhere;
-	}
-
-	.booktok-page .reading-progress-table th:nth-child(4),
-	.booktok-page .reading-progress-table td:nth-child(4),
-	.booktok-page .reading-progress-table th:nth-child(5),
-	.booktok-page .reading-progress-table td:nth-child(5) {
-		display: none;
-	}
-
-	.booktok-page .reading-progress-table th:nth-child(1),
-	.booktok-page .reading-progress-table td:nth-child(1) {
-		width: 8%;
-	}
-
-	.booktok-page .reading-progress-table th:nth-child(2),
-	.booktok-page .reading-progress-table td:nth-child(2) {
-		width: 15%;
-	}
-
-	.booktok-page .reading-progress-table th:nth-child(3),
-	.booktok-page .reading-progress-table td:nth-child(3) {
-		width: 55%;
-	}
-
-	.booktok-page .reading-progress-table th:nth-child(6),
-	.booktok-page .reading-progress-table td:nth-child(6) {
-		display: table-cell !important;
-		width: 24%;
-	}
-
-	.booktok-page .reading-progress-table td:nth-child(3) a {
-		display: block;
-		overflow-wrap: anywhere;
-		word-break: break-word;
-	}
-}
-
 @media (max-width: 640px) {
-	.booktok-page .reading-progress-history {
-		overflow: hidden;
-		padding: 12px;
-	}
-
-	.booktok-page .reading-progress-table {
-		table-layout: fixed;
-		min-width: 0;
-		width: 100%;
-	}
-
-	.booktok-page .reading-progress-table th,
-	.booktok-page .reading-progress-table td {
-		padding: 8px 6px;
-		vertical-align: middle;
-		overflow-wrap: anywhere;
-	}
-
-	.booktok-page .reading-progress-table th:nth-child(1),
-	.booktok-page .reading-progress-table td:nth-child(1) {
-		width: 11%;
-	}
-
-	.booktok-page .reading-progress-table th:nth-child(2),
-	.booktok-page .reading-progress-table td:nth-child(2) {
-		width: 22%;
-	}
-
-	.booktok-page .reading-progress-table th:nth-child(4),
-	.booktok-page .reading-progress-table td:nth-child(4),
-	.booktok-page .reading-progress-table th:nth-child(5),
-	.booktok-page .reading-progress-table td:nth-child(5) {
-		display: none;
-	}
-
-	.booktok-page .reading-progress-table th:nth-child(3),
-	.booktok-page .reading-progress-table td:nth-child(3) {
-		width: 48%;
-	}
-
-	.booktok-page .reading-progress-table th:nth-child(6),
-	.booktok-page .reading-progress-table td:nth-child(6) {
-		display: table-cell !important;
-		width: 22%;
-	}
-
-	.booktok-page .reading-progress-table td:nth-child(3) a {
-		display: block;
-		overflow-wrap: anywhere;
-		word-break: break-word;
-	}
-
-	.booktok-page .reading-progress-table td:nth-child(2) img {
-		width: 42px !important;
-		height: 62px !important;
-	}
-
-	.booktok-page .reading-progress-table td:nth-child(6) form {
-		display: block !important;
-		width: 100%;
-	}
-
-	.booktok-page .reading-progress-table td:nth-child(6) .reading-progress-submit {
-		width: 100%;
-		margin: 0;
-		padding: 6px 3px;
-		font-size: 0.62rem;
-		line-height: 1.15;
-		white-space: normal;
-	}
-
-	.booktok-page .booktok-author-grid,
-	.booktok-page .booktok-author-books-grid {
-		grid-template-columns: 1fr;
-	}
-
-	.booktok-page .booktok-author-card,
-	.booktok-page .booktok-author-book-card {
-		max-width: 100%;
-	}
-
-	.booktok-page .booktok-author-card strong,
-	.booktok-page .booktok-author-book-card strong {
-		white-space: normal;
-		overflow-wrap: anywhere;
-	}
 
 	.book-listings-heading,
 	.book-listing-card-heading {
@@ -450,36 +237,6 @@
 
 	.welcome-container {
 		margin: 8px auto;
-	}
-
-	.welcome-title {
-		font-size: 2.35rem !important;
-	}
-
-	.welcome-card,
-	.welcome-card--wide {
-		padding: 14px;
-	}
-
-	.welcome-section-heading {
-		align-items: flex-start;
-		flex-direction: column;
-		gap: 4px;
-		margin-bottom: 12px;
-	}
-
-	.welcome-section-note {
-		font-size: 0.72rem;
-	}
-
-	.weekly-top-controls {
-		gap: 8px;
-	}
-
-	.weekly-top-controls .weekly-genre-select,
-	.weekly-top-controls .reading-progress-submit {
-		width: 100%;
-		max-width: none;
 	}
 
 	.book-genre-filter {

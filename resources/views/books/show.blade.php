@@ -9,7 +9,7 @@
         <div class="reading-progress-history">
             <a href="{{ $backUrl }}" class="weekly-top-action">← Atpakaļ</a>
 
-            <div class="weekly-top-item" style="margin-top: 12px;">
+            <div class="weekly-top-item u-mt-12">
                 @if($book['thumbnail'])
                     <img
                         class="weekly-top-cover"
@@ -23,20 +23,20 @@
                 <div class="weekly-top-content">
                     <h1 class="welcome-card-title" style="margin-bottom: 8px;">{{ $book['title'] }}</h1>
                     <p class="welcome-card-text"><strong>Autors:</strong> {{ $book['authors'] }}</p>
-                    <p class="welcome-card-text weekly-top-meta" style="margin-top: 6px;">
+                    <p class="welcome-card-text weekly-top-meta u-mt-6">
                         <strong>Izdošana:</strong> {{ $book['publishedDate'] }} ·
                         <strong>Izdevējs:</strong> {{ $book['publisher'] }}
                     </p>
-                    <p class="welcome-card-text weekly-top-meta" style="margin-top: 6px;">
+                    <p class="welcome-card-text weekly-top-meta u-mt-6">
                         <strong>Lapas:</strong> {{ $book['pageCount'] ?? 'Nav norādīts' }} ·
                         <strong>Valoda:</strong> {{ $book['language'] }}
                     </p>
-                    <p class="welcome-card-text weekly-top-meta" style="margin-top: 6px;">
+                    <p class="welcome-card-text weekly-top-meta u-mt-6">
                         <strong>Kategorijas:</strong> {{ $book['categories'] }}
                     </p>
 
                     @if($book['averageRating'])
-                        <p class="welcome-card-text weekly-top-meta" style="margin-top: 6px;">
+                        <p class="welcome-card-text weekly-top-meta u-mt-6">
                             <strong>Reitings:</strong> {{ $book['averageRating'] }}/5
                             @if($book['ratingsCount'])
                                 ({{ $book['ratingsCount'] }} vērtējumi)
@@ -47,13 +47,13 @@
             </div>
 
             @if($book['description'])
-                <div style="margin-top: 16px;">
+                <div class="u-mt-16">
                     <h2 class="welcome-card-title">Apraksts</h2>
                     <p class="welcome-card-text" style="line-height: 1.6; white-space: pre-line;">{{ $book['description'] }}</p>
                 </div>
             @endif
 
-            <div style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <div class="u-row u-mt-16">
                 @auth
                     @if ($currentBookStatus === 'read')
                         <span class="reading-progress-status-badge">IZLASĪTA</span>

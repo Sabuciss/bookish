@@ -39,7 +39,7 @@
             </form>
         </section>
 
-        <section class="reading-challenges-list uiverse-container" style="margin-top: 16px;">
+        <section class="reading-challenges-list uiverse-container u-mt-16">
             <h2 class="uiverse-heading">Kopsavilkums</h2>
             <div class="reading-challenges-cards">
                 <article class="reading-challenge-card">
@@ -54,7 +54,7 @@
             </div>
         </section>
 
-        <section class="reading-challenges-list uiverse-container" style="margin-top: 16px;">
+        <section class="reading-challenges-list uiverse-container u-mt-16">
             <h2 class="uiverse-heading">Rezultatu saraksts</h2>
 
             @if ($sessions->isEmpty())
@@ -79,7 +79,7 @@
                     @endforeach
                 </div>
 
-                <div style="margin-top: 16px;">
+                <div class="u-mt-16">
                     {{ $sessions->links() }}
                 </div>
             @endif

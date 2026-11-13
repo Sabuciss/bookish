@@ -5,47 +5,12 @@
 	font-family: Arial, sans-serif;
 }
 
-.welcome-title {
-	margin-top: 0;
-}
-
-.welcome-grid {
-	margin-top: 24px;
-	display: grid;
-	gap: 16px;
-}
-
-.welcome-grid > *,
-.welcome-card,
-.welcome-card > * {
-	min-width: 0;
-}
-
-.welcome-card {
-	padding: 16px;
-	border: 1px solid #ddd;
-	border-radius: 8px;
-	background: #fff;
-}
-
 .welcome-card-title {
 	margin: 0 0 8px;
 }
 
 .welcome-card-text {
 	margin: 0;
-}
-
-.welcome-card--wide {
-	padding: 20px;
-}
-
-.welcome-section-heading {
-	display: flex;
-	justify-content: space-between;
-	align-items: end;
-	gap: 16px;
-	margin-bottom: 16px;
 }
 
 .welcome-eyebrow {
@@ -55,11 +20,6 @@
 	font-weight: 800;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
-}
-
-.welcome-section-note {
-	color: #866b75;
-	font-size: 0.78rem;
 }
 
 .book-recommendation-grid {
@@ -226,8 +186,7 @@ html.dark .book-recommendation-card h3 a {
 }
 
 html.dark .book-recommendation-card p,
-html.dark .book-recommendation-card span,
-html.dark .welcome-section-note {
+html.dark .book-recommendation-card span {
 	color: #f2dce3;
 }
 
@@ -245,36 +204,6 @@ html.dark .book-reminder-button--saved {
 	margin-top: 12px;
 	display: grid;
 	gap: 8px;
-}
-
-.weekly-top-controls {
-	display: flex;
-	gap: 10px;
-	align-items: center;
-	margin-top: 12px;
-	flex-wrap: wrap;
-}
-
-.weekly-genre-select {
-	flex: 1;
-	padding: 10px 12px;
-	border: 1px solid var(--bookish-line);
-	border-radius: 10px;
-	background: #ffffff;
-}
-
-.weekly-month-select {
-	max-width: 170px;
-	flex: 0 0 170px;
-}
-
-.weekly-year-input {
-	max-width: 170px;
-	flex: 0 0 170px;
-	padding: 10px 12px;
-	border: 1px solid var(--bookish-line);
-	border-radius: 10px;
-	background: #ffffff;
 }
 
 .weekly-top-item {
@@ -456,13 +385,6 @@ html.dark .book-reminder-button--saved {
 	color: var(--bookish-muted);
 }
 
-.weekly-top-description {
-	margin-top: 6px;
-	font-size: 0.86rem;
-	line-height: 1.45;
-	color: var(--bookish-ink);
-}
-
 .weekly-top-title-link {
 	color: #1d4ed8;
 	text-decoration: none;
@@ -470,23 +392,6 @@ html.dark .book-reminder-button--saved {
 
 .weekly-top-title-link:hover {
 	text-decoration: underline;
-}
-
-.weekly-top-details {
-	margin-top: 8px;
-}
-
-.weekly-top-details summary {
-	cursor: pointer;
-	font-size: 0.82rem;
-	color: var(--bookish-muted);
-}
-
-.weekly-top-details-list {
-	margin: 6px 0 0;
-	padding-left: 18px;
-	font-size: 0.82rem;
-	color: var(--bookish-ink);
 }
 
 .weekly-top-action {
@@ -697,145 +602,6 @@ html.dark .book-reminder-button--saved {
 	margin-top: 20px;
 }
 
-.booktok-authors {
-	margin-bottom: 16px;
-}
-
-.booktok-view-switcher {
-	display: flex;
-	gap: 8px;
-	margin-bottom: 16px;
-}
-
-.booktok-view-button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 110px;
-	padding: 9px 16px;
-	border: 1px solid var(--bookish-line);
-	border-radius: 8px;
-	background: #ffffff;
-	color: var(--bookish-ink);
-	font-weight: 700;
-	text-decoration: none;
-}
-
-.booktok-view-button.is-active,
-.booktok-view-button:hover {
-	border-color: #2563eb;
-	background: #2563eb;
-	color: #ffffff;
-}
-
-.booktok-section-heading {
-	display: flex;
-	justify-content: space-between;
-	align-items: end;
-	gap: 16px;
-	margin-bottom: 18px;
-}
-
-.booktok-section-heading .book-detail-eyebrow {
-	margin-bottom: 4px;
-}
-
-.booktok-section-title {
-	margin: 0;
-	color: #172554;
-	font-size: 1.45rem;
-}
-
-.booktok-section-count {
-	color: var(--bookish-muted);
-	font-size: 0.82rem;
-}
-
-.booktok-author-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-	gap: 10px;
-}
-
-.booktok-author-card {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	min-width: 0;
-	padding: 12px;
-	border: 1px solid var(--bookish-line);
-	border-radius: 10px;
-	background: var(--bookish-cream);
-	text-decoration: none;
-}
-
-.booktok-author-avatar {
-	display: inline-flex;
-	flex: 0 0 34px;
-	width: 34px;
-	height: 34px;
-	align-items: center;
-	justify-content: center;
-	border-radius: 50%;
-	background: #dbeafe;
-	color: #1d4ed8;
-	font-weight: 800;
-}
-
-.booktok-author-card div {
-	display: grid;
-	gap: 3px;
-	min-width: 0;
-}
-
-.booktok-author-card strong {
-	overflow: hidden;
-	color: #172554;
-	font-size: 0.88rem;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.booktok-author-card div span {
-	color: var(--bookish-muted);
-	font-size: 0.75rem;
-}
-
-html.dark .booktok-section-title,
-html.dark .booktok-author-card strong {
-	color: var(--bookish-plum);
-}
-
-html.dark .booktok-section-count,
-html.dark .booktok-author-card div span {
-	color: var(--bookish-muted);
-}
-
-html.dark .booktok-author-card {
-	border-color: var(--bookish-line);
-	background: var(--bookish-cream);
-}
-
-html.dark .welcome-card {
-	background: #432430;
-	border-color: #74485a;
-}
-
-html.dark .welcome-card--search .weekly-genre-select,
-html.dark .welcome-card--search .reading-progress-submit {
-	border-color: #875668;
-	background: #623747;
-	color: #ffe9f0;
-}
-
-html.dark .welcome-card--search .weekly-genre-select::placeholder {
-	color: #e4bdcb;
-}
-
-html.dark .welcome-card--search .reading-progress-submit:hover {
-	background: #754255;
-}
-
 html.dark .weekly-top-item {
 	background: #623747;
 	border-color: #875668;
@@ -875,17 +641,8 @@ html.dark .weekly-top-meta {
 	color: #f2dce3;
 }
 
-html.dark .weekly-top-description {
-	color: #f2dce3;
-}
-
 html.dark .weekly-top-title-link {
 	color: #ffe9f0;
-}
-
-html.dark .weekly-top-details summary,
-html.dark .weekly-top-details-list {
-	color: #f2dce3;
 }
 
 html.dark .weekly-top-action {
@@ -928,11 +685,4 @@ html.dark .weekly-top-cover {
 
 html.dark .weekly-top-cover--empty {
 	color: #94a3b8;
-}
-
-html.dark .weekly-genre-select,
-html.dark .weekly-year-input {
-	background: var(--bookish-cream);
-	border-color: var(--bookish-line);
-	color: var(--bookish-ink);
 }

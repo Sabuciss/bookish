@@ -13,7 +13,7 @@
             </div>
         @endif
 
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px;">
+        <div class="u-row u-mb-16">
             <a href="{{ route('reading-highlights.index') }}" class="reading-progress-submit" style="text-decoration: none;">Skatīt visus highlights</a>
         </div>
 

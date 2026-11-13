@@ -22,7 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (env('APP_ENV') === 'production') {
+        // config('app.env'), nevis env(): env() atgriež null, ja serverī palaists `php artisan config:cache`.
+        if ($this->app->environment('production')) {
             URL::forceScheme('https');
 
             // Drošības tīkls: produkcijā nekad nerādīt kļūdu detaļas (kodu, .env vērtības),

@@ -47,8 +47,7 @@ nav.app-surface-opaque form button:hover {
 	z-index: 1;
 }
 
-.reading-progress-page > h1,
-.welcome-title {
+.reading-progress-page > h1 {
 	color: var(--bookish-plum) !important;
 	font-size: 3.4rem !important;
 	font-weight: 500 !important;
@@ -89,75 +88,7 @@ nav.app-surface-opaque form button:hover {
 	color: var(--bookish-paper) !important;
 }
 
-.bookish-field-label {
-	display: block;
-	margin: 0 0 6px;
-	color: var(--bookish-ink);
-	font-size: 0.76rem;
-	font-weight: 700;
-	letter-spacing: 0.02em;
-}
-
-.bookish-field-group {
-	display: flex;
-	flex: 1 1 180px;
-	min-width: 0;
-	flex-direction: column;
-	gap: 0;
-}
-
-.book-year-filter {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 180px));
-	gap: 12px;
-}
-
-.welcome-genres-heading {
-	display: flex;
-	align-items: flex-end;
-	justify-content: space-between;
-	flex-wrap: wrap;
-	gap: 20px;
-}
-
-.welcome-genres-heading-tools {
-	display: flex;
-	align-items: flex-end;
-	flex-wrap: wrap;
-	gap: 16px;
-}
-
-@media (max-width: 640px) {
-	.welcome-genres-heading {
-		align-items: stretch;
-	}
-
-	.welcome-genres-heading > div:first-child {
-		width: 100%;
-		text-align: left;
-	}
-
-	.welcome-genres-heading-tools {
-		width: 100%;
-		justify-content: space-between;
-	}
-
-	.book-year-filter {
-		flex: 1 1 240px;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-}
-
-.bookish-field-group .weekly-genre-select,
-.bookish-field-group .weekly-year-input {
-	width: 100%;
-	max-width: none;
-	flex: 0 0 40px;
-}
-
-.reading-progress-submit,
-.booktok-view-button.is-active,
-.booktok-view-button:hover {
+.reading-progress-submit {
 	border-color: var(--bookish-plum) !important;
 	background: var(--bookish-plum) !important;
 	color: #fffaf5 !important;
@@ -169,8 +100,6 @@ nav.app-surface-opaque form button:hover {
 .login-button,
 .book-reminder-button,
 .book-genre-filter-button,
-.booktok-view-button,
-.booktok-favorite-button,
 .rp-back-button {
 	font-family: 'DM Sans', sans-serif !important;
 	font-weight: 700;
@@ -181,7 +110,6 @@ nav.app-surface-opaque form button:hover {
 .login-button,
 .book-reminder-button,
 .book-genre-filter-button,
-.booktok-view-button,
 .rp-back-button {
 	border: 1px solid var(--bookish-plum) !important;
 	background: var(--bookish-paper) !important;
@@ -191,42 +119,10 @@ nav.app-surface-opaque form button:hover {
 .login-button:hover,
 .book-reminder-button:hover,
 .book-genre-filter-button:hover,
-.booktok-view-button:hover,
 .rp-back-button:hover {
 	border-color: var(--bookish-plum-deep) !important;
 	background: var(--bookish-soft) !important;
 	color: var(--bookish-plum-deep) !important;
-}
-
-.booktok-view-button {
-	border-color: var(--bookish-line) !important;
-	background: var(--bookish-paper) !important;
-	color: var(--bookish-plum) !important;
-	border-radius: 7px !important;
-	font-family: 'DM Sans', sans-serif !important;
-	text-transform: uppercase;
-	letter-spacing: 0.08em !important;
-	font-size: 0.72rem;
-	min-height: 40px;
-	white-space: nowrap;
-}
-
-.booktok-page .reading-progress-submit {
-	min-height: 40px;
-	margin: 10px 0 0;
-	padding: 9px 16px;
-	font-family: 'DM Sans', sans-serif;
-	font-size: 0.72rem;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	white-space: nowrap;
-}
-
-.booktok-page .booktok-view-button:focus-visible,
-.booktok-page .reading-progress-submit:focus-visible {
-	outline: 3px solid rgba(185, 143, 136, 0.45);
-	outline-offset: 2px;
 }
 
 .guest-auth-page {
@@ -281,129 +177,6 @@ nav.app-surface-opaque form button:hover {
 .guest-auth-card button[type='submit']:focus-visible {
 	outline: 3px solid rgba(185, 143, 136, 0.45);
 	outline-offset: 2px;
-}
-
-.booktok-author-card {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
-	align-items: start;
-	gap: 10px;
-	border-color: var(--bookish-line) !important;
-	border-radius: 2px !important;
-	background: var(--bookish-soft) !important;
-	transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.booktok-author-link {
-	display: flex;
-	align-items: center;
-	grid-column: 1;
-	grid-row: 1;
-	min-width: 0;
-	gap: 10px;
-	color: inherit;
-	text-decoration: none;
-}
-
-.booktok-author-info {
-	display: grid;
-	gap: 3px;
-	min-width: 0;
-}
-
-.booktok-author-books {
-	display: grid !important;
-	grid-column: 1;
-	grid-row: 2;
-	gap: 2px;
-	max-height: 104px;
-	margin: 0 0 0 44px;
-	overflow-y: auto;
-}
-
-.booktok-author-books a {
-	overflow: hidden;
-	min-width: 0;
-	color: var(--bookish-plum) !important;
-	font-size: 0.72rem;
-	text-overflow: ellipsis;
-	text-decoration: none;
-	white-space: nowrap;
-}
-
-.booktok-author-books a:hover {
-	text-decoration: underline;
-}
-
-.booktok-author-card > form,
-.booktok-author-card > .booktok-favorite-button {
-	grid-column: 2;
-	grid-row: 1;
-}
-
-.booktok-author-books-section {
-	margin-bottom: 16px;
-}
-
-.booktok-author-books-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-	gap: 10px;
-}
-
-.booktok-author-book-card {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr);
-	gap: 10px;
-	align-items: center;
-	min-width: 0;
-	min-height: 92px;
-	padding: 8px;
-	border: 1px solid var(--bookish-line);
-	border-radius: 4px;
-	background: var(--bookish-paper);
-	color: var(--bookish-ink);
-	text-decoration: none;
-}
-
-.booktok-author-book-card.has-cover {
-	grid-template-columns: 46px minmax(0, 1fr);
-}
-
-.booktok-author-book-card:hover {
-	border-color: var(--bookish-rose);
-	background: var(--bookish-alt);
-}
-
-.booktok-author-book-card img {
-	width: 46px;
-	height: 66px;
-	object-fit: cover;
-	border-radius: 3px;
-}
-
-.booktok-author-book-card span {
-	display: grid;
-	gap: 4px;
-	min-width: 0;
-}
-
-.booktok-author-book-card strong {
-	display: -webkit-box;
-	overflow: hidden;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 3;
-	line-clamp: 3;
-	overflow-wrap: anywhere;
-	font-size: 0.8rem;
-	line-height: 1.25;
-}
-
-.booktok-author-book-card small {
-	overflow-wrap: anywhere;
-	color: var(--bookish-muted);
-	font-size: 0.7rem;
-	line-height: 1.2;
 }
 
 .book-listings-heading {
@@ -675,30 +448,6 @@ nav.app-surface-opaque form button:hover {
 	display: grid;
 	min-width: 0;
 	gap: 3px;
-}
-
-.book-notification-delete-form {
-	margin: 0;
-}
-
-.book-notification-delete {
-	display: inline-flex;
-	width: 30px;
-	height: 30px;
-	align-items: center;
-	justify-content: center;
-	border: 1px solid var(--bookish-line, #ddc9c1);
-	border-radius: 6px;
-	background: var(--bookish-soft, #f1dfe4);
-	color: var(--bookish-plum-deep, #5e4740);
-	cursor: pointer;
-}
-
-.book-notification-delete:hover,
-.book-notification-delete:focus-visible {
-	background: var(--bookish-rose, #b98f88);
-	color: var(--bookish-cream, #fbf7f4);
-	outline: none;
 }
 
 @media (max-width: 480px) {
@@ -1018,63 +767,10 @@ nav.app-surface-opaque form button:hover {
 	margin-top: 20px;
 }
 
-.booktok-favorite-button {
-	display: inline-flex;
-	flex: 0 0 34px;
-	width: 34px;
-	height: 34px;
-	align-items: center;
-	justify-content: center;
-	border: 1px solid var(--bookish-line);
-	border-radius: 50%;
-	background: transparent;
-	color: var(--bookish-plum);
-	cursor: pointer;
-	font-size: 1.25rem;
-	line-height: 1;
-	text-decoration: none;
-	transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-
-.booktok-favorite-button:hover,
-.booktok-favorite-button.is-favorite {
-	background: var(--bookish-rose);
-	border-color: var(--bookish-rose);
-	color: #fffaf5;
-	transform: scale(1.06);
-}
-
-.booktok-author-card:hover {
-	border-color: var(--bookish-rose) !important;
-	box-shadow: 0 8px 18px rgba(77, 38, 57, 0.1);
-	transform: translateY(-2px);
-}
-
-.booktok-author-avatar {
-	border-radius: 50% !important;
-	background: var(--bookish-plum) !important;
-	color: #fffaf5 !important;
-}
-
-.booktok-section-title,
 .book-detail-section-title {
 	color: var(--bookish-plum) !important;
 }
 
-.reading-progress-table th {
-	background: var(--bookish-plum) !important;
-	color: #fffaf5 !important;
-	font-family: 'DM Sans', sans-serif;
-	font-size: 0.72rem;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-}
-
-.reading-progress-table td {
-	border-color: var(--bookish-line) !important;
-}
-
-.reading-progress-table a,
 .book-detail-link {
 	color: var(--bookish-plum) !important;
 }
@@ -1254,10 +950,7 @@ html.dark #drawer-navigation .bg-neutral-tertiary-soft {
 	color: var(--bookish-muted) !important;
 }
 
-html.dark .bookish-brand,
 html.dark .reading-progress-page > h1,
-html.dark .welcome-title,
-html.dark .booktok-section-title,
 html.dark .book-detail-section-title,
 html.dark .book-detail-title,
 html.dark .uiverse-heading,
@@ -1268,8 +961,6 @@ html.dark .book-notification-item strong {
 
 html.dark .reading-progress-page > p,
 html.dark .welcome-container > p,
-html.dark .booktok-section-count,
-html.dark .booktok-author-card div span,
 html.dark .book-notification-heading span,
 html.dark .book-notification-item small,
 html.dark .book-notification-empty {
@@ -1299,47 +990,20 @@ html.dark .uiverse-container .form .input::placeholder {
 	color: var(--bookish-muted) !important;
 }
 
-html.dark .reading-progress-table td,
-html.dark .reading-progress-table th {
-	border-color: var(--bookish-line) !important;
-}
-
-html.dark .reading-progress-table td,
-html.dark .reading-progress-table td span,
-html.dark .booktok-author-card strong {
-	color: var(--bookish-ink) !important;
-}
-
-html.dark .reading-progress-table a,
 html.dark .book-detail-link {
 	color: var(--bookish-plum) !important;
 }
 
-html.dark .booktok-author-card {
-	background: var(--bookish-paper) !important;
-	border-color: var(--bookish-line) !important;
-}
-
-html.dark .booktok-author-card:nth-child(3n + 2),
 html.dark .book-recommendation-card:nth-child(3n + 2),
 html.dark .highlight-card:nth-child(3n + 2),
 html.dark .reading-challenge-card:nth-child(3n + 2) {
 	background: var(--bookish-soft) !important;
 }
 
-html.dark .booktok-author-card:nth-child(3n),
 html.dark .book-recommendation-card:nth-child(3n),
 html.dark .highlight-card:nth-child(3n),
 html.dark .reading-challenge-card:nth-child(3n) {
 	background: var(--bookish-alt) !important;
-}
-
-html.dark .booktok-author-card:nth-child(3n + 2) .booktok-author-avatar {
-	background: #b88791 !important;
-}
-
-html.dark .booktok-author-card:nth-child(3n) .booktok-author-avatar {
-	background: #8a5362 !important;
 }
 
 html.dark .book-recommendation-card,
@@ -1352,7 +1016,6 @@ html.dark .reading-progress-history,
 html.dark .reading-progress-editor,
 html.dark .rp-form-footer,
 html.dark .live-progress-preview,
-html.dark .status-tag,
 html.dark .emotion-tag,
 html.dark .rp-emotion-icon {
 	background: var(--bookish-paper) !important;
@@ -1368,7 +1031,6 @@ html.dark .highlight-card strong,
 html.dark .reading-challenge-card p,
 html.dark .reading-challenge-card strong,
 html.dark .rp-snapshot-meta,
-html.dark .status-tag,
 html.dark .emotion-tag,
 html.dark .rp-back-button,
 html.dark #drawer-navigation a,
@@ -1396,7 +1058,6 @@ html.dark nav.app-surface-opaque button {
 	color: var(--bookish-muted) !important;
 }
 
-html.dark nav.app-surface-opaque .bookish-brand,
 html.dark nav.app-surface-opaque button:hover {
 	color: var(--bookish-plum) !important;
 }
@@ -1408,19 +1069,13 @@ html.dark .edit-mode-banner {
 	color: #ffedb0 !important;
 }
 
-html.dark .emotion-tag:hover,
-html.dark .status-tag:hover {
+html.dark .emotion-tag:hover {
 	background: var(--bookish-soft) !important;
 }
 
 html.dark .emotion-tag.selected {
 	background: var(--bookish-rose) !important;
 	border-color: var(--bookish-rose) !important;
-	color: var(--bookish-cream) !important;
-}
-
-html.dark .booktok-author-avatar {
-	background: var(--bookish-rose) !important;
 	color: var(--bookish-cream) !important;
 }
 
@@ -1445,39 +1100,6 @@ html.dark .booktok-author-avatar {
 .profile-page-heading p:last-child {
 	margin: 8px 0 0;
 	color: var(--bookish-muted);
-}
-
-.profile-statistics {
-	background: var(--bookish-paper) !important;
-	border: 1px solid var(--bookish-line) !important;
-	border-radius: 4px !important;
-	box-shadow: 0 12px 28px rgba(77, 38, 57, 0.08) !important;
-}
-
-.profile-statistics-heading {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 1rem;
-}
-
-.profile-statistics .uiverse-heading {
-	margin: 0;
-	color: var(--bookish-plum-deep);
-	text-align: left;
-}
-
-.profile-statistics-link {
-	color: var(--bookish-plum-deep);
-	font-weight: 700;
-	text-decoration: underline;
-}
-
-.profile-statistics-grid {
-	display: grid;
-	grid-template-columns: repeat(5, minmax(0, 1fr));
-	gap: 12px;
-	margin-top: 1.5rem;
 }
 
 .release-calendar-layout {
@@ -1570,38 +1192,6 @@ html.dark .booktok-author-avatar {
 	}
 }
 
-.profile-statistic {
-	background: var(--bookish-cream);
-	border: 1px solid var(--bookish-line);
-	border-radius: 4px;
-	padding: 1rem;
-}
-
-.profile-statistic strong,
-.profile-statistic span {
-	display: block;
-}
-
-.profile-statistic strong {
-	color: var(--bookish-plum-deep);
-	font-size: 1.8rem;
-}
-
-.profile-statistic span {
-	color: var(--bookish-muted);
-	font-size: 0.9rem;
-	margin-top: 0.25rem;
-}
-
-.profile-statistics-shelf {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.75rem 1.25rem;
-	margin-top: 1rem;
-	color: var(--bookish-muted);
-	font-size: 0.9rem;
-}
-
 .profile-settings-grid {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1674,13 +1264,8 @@ html.dark .booktok-author-avatar {
 		margin: 24px auto;
 	}
 
-	.profile-settings-grid,
-	.profile-statistics-grid {
+	.profile-settings-grid {
 		grid-template-columns: 1fr;
-	}
-
-	.profile-statistics-heading {
-		flex-direction: column;
 	}
 
 	.profile-card-danger {
@@ -1688,18 +1273,10 @@ html.dark .booktok-author-avatar {
 	}
 }
 
-html.dark .reading-progress-submit,
-html.dark .booktok-view-button.is-active,
-html.dark .booktok-view-button:hover {
+html.dark .reading-progress-submit {
 	background: var(--bookish-rose) !important;
 	border-color: var(--bookish-rose) !important;
 	color: var(--bookish-cream) !important;
-}
-
-html.dark .booktok-view-button {
-	background: var(--bookish-paper) !important;
-	border-color: var(--bookish-line) !important;
-	color: var(--bookish-plum) !important;
 }
 
 html.dark .book-notification-item,
@@ -1765,8 +1342,7 @@ body {
 
 .uiverse-heading,
 .book-detail-title,
-.book-detail-section-title,
-.booktok-section-title {
+.book-detail-section-title {
 	color: var(--bookish-plum) !important;
 }
 
@@ -1790,14 +1366,9 @@ body {
 .book-detail-categories,
 .book-detail-description-text,
 .weekly-top-meta,
-.weekly-top-description,
-.weekly-top-details summary,
-.weekly-top-details-list,
-.booktok-section-count,
 .book-recommendation-card p,
 .book-recommendation-card span,
-.book-detail-eyebrow,
-.welcome-section-note {
+.book-detail-eyebrow {
 	color: var(--bookish-muted) !important;
 }
 
@@ -1817,8 +1388,6 @@ body {
 .book-detail-status--want,
 .reading-progress-status-badge,
 .rp-read-badge,
-.booktok-view-button.is-active,
-.booktok-view-button:hover,
 .book-genre-filter-button.is-active,
 .book-genre-filter-button:hover {
 	border-color: var(--bookish-rose) !important;
@@ -1827,10 +1396,7 @@ body {
 }
 
 .book-detail-secondary,
-.booktok-view-button,
 .book-genre-filter-button,
-.weekly-genre-select,
-.weekly-year-input,
 .book-reminder-button,
 .theme-toggle-nav,
 .book-notification-button,
@@ -1841,7 +1407,6 @@ body {
 }
 
 .book-detail-secondary:hover,
-.booktok-view-button:hover,
 .book-genre-filter-button:hover,
 .book-reminder-button:hover,
 .theme-toggle-nav:hover {
@@ -1850,15 +1415,12 @@ body {
 	color: var(--bookish-plum-deep) !important;
 }
 
-.booktok-author-card,
-.booktok-author-book-card,
 .book-recommendation-card,
 .highlight-card,
 .reading-challenge-card {
 	background: var(--bookish-soft) !important;
 	border-color: var(--bookish-line) !important;
 }
-
 
 .release-calendar-month,
 .release-calendar-date,
@@ -1910,25 +1472,17 @@ body {
 	color: var(--bookish-ink) !important;
 }
 
-.emotion-tag,
-.status-tag {
+.emotion-tag {
 	border-color: var(--bookish-line) !important;
 	background: var(--bookish-paper) !important;
 	color: var(--bookish-ink) !important;
 }
 
 .emotion-tag:hover,
-.status-tag:hover,
-.emotion-tag.selected,
-.status-tag.selected {
+.emotion-tag.selected {
 	border-color: var(--bookish-rose) !important;
 	background: var(--bookish-rose) !important;
 	color: var(--bookish-paper) !important;
-}
-
-.reading-progress-table th,
-.reading-progress-table td {
-	border-color: var(--bookish-line) !important;
 }
 
 .book-notification-panel,
@@ -2079,8 +1633,7 @@ html.dark .admin-shell .dark\:bg-gray-800 {
 		padding-top: 82px;
 	}
 
-	.reading-progress-page > h1,
-	.welcome-title {
+	.reading-progress-page > h1 {
 		font-size: 2.35rem !important;
 	}
 }

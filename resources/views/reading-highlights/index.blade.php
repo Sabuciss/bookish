@@ -19,7 +19,7 @@
             </div>
         @endif
 
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px;">
+        <div class="u-row u-mb-16">
             <a href="{{ route('reading-highlights.create') }}" class="reading-progress-submit" style="text-decoration: none;">Izveidot highlight</a>
         </div>
 

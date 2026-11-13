@@ -440,3 +440,64 @@ html.dark .uiverse-container .form .input {
 html.dark .uiverse-container .form .input::placeholder {
 	color: var(--bookish-muted);
 }
+
+/* =========================================================
+   Palīgklases (aizstāj inline style="" atribūtus skatos)
+   ========================================================= */
+.u-mt-4 { margin-top: 4px; }
+.u-mt-6 { margin-top: 6px; }
+.u-mt-8 { margin-top: 8px; }
+.u-mt-12 { margin-top: 12px; }
+.u-mt-16 { margin-top: 16px; }
+.u-mb-8 { margin-bottom: 8px; }
+.u-mb-16 { margin-bottom: 16px; }
+
+.u-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.u-row-center {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.u-no-underline {
+	text-decoration: none;
+}
+
+/* Grāmatu plaukts (reading-progress/shelf) */
+.rp-shelf-columns {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	align-items: start;
+	gap: 12px;
+}
+
+.rp-snapshot-cover {
+	width: 46px;
+	height: 68px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.rp-selected-cover {
+	width: 60px;
+	height: 88px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.rp-mini-track {
+	height: 8px;
+	overflow: hidden;
+	border-radius: 999px;
+	background: var(--bookish-line);
+}
+
+.rp-mini-fill {
+	height: 100%;
+	background: linear-gradient(90deg, var(--bookish-plum-deep), var(--bookish-rose));
+}
