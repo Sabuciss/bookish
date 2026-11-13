@@ -32,8 +32,55 @@ class ReadingProgressController extends Controller
         $userId = (int) auth()->id();
         $data = $this->buildProgressData($userId);
 
+        $entryId = (int) $request->query('entry_id', 0);
+        $prefill = $entryId > 0
+            ? $this->prefillFromEntry($userId, $entryId, $request->query('session') === 'new')
+            : $this->prefillFromQuery($request);
+
+        return view('reading-progress.index', [
+            'progressEntries' => $data['progressEntries'],
+            'latestPagesByBook' => $data['latestPagesByBook'],
+            'challenges' => $this->availableChallenges($userId),
+            'prefill' => $prefill,
+        ]);
+    }
+
+    /**
+     * Rediģēšanas forma: dati tiek ielādēti no datubāzes, nevis no URL.
+     * $newSession = true → jauna lasīšanas sesija (šodienas datums, tukši laiki).
+     */
+    private function prefillFromEntry(int $userId, int $entryId, bool $newSession): array
+    {
+        $entry = ReadingProgress::query()
+            ->where('user_id', $userId)
+            ->findOrFail($entryId);
+
+        $emotion = (string) $entry->emotion === 'Want to Read' ? '' : (string) $entry->emotion;
+
+        return [
+            'entry_id' => (string) $entry->id,
+            'book_title' => (string) $entry->book_title,
+            'google_volume_id' => (string) ($entry->google_volume_id ?? ''),
+            'book_cover_url' => (string) ($entry->book_cover_url ?? ''),
+            'pages_read' => (string) $entry->pages_read,
+            'total_pages' => (string) ($entry->total_pages ?? ''),
+            'reading_status' => $newSession ? 'in_progress' : (string) $entry->reading_status,
+            'emotion' => $emotion,
+            'reading_date' => $newSession ? now()->toDateString() : $entry->reading_date->toDateString(),
+            'start_time' => $newSession ? '00:00' : substr((string) $entry->start_time, 0, 5),
+            'end_time' => $newSession ? '00:01' : substr((string) ($entry->end_time ?? '00:01'), 0, 5),
+            'challenge_id' => (string) ($entry->challenge_id ?? ''),
+            'is_edit_mode' => true,
+        ];
+    }
+
+    /**
+     * Jauna ieraksta forma: drīkst iepriekš aizpildīt no URL (piem., challenge_id no izaicinājumu lapas).
+     */
+    private function prefillFromQuery(Request $request): array
+    {
         $prefill = [
-            'entry_id' => (string) $request->query('entry_id', ''),
+            'entry_id' => '',
             'book_title' => (string) $request->query('book_title', ''),
             'google_volume_id' => (string) $request->query('google_volume_id', ''),
             'book_cover_url' => (string) $request->query('book_cover_url', ''),
@@ -47,12 +94,14 @@ class ReadingProgressController extends Controller
             'challenge_id' => (string) $request->query('challenge_id', ''),
         ];
 
-        $prefill['is_edit_mode'] = !empty($prefill['entry_id']) || !empty($prefill['book_title']);
+        $prefill['is_edit_mode'] = !empty($prefill['book_title']);
 
-        return view('reading-progress.index', [
-            'progressEntries' => $data['progressEntries'],
-            'latestPagesByBook' => $data['latestPagesByBook'],
-            'challenges' => ReadingChallenge::query()
+        return $prefill;
+    }
+
+    private function availableChallenges(int $userId)
+    {
+        return ReadingChallenge::query()
                 ->where('user_id', $userId)
                 ->where('challenge_type', 'pages')
                 ->where(function ($query) use ($userId): void {
@@ -67,9 +116,7 @@ class ReadingProgressController extends Controller
                 })
                 ->orderBy('end_date')
                 ->limit(50)
-                ->get(['id', 'title', 'target_value']),
-            'prefill' => $prefill,
-        ]);
+                ->get(['id', 'title', 'target_value']);
     }
 
     private function buildProgressData(int $userId, bool $includeBookSnapshots = false): array
@@ -129,7 +176,7 @@ class ReadingProgressController extends Controller
         $startTime = Carbon::createFromFormat('H:i', $data['start_time']);
         $endTime = Carbon::createFromFormat('H:i', $data['end_time']);
 
-        $data['duration_minutes'] = $startTime->diffInMinutes($endTime);
+        $sessionMinutes = (int) $startTime->diffInMinutes($endTime);
         $data['user_id'] = $request->user()->id;
 
         if (!empty($data['total_pages']) && (int) $data['pages_read'] >= (int) $data['total_pages']) {
@@ -154,6 +201,10 @@ class ReadingProgressController extends Controller
             $data['google_volume_id'] ?? null,
             );
         }
+
+        // duration_minutes = kopējais lasīšanas laiks visās sesijās;
+        // pēdējās sesijas ilgumu nolasa no start_time/end_time.
+        $data['duration_minutes'] = $this->calculateTotalDuration($existingEntry, $data, $sessionMinutes);
 
         [$wasUpdate, $existingEntry] = DB::transaction(function () use ($data, $existingEntry, $request) {
             $wasUpdate = $existingEntry !== null;
@@ -245,7 +296,33 @@ class ReadingProgressController extends Controller
             'end_time' => '00:00:00',
         ]);
 
-        return redirect()->back()->with('status', 'Grāmata pievienota Want to Read sarakstam.');
+        return redirect()->back()->with('status', 'Grāmata pievienota sarakstam „Gribu izlasīt”.');
+    }
+
+    /**
+     * Kopējais lasīšanas laiks visās sesijās.
+     * - Jauna grāmata: kopā = šīs sesijas ilgums.
+     * - Tā pati sesija (sakrīt datums un sākuma laiks) tiek labota:
+     *   vecais sesijas ilgums tiek aizstāts ar jauno, nevis pieskaitīts vēlreiz.
+     * - Jauna sesija esošai grāmatai: ilgums tiek pieskaitīts kopējam laikam.
+     */
+    private function calculateTotalDuration(?ReadingProgress $existingEntry, array $data, int $sessionMinutes): int
+    {
+        if (!$existingEntry) {
+            return $sessionMinutes;
+        }
+
+        $previousTotal = (int) $existingEntry->duration_minutes;
+        $previousSessionMinutes = ReadingProgress::sessionMinutes($existingEntry->start_time, $existingEntry->end_time);
+
+        $isSameSession = $existingEntry->reading_date?->toDateString() === $data['reading_date']
+            && substr((string) $existingEntry->start_time, 0, 5) === $data['start_time'];
+
+        if ($isSameSession) {
+            return max(0, $previousTotal - $previousSessionMinutes + $sessionMinutes);
+        }
+
+        return $previousTotal + $sessionMinutes;
     }
 
     private function findExistingEntry(int $userId, string $bookTitle, ?string $googleVolumeId): ?ReadingProgress

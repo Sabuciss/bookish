@@ -1,7 +1,7 @@
 <x-layout>
     <div class="reading-progress-page">
         <h1>Grāmatu plaukts</h1>
-        <p>Atsevišķs skats grāmatām pa statusiem. In Progress grāmatām vari spiest Atjaunot un nonākt rediģēšanas formā.</p>
+        <p>Atsevišķs skats grāmatām pa statusiem. Grāmatām, kuras pašlaik lasi, vari spiest Atjaunot un nonākt rediģēšanas formā.</p>
 
         @if (session('status'))
             <div class="reading-progress-alert reading-progress-alert-success">
@@ -10,7 +10,7 @@
         @endif
 
         <div class="rp-actions-row">
-            <a href="{{ route('reading-progress.index') }}" class="reading-progress-submit" style="text-decoration: none; display: inline-block;">Pievienot reading progress</a>
+            <a href="{{ route('reading-progress.index') }}" class="reading-progress-submit" style="text-decoration: none; display: inline-block;">Pievienot lasīšanas progresu</a>
         </div>
 
         <section class="reading-progress-overview uiverse-container" style="margin-bottom: 1rem;">
@@ -20,13 +20,13 @@
         </section>
 
         <section class="reading-progress-overview uiverse-container" style="margin-bottom: 1rem;">
-            <h2 class="uiverse-heading">Plaukti: Want to Read / In Progress / Read</h2>
+            <h2 class="uiverse-heading">Plaukti: Gribu izlasīt / Lasu / Izlasītas</h2>
             <div style="display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); align-items: start;">
                 @php
                     $statusColumns = [
-                        'want_to_read' => 'Want to Read',
-                        'in_progress' => 'In Progress',
-                        'read' => 'Read',
+                        'want_to_read' => 'Gribu izlasīt',
+                        'in_progress' => 'Lasu',
+                        'read' => 'Izlasītas',
                     ];
                 @endphp
 
@@ -72,7 +72,7 @@
                                     <div>
                                         <strong>{{ $snapshot['book_title'] }}</strong>
                                         @if ($statusKey === 'read')
-                                            <div class="rp-read-badge">READ</div>
+                                            <div class="rp-read-badge">IZLASĪTA</div>
                                         @endif
                                         <div class="rp-snapshot-meta">Pēdējais ieraksts: {{ $snapshot['reading_date']->format('Y-m-d') }}</div>
                                         @if ($emotionNames->isNotEmpty())
@@ -106,25 +106,14 @@
                                 @if ($statusKey !== 'read')
                                     @php
                                         $btnLabel = $statusKey === 'want_to_read' ? '📖 Sākt lasīt' : '🔄 Atjaunot';
-                                        $prefillStatus = $statusKey === 'want_to_read' ? 'in_progress' : 'in_progress';
                                     @endphp
                                 @endif
                                 <div class="rp-snapshot-actions">
                                     @if ($statusKey !== 'read')
                                         <a
                                             href="{{ route('reading-progress.index', [
-                                                'entry_id' => $snapshot['entry_id'] ?? '',
-                                                'challenge_id' => $snapshot['challenge_id'] ?? '',
-                                                'book_title' => $snapshot['book_title'],
-                                                'google_volume_id' => $snapshot['google_volume_id'] ?? '',
-                                                'book_cover_url' => $snapshot['book_cover_url'] ?? '',
-                                                'pages_read' => $snapshot['pages_read'],
-                                                'total_pages' => $snapshot['total_pages'] ?? '',
-                                                'reading_status' => $prefillStatus,
-                                                'emotion' => $snapshot['emotion'] ?? '',
-                                                'reading_date' => now()->format('Y-m-d'),
-                                                'start_time' => '00:00',
-                                                'end_time' => '00:01',
+                                                'entry_id' => $snapshot['entry_id'],
+                                                'session' => 'new',
                                             ]) }}"
                                             class="login-button"
                                             style="text-decoration: none;"

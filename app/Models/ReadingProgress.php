@@ -46,6 +46,26 @@ class ReadingProgress extends Model
         return $this->belongsTo(ReadingChallenge::class, 'challenge_id');
     }
 
+    /**
+     * Vienas sesijas ilgums minūtēs no sākuma/beigu laika ("H:i" vai "H:i:s").
+     */
+    public static function sessionMinutes(?string $startTime, ?string $endTime): int
+    {
+        if (!$startTime || !$endTime) {
+            return 0;
+        }
+
+        [$startHour, $startMinute] = array_map('intval', explode(':', $startTime) + [0, 0]);
+        [$endHour, $endMinute] = array_map('intval', explode(':', $endTime) + [0, 0]);
+
+        return max(0, ($endHour * 60 + $endMinute) - ($startHour * 60 + $startMinute));
+    }
+
+    public function lastSessionMinutes(): int
+    {
+        return self::sessionMinutes($this->start_time, $this->end_time);
+    }
+
     public static function deriveReadingStatus(int $pagesRead, ?int $totalPages): string
     {
         if ($totalPages !== null && $pagesRead >= $totalPages) {

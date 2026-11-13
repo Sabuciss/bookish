@@ -40,8 +40,8 @@
 
                 <div class="profile-statistics-shelf">
                     <span>Plauktā:</span>
-                    <span>Want to Read: {{ $profileStats['booksWantToRead'] }}</span>
-                    <span>In Progress: {{ $profileStats['booksInProgress'] }}</span>
+                    <span>Gribu izlasīt: {{ $profileStats['booksWantToRead'] }}</span>
+                    <span>Lasu: {{ $profileStats['booksInProgress'] }}</span>
                     <span>Read: {{ $profileStats['booksRead'] }}</span>
                 </div>
             </section>

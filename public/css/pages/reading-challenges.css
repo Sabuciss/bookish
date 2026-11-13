@@ -34,7 +34,7 @@
 
 .reading-challenge-notes {
 	margin-top: 8px;
-	color: #4b5563;
+	color: var(--bookish-muted);
 }
 
 .reading-challenges-list,
@@ -43,10 +43,10 @@
 }
 
 html.dark .reading-challenge-card {
-	background: #111827;
-	border-color: #374151;
+	background: var(--bookish-cream);
+	border-color: var(--bookish-line);
 }
 
 html.dark .reading-challenge-notes {
-	color: #9ca3af;
+	color: var(--bookish-muted);
 }

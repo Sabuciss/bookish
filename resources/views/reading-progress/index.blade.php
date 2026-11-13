@@ -13,7 +13,7 @@
         data-latest-pages='@json($latestPagesByBook ?? [])'
         data-is-edit-mode="{{ $isEditMode ? '1' : '0' }}"
     >
-        <h1>{{ $isEditMode ? 'Atjaunot reading progress' : 'Pievienot reading progress' }}</h1>
+        <h1>{{ $isEditMode ? 'Atjaunot lasīšanas progresu' : 'Pievienot lasīšanas progresu' }}</h1>
         <p>Šeit vari pievienot un atjaunot lasīšanas progresu.</p>
 
         @if (session('status'))
@@ -103,9 +103,18 @@
                                 </div>
 
                                 <div class="rp-entry-details">
+                                    @php
+                                        $formatMinutes = function (int $minutes): string {
+                                            $hours = intdiv($minutes, 60);
+                                            $rest = $minutes % 60;
+                                            return $hours > 0 ? $hours . ' h ' . $rest . ' min' : $rest . ' min';
+                                        };
+                                        $sessionMinutes = $entry->lastSessionMinutes();
+                                        $totalMinutes = max((int) $entry->duration_minutes, $sessionMinutes);
+                                    @endphp
                                     <div class="rp-detail-row">
-                                        <strong>Datums:</strong>
-                                        <span>{{ $entry->reading_date->format('Y-m-d') }}</span>
+                                        <strong>Pēdējoreiz lasīts:</strong>
+                                        <span>{{ $entry->reading_date->format('d.m.Y') }}</span>
                                     </div>
                                     <div class="rp-detail-row">
                                         <strong>Izlasīts:</strong>
@@ -115,37 +124,24 @@
                                         <strong>Statuss:</strong>
                                         <span>
                                             @if ($entry->reading_status === 'read')
-                                                <span class="reading-progress-status-badge">READ</span>
+                                                <span class="reading-progress-status-badge">IZLASĪTA</span>
                                             @elseif ($entry->reading_status === 'want_to_read')
-                                                Want to Read
+                                                Gribu izlasīt
                                             @else
-                                                In Progress
+                                                Lasu
                                             @endif
                                         </span>
                                     </div>
                                     <div class="rp-detail-row">
-                                        <strong>Laiks:</strong>
-                                        <span>{{ $entry->start_time ? \Illuminate\Support\Carbon::parse($entry->start_time)->format('H:i') : '-' }} - {{ $entry->end_time ? \Illuminate\Support\Carbon::parse($entry->end_time)->format('H:i') : '-' }}</span>
+                                        <strong>Pēdējā sesija:</strong>
+                                        <span>{{ $entry->start_time ? \Illuminate\Support\Carbon::parse($entry->start_time)->format('H:i') : '-' }} - {{ $entry->end_time ? \Illuminate\Support\Carbon::parse($entry->end_time)->format('H:i') : '-' }} ({{ $formatMinutes($sessionMinutes) }})</span>
                                     </div>
-                                    <div class="rp-detail-row">
-                                        <strong>Ilgums:</strong>
-                                        <span>{{ $entry->duration_minutes }} min</span>
+                                    <div class="rp-detail-row rp-detail-row--total">
+                                        <strong>Kopā lasīts:</strong>
+                                        <span>{{ $formatMinutes($totalMinutes) }}</span>
                                     </div>
                                     <div class="rp-entry-actions">
-                                        <a href="{{ route('reading-progress.index', [
-                                            'entry_id' => $entry->id,
-                                            'challenge_id' => $entry->challenge_id,
-                                            'book_title' => $entry->book_title,
-                                            'google_volume_id' => $entry->google_volume_id,
-                                            'book_cover_url' => $entry->book_cover_url,
-                                            'pages_read' => $entry->pages_read,
-                                            'total_pages' => $entry->total_pages,
-                                            'reading_status' => $entry->reading_status,
-                                            'emotion' => $entry->emotion,
-                                            'reading_date' => $entry->reading_date->toDateString(),
-                                            'start_time' => \Illuminate\Support\Carbon::parse($entry->start_time)->format('H:i'),
-                                            'end_time' => \Illuminate\Support\Carbon::parse($entry->end_time)->format('H:i'),
-                                        ]) }}" class="rp-action-btn rp-action-edit">✎ Rediģēt</a>
+                                        <a href="{{ route('reading-progress.index', ['entry_id' => $entry->id]) }}" class="rp-action-btn rp-action-edit">✎ Rediģēt</a>
                                         <form method="POST" action="{{ route('reading-progress.destroy', $entry->id) }}" style="display: inline;">
                                             @csrf
                                             @method('DELETE')
@@ -200,7 +196,7 @@
                     </label>
 
                     <label>
-                        Lapušu izaicinājums (nav obligāti)
+                        Lappušu izaicinājums (nav obligāti)
                         <select name="challenge_id" class="reading-progress-input input">
                             <option value="">Bez izaicinājuma</option>
                             @foreach ($challenges as $challenge)
@@ -273,8 +269,8 @@
                         </div>
 
                         <div class="rp-datetime-row">
-                            <label class="rp-datetime-label">
-                                Datums
+                            <div class="rp-datetime-label">
+                                <span id="reading-date-label">Datums</span>
                                 <div class="rp-date-control">
                                     <input type="text" id="reading-date-display" value="{{ \Illuminate\Support\Carbon::parse(old('reading_date', $prefill['reading_date'] ?? now()->toDateString()))->format('d.m.Y') }}" readonly class="reading-progress-input input rp-date-display" aria-label="Datums, diena mēnesis gads">
                                     <button type="button" id="reading-date-open" class="rp-date-open" aria-label="Atvērt datuma izvēlni">▣</button>
@@ -291,15 +287,25 @@
                                         <div id="reading-date-days" class="rp-calendar-days"></div>
                                     </div>
                                 </div>
-                            </label>
-                            <label class="rp-datetime-label">
-                                No cikiem
-                                <input type="time" name="start_time" value="{{ old('start_time', $prefill['start_time'] ?? '00:00') }}" required class="reading-progress-input input rp-time-input" lang="lv-LV" step="60" aria-label="Sākuma laiks, 24 stundu formāts">
-                            </label>
-                            <label class="rp-datetime-label">
-                                Līdz cikiem
-                                <input type="time" name="end_time" value="{{ old('end_time', $prefill['end_time'] ?? '00:01') }}" required class="reading-progress-input input rp-time-input" lang="lv-LV" step="60" aria-label="Beigu laiks, 24 stundu formāts">
-                            </label>
+                            </div>
+                            @foreach ([
+                                ['name' => 'start_time', 'label' => 'No cikiem', 'default' => '00:00', 'aria' => 'Sākuma laiks'],
+                                ['name' => 'end_time', 'label' => 'Līdz cikiem', 'default' => '00:01', 'aria' => 'Beigu laiks'],
+                            ] as $timeField)
+                                @php $timeValue = substr((string) old($timeField['name'], $prefill[$timeField['name']] ?? $timeField['default']), 0, 5); @endphp
+                                <div class="rp-datetime-label">
+                                    <span>{{ $timeField['label'] }}</span>
+                                    <div class="rp-time-control" data-time-control>
+                                        <input type="text" value="{{ $timeValue }}" readonly class="reading-progress-input input rp-time-input rp-time-display" aria-label="{{ $timeField['aria'] }}, 24 stundu formāts">
+                                        <button type="button" class="rp-date-open rp-time-open" aria-label="Atvērt laika izvēlni">◷</button>
+                                        <input type="hidden" name="{{ $timeField['name'] }}" value="{{ $timeValue }}" required data-time-value>
+                                        <div class="rp-time-popup" hidden>
+                                            <div class="rp-time-column" data-time-part="hour" aria-label="Stundas"></div>
+                                            <div class="rp-time-column" data-time-part="minute" aria-label="Minūtes"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                         <div class="rp-form-footer">
                             <a href="{{ route('reading-shelf.show') }}" class="rp-back-button">Atpakaļ</a>

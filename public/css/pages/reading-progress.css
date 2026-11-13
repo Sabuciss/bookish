@@ -350,7 +350,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 	accent-color: var(--bookish-rose);
 }
 
-.rp-datetime-row label {
+.rp-datetime-row label,
+.rp-datetime-row .rp-datetime-label {
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
@@ -363,10 +364,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .rp-datetime-label {
 	min-width: 0;
 	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	/* overflow: visible, lai kalendāra uznirstošais logs netiktu apgriezts */
+	overflow: visible;
 	position: relative;
 	z-index: 1;
+}
+
+.rp-datetime-label:has(.rp-calendar:not([hidden])) {
+	z-index: 50;
 }
 
 .rp-date-control {
@@ -413,100 +418,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 	cursor: pointer;
 }
 
-/* Legacy date control fragment replaced below. */
-/* .rp-date-open {
-	position: absolute;
-	top: 50%;
-	right: 8px;
-	width: 34px;
-	height: 34px;
-	transform: translateY(-50%);
-	border: 0;
-	border-radius: 7px;
-	padding: 10px 16px;
-	border-radius: 8px;
-	background: var(--bookish-plum-deep);
-	box-shadow: none;
-	background: transparent;
-	color: #334155;
-.rp-search-row .login-button:hover,
-.rp-book-preview .login-button:hover {
-	background: var(--bookish-plum);
-	transform: none;
-}
-	cursor: pointer;
-.reading-progress-submit {
-	padding: 10px 14px;
-	cursor: pointer;
-	border: 1px solid #d1d5db;
-	border-radius: 8px;
-	background: #ffffff;
-	width: auto;
-	display: inline-block;
-	justify-self: end;
-	margin: 10px 0 0;
-	font-size: 1.05rem;
-}
-
-.rp-date-open:hover {
-	background: #e2e8f0;
-}
-
-.rp-date-picker {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	op: 50%;
-	right: 22px;
-	op: 50%;
-	op: 0;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	op: 50%;
-	tab-size: 0;
-	opacity: 0;
-	pointer-events: none;
-}
-*/
-
 .rp-date-open {
 	position: absolute;
 	top: 50%;
@@ -542,6 +453,141 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 	border: 0;
 	opacity: 0;
 	pointer-events: none;
+}
+
+/* Datuma un laika lauki: poga precīzi centrēta lauka augstumā */
+.rp-date-control,
+.rp-time-control {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.rp-date-control .rp-date-display,
+.rp-time-control .rp-time-display {
+	display: block;
+	margin: 0;
+	padding-right: 52px;
+	cursor: pointer;
+}
+
+/* base.css (.uiverse-container .form .input) pieliek margin-top: 15px –
+   noņemam, lai lauks un poga būtu vienā augstumā */
+.uiverse-container .form .rp-datetime-row .input.rp-date-display,
+.uiverse-container .form .rp-datetime-row .input.rp-time-display {
+	margin: 0;
+	box-shadow: none;
+	border-inline: 2px solid var(--bookish-rose);
+}
+
+/* Poga centrēta lauka iekšpusē, nepārsniedzot tā robežu */
+.rp-date-control .rp-date-open,
+.rp-time-control .rp-time-open {
+	top: 0;
+	bottom: 0;
+	right: 6px;
+	width: 38px;
+	height: 38px;
+	margin: auto 0;
+	padding: 0;
+	min-height: 0;
+	line-height: 1;
+	border-radius: 50%;
+	transform: none;
+}
+
+.rp-date-control .rp-date-open:hover,
+.rp-time-control .rp-time-open:hover {
+	transform: scale(1.06);
+}
+
+.rp-time-control:has(.rp-time-popup:not([hidden])) {
+	z-index: 60;
+}
+
+.rp-time-popup {
+	position: absolute;
+	top: calc(100% + 8px);
+	left: 0;
+	z-index: 2000;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 6px;
+	width: 100%;
+	min-width: 150px;
+	box-sizing: border-box;
+	padding: 8px;
+	border: 2px solid var(--bookish-rose);
+	border-radius: 12px;
+	background: var(--bookish-cream);
+	box-shadow: 0 12px 28px rgba(185, 143, 136, 0.25);
+	animation: rpTimeFade 0.15s ease;
+}
+
+.rp-time-popup[hidden] {
+	display: none !important;
+}
+
+@keyframes rpTimeFade {
+	from { opacity: 0; transform: translateY(-6px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.rp-time-column {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	max-height: 210px;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--bookish-rose) transparent;
+}
+
+.rp-time-column + .rp-time-column {
+	border-left: 2px solid var(--bookish-line);
+	padding-left: 6px;
+}
+
+.rp-time-option,
+.rp-time-option + .rp-time-option {
+	margin: 0;
+}
+
+.rp-time-option {
+	flex: 0 0 auto;
+	min-height: 30px;
+	padding: 4px 0;
+	border: 1px solid transparent;
+	border-radius: 8px;
+	background: transparent;
+	color: var(--bookish-ink);
+	font-size: 0.9rem;
+	font-variant-numeric: tabular-nums;
+	cursor: pointer;
+	transition: background 0.15s ease;
+}
+
+.rp-time-option:hover,
+.rp-time-option:focus-visible {
+	background: var(--bookish-soft);
+	border-color: var(--bookish-rose);
+	outline: none;
+}
+
+.rp-time-option.is-selected {
+	background: var(--bookish-rose);
+	color: var(--bookish-paper);
+	font-weight: 800;
+}
+
+html.dark .rp-time-popup {
+	background: var(--bookish-paper);
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+html.dark .rp-time-option.is-selected {
+	color: var(--bookish-ink);
 }
 
 .rp-calendar {
@@ -684,7 +730,9 @@ button.rp-calendar-day:focus-visible {
 	}
 
 	.rp-datetime-row > label,
+	.rp-datetime-row > .rp-datetime-label,
 	.rp-datetime-row .rp-date-control,
+	.rp-datetime-row .rp-time-control,
 	.rp-datetime-row .rp-time-input {
 		width: 100% !important;
 		min-width: 0 !important;
@@ -759,7 +807,7 @@ button.rp-calendar-day:focus-visible {
 }
 
 .rp-snapshot-col {
-	border: 1px solid #e5e7eb;
+	border: 1px solid var(--bookish-line);
 	border-radius: 12px;
 	background: #fff;
 	padding: 12px;
@@ -821,7 +869,7 @@ button.rp-calendar-day:focus-visible {
 
 .rp-snapshot-meta {
 	font-size: 0.85rem;
-	color: #4b5563;
+	color: var(--bookish-muted);
 }
 
 .rp-snapshot-pages {
@@ -830,16 +878,16 @@ button.rp-calendar-day:focus-visible {
 }
 
 .live-progress-preview {
-	border: 1px solid #e5e7eb;
+	border: 1px solid var(--bookish-line);
 	border-radius: 12px;
 	padding: 14px 16px;
-	background: #f8fafc;
+	background: var(--bookish-cream);
 }
 
 .live-progress-bar-wrap {
 	height: 10px;
 	border-radius: 999px;
-	background: #e5e7eb;
+	background: var(--bookish-soft);
 	overflow: hidden;
 	margin-bottom: 10px;
 }
@@ -861,7 +909,7 @@ button.rp-calendar-day:focus-visible {
 .live-progress-pct {
 	font-size: 1.1rem;
 	font-weight: 800;
-	color: #111827;
+	color: var(--bookish-ink);
 }
 
 .live-progress-pages-left {
@@ -1244,11 +1292,11 @@ html.dark .reading-progress-page strong,
 html.dark .reading-progress-page td,
 html.dark .reading-progress-page th,
 html.dark .reading-progress-page span {
-	color: #e5e7eb;
+	color: var(--bookish-ink);
 }
 
 html.dark .rp-emotion-icon {
-	background: #1f2937;
+	background: var(--bookish-paper);
 }
 
 html.dark .rp-snapshot-col,
@@ -1256,19 +1304,37 @@ html.dark .rp-snapshot-article,
 html.dark .reading-progress-overview,
 html.dark .reading-progress-history,
 html.dark .reading-progress-editor {
-	background: #111827;
-	border-color: #374151;
+	background: var(--bookish-cream);
+	border-color: var(--bookish-line);
 }
 
 html.dark .reading-progress-editor .uiverse-heading,
 html.dark .reading-progress-form > label {
-	border-color: #374151;
-	color: #e0e7ff;
+	border-color: var(--bookish-line);
+	color: var(--bookish-plum);
 }
 
 html.dark .rp-datetime-row {
-	border-color: #8a5362;
-	background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+	border-color: var(--bookish-rose);
+	background: linear-gradient(135deg, var(--bookish-paper) 0%, var(--bookish-alt) 100%);
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+html.dark .rp-datetime-row label,
+html.dark .rp-datetime-row .rp-datetime-label {
+	color: var(--bookish-ink);
+}
+
+html.dark .rp-date-control .rp-date-display:hover,
+html.dark .rp-datetime-row .rp-time-input:hover,
+html.dark .rp-date-control .rp-date-display:focus,
+html.dark .rp-datetime-row .rp-time-input:focus {
+	border-color: var(--bookish-plum);
+	background: var(--bookish-cream);
+}
+
+html.dark .rp-time-input::-webkit-calendar-picker-indicator {
+	filter: invert(0.8) sepia(1) saturate(2) hue-rotate(300deg);
 }
 
 html.dark .rp-date-control .rp-date-display,
@@ -1291,11 +1357,11 @@ html.dark .rp-date-open {
 }
 
 html.dark .rp-snapshot-meta {
-	color: #cbd5e1;
+	color: var(--bookish-muted);
 }
 
 html.dark .cancel-edit-btn {
-	background: #111827;
+	background: var(--bookish-cream);
 	border-color: var(--bookish-rose);
 	color: var(--bookish-soft);
 }
@@ -1306,13 +1372,13 @@ html.dark .edit-mode-banner {
 }
 
 html.dark .status-tag {
-	background: #111827;
-	border-color: #4b5563;
-	color: #e5e7eb;
+	background: var(--bookish-cream);
+	border-color: var(--bookish-line);
+	color: var(--bookish-ink);
 }
 
 html.dark .status-tag:hover {
-	background: #1f2937;
+	background: var(--bookish-paper);
 }
 
 html.dark .status-tag--want.selected,
@@ -1325,13 +1391,13 @@ html.dark .status-tag--read.selected {
 
 html.dark .reading-progress-input,
 html.dark .reading-progress-submit {
-	background: #111827;
-	border-color: #4b5563;
-	color: #e5e7eb;
+	background: var(--bookish-cream);
+	border-color: var(--bookish-line);
+	color: var(--bookish-ink);
 }
 
 html.dark .rp-form-footer {
-	border-color: #374151;
+	border-color: var(--bookish-line);
 	background: var(--bookish-ink);
 }
 
@@ -1352,12 +1418,12 @@ html.dark .reading-progress-alert-error {
 }
 
 html.dark .live-progress-preview {
-	background: #1f2937;
-	border-color: #374151;
+	background: var(--bookish-paper);
+	border-color: var(--bookish-line);
 }
 
 html.dark .live-progress-bar-wrap {
-	background: #374151;
+	background: var(--bookish-soft);
 }
 
 html.dark .live-progress-pct {
@@ -1365,17 +1431,17 @@ html.dark .live-progress-pct {
 }
 
 html.dark .live-progress-pages-left {
-	color: #9ca3af;
+	color: var(--bookish-muted);
 }
 
 html.dark .emotion-tag {
-	background: #111827;
-	border-color: #4b5563;
-	color: #e5e7eb;
+	background: var(--bookish-cream);
+	border-color: var(--bookish-line);
+	color: var(--bookish-ink);
 }
 
 html.dark .emotion-tag:hover {
-	background: #1f2937;
+	background: var(--bookish-paper);
 }
 
 html.dark .emotion-tag.selected {
@@ -1385,43 +1451,56 @@ html.dark .emotion-tag.selected {
 }
 
 html.dark .reading-progress-table th {
-	border-bottom-color: #4b5563;
+	border-bottom-color: var(--bookish-line);
 }
 
 html.dark .reading-progress-table td {
-	border-bottom-color: #374151;
+	border-bottom-color: var(--bookish-line);
 }
 
 /* Dark mode card grid */
 html.dark .rp-entry-card {
-	background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-	border-color: #374151;
-	color: #e5e7eb;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	background: linear-gradient(135deg, var(--bookish-paper) 0%, var(--bookish-alt) 100%);
+	border-color: var(--bookish-rose);
+	color: var(--bookish-ink);
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
 
 html.dark .rp-entry-card:hover {
+	border-color: var(--bookish-plum);
+	background: linear-gradient(135deg, var(--bookish-soft) 0%, var(--bookish-paper) 100%);
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+html.dark .rp-entry-cover {
 	border-color: var(--bookish-rose);
-	background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-	box-shadow: 0 12px 28px rgba(185, 143, 136, 0.25);
 }
 
 html.dark .rp-entry-cover-placeholder {
-	background: linear-gradient(135deg, #2d3748 0%, #374151 100%);
-	border-color: #4b5563;
-	color: #9ca3af;
+	background: linear-gradient(135deg, var(--bookish-soft) 0%, var(--bookish-cream) 100%);
+	border-color: var(--bookish-rose);
+	color: var(--bookish-muted);
 }
 
 html.dark .rp-entry-title {
-	color: #e5e7eb;
+	color: var(--bookish-ink);
 }
 
 html.dark .rp-progress-bar {
-	background: #374151;
+	background: var(--bookish-cream);
+}
+
+html.dark .rp-progress-fill {
+	background: linear-gradient(90deg, var(--bookish-rose), var(--bookish-plum));
+}
+
+html.dark .rp-progress-text {
+	color: var(--bookish-ink);
 }
 
 html.dark .rp-emotion-badge {
-	background: rgba(0, 0, 0, 0.2);
+	background: var(--bookish-cream);
+	border: 1px solid var(--bookish-line);
 }
 
 html.dark .rp-entry-details {
@@ -1435,22 +1514,26 @@ html.dark .rp-detail-row strong {
 	font-weight: 700;
 }
 
+html.dark .rp-detail-row strong {
+	color: var(--bookish-plum);
+}
+
 html.dark .rp-detail-row span {
-	color: #e5e7eb;
+	color: var(--bookish-ink);
 	font-weight: 500;
 }
 
 html.dark .rp-entry-actions {
-	border-top-color: rgba(185, 143, 136, 0.2);
+	border-top-color: var(--bookish-line);
 }
 
 html.dark .rp-action-btn {
-	border-color: #374151;
+	border-color: var(--bookish-line);
 }
 
 html.dark .rp-action-edit {
 	background: var(--bookish-rose);
-	color: var(--bookish-paper);
+	color: var(--bookish-ink);
 	border-color: var(--bookish-rose);
 }
 
@@ -1473,22 +1556,22 @@ html.dark .rp-action-delete:hover {
 /* Dark mode calendar */
 html.dark .rp-calendar {
 	border-color: var(--bookish-rose);
-	background: #1f2937;
-	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+	background: var(--bookish-paper);
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
 }
 
 html.dark .rp-calendar-header {
-	border-bottom-color: #374151;
+	border-bottom-color: var(--bookish-line);
 }
 
 html.dark .rp-calendar-header strong {
-	color: #e5e7eb;
+	color: var(--bookish-ink);
 }
 
 html.dark .rp-calendar-nav {
-	background: #2d3748;
-	border-color: #4b5563;
-	color: #e5e7eb;
+	background: var(--bookish-cream);
+	border-color: var(--bookish-line);
+	color: var(--bookish-ink);
 }
 
 html.dark .rp-calendar-nav:hover,
@@ -1499,17 +1582,21 @@ html.dark .rp-calendar-nav:focus-visible {
 }
 
 html.dark .rp-calendar-weekdays {
-	color: #9ca3af;
+	color: var(--bookish-muted);
 }
 
 html.dark .rp-calendar-day {
-	color: #e5e7eb;
+	color: var(--bookish-ink);
 }
 
 html.dark button.rp-calendar-day:hover,
 html.dark button.rp-calendar-day:focus-visible {
-	background: rgba(185, 143, 136, 0.15);
-	border-color: var(--bookish-rose);
+	background: var(--bookish-soft);
+	border-color: var(--bookish-plum);
+}
+
+html.dark .rp-calendar-day.is-today {
+	border-color: var(--bookish-plum);
 }
 
 html.dark .rp-calendar-day.is-selected {

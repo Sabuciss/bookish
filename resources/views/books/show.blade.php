@@ -56,11 +56,11 @@
             <div style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
                 @auth
                     @if ($currentBookStatus === 'read')
-                        <span class="reading-progress-status-badge">READ</span>
+                        <span class="reading-progress-status-badge">IZLASĪTA</span>
                     @elseif ($currentBookStatus === 'in_progress')
-                        <span class="reading-progress-status-badge">In Progress</span>
+                        <span class="reading-progress-status-badge">Lasu</span>
                     @elseif ($currentBookStatus === 'want_to_read')
-                        <span class="reading-progress-status-badge">Added to Want to Read</span>
+                        <span class="reading-progress-status-badge">Pievienota: Gribu izlasīt</span>
                     @else
                         <form action="{{ route('reading-progress.want-to-read.store') }}" method="POST" style="display: inline-block;">
                             @csrf
@@ -68,7 +68,7 @@
                             <input type="hidden" name="google_volume_id" value="{{ $book['id'] ?? '' }}">
                             <input type="hidden" name="book_cover_url" value="{{ $book['thumbnail'] ?? '' }}">
                             <input type="hidden" name="total_pages" value="{{ $book['pageCount'] ?? '' }}">
-                            <button type="submit" class="reading-progress-submit">Pievienot Want to Read</button>
+                            <button type="submit" class="reading-progress-submit">Pievienot: Gribu izlasīt</button>
                         </form>
                     @endif
                 @else

@@ -230,7 +230,7 @@
                             <th>Nosaukums</th>
                             <th>Autors</th>
                             <th>Publicēta</th>
-                            <th>Want to Read</th>
+                            <th>Gribu izlasīt</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -265,11 +265,11 @@
                                 <td>
                                     @auth
                                         @if ($bookStatus === 'read')
-                                            <span class="reading-progress-status-badge">READ</span>
+                                            <span class="reading-progress-status-badge">IZLASĪTA</span>
                                         @elseif ($bookStatus === 'in_progress')
-                                            <span class="reading-progress-status-badge">In Progress</span>
+                                            <span class="reading-progress-status-badge">Lasu</span>
                                         @elseif ($bookStatus === 'want_to_read')
-                                            <span class="reading-progress-status-badge">Added to Want to Read</span>
+                                            <span class="reading-progress-status-badge">Pievienota: Gribu izlasīt</span>
                                         @else
                                             <form action="{{ route('reading-progress.want-to-read.store') }}" method="POST" style="display: inline-block;">
                                                 @csrf
@@ -277,7 +277,7 @@
                                                 <input type="hidden" name="google_volume_id" value="{{ $book->google_volume_id }}">
                                                 <input type="hidden" name="book_cover_url" value="{{ $book->google_thumbnail }}">
                                                 <input type="hidden" name="total_pages" value="{{ $book->google_page_count }}">
-                                                <button type="submit" class="reading-progress-submit">Want to Read</button>
+                                                <button type="submit" class="reading-progress-submit">Gribu izlasīt</button>
                                             </form>
                                         @endif
                                     @else

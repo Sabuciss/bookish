@@ -141,9 +141,9 @@
 	align-items: start;
 	min-width: 0;
 	padding: 10px;
-	border: 1px solid #e2e8f0;
+	border: 1px solid var(--bookish-line);
 	border-radius: 10px;
-	background: #f8fafc;
+	background: var(--bookish-cream);
 }
 
 .book-recommendation-card img,
@@ -152,7 +152,7 @@
 	height: 92px;
 	object-fit: cover;
 	border-radius: 4px;
-	background: #e2e8f0;
+	background: var(--bookish-soft);
 }
 
 .book-recommendation-cover--empty {
@@ -160,7 +160,7 @@
 	align-items: center;
 	justify-content: center;
 	padding: 5px;
-	color: #64748b;
+	color: var(--bookish-muted);
 	font-size: 0.65rem;
 	text-align: center;
 }
@@ -258,7 +258,7 @@ html.dark .book-reminder-button--saved {
 .weekly-genre-select {
 	flex: 1;
 	padding: 10px 12px;
-	border: 1px solid #d1d5db;
+	border: 1px solid var(--bookish-line);
 	border-radius: 10px;
 	background: #ffffff;
 }
@@ -272,14 +272,14 @@ html.dark .book-reminder-button--saved {
 	max-width: 170px;
 	flex: 0 0 170px;
 	padding: 10px 12px;
-	border: 1px solid #d1d5db;
+	border: 1px solid var(--bookish-line);
 	border-radius: 10px;
 	background: #ffffff;
 }
 
 .weekly-top-item {
 	padding: 10px 12px;
-	border: 1px solid #e5e7eb;
+	border: 1px solid var(--bookish-line);
 	border-radius: 10px;
 	background: #ffffff;
 	display: grid;
@@ -443,7 +443,7 @@ html.dark .book-reminder-button--saved {
 	font-size: 0.72rem;
 	line-height: 1.2;
 	text-align: center;
-	color: #64748b;
+	color: var(--bookish-muted);
 }
 
 .weekly-top-content {
@@ -453,14 +453,14 @@ html.dark .book-reminder-button--saved {
 .weekly-top-meta {
 	margin-top: 4px;
 	font-size: 0.82rem;
-	color: #475569;
+	color: var(--bookish-muted);
 }
 
 .weekly-top-description {
 	margin-top: 6px;
 	font-size: 0.86rem;
 	line-height: 1.45;
-	color: #334155;
+	color: var(--bookish-ink);
 }
 
 .weekly-top-title-link {
@@ -479,14 +479,14 @@ html.dark .book-reminder-button--saved {
 .weekly-top-details summary {
 	cursor: pointer;
 	font-size: 0.82rem;
-	color: #475569;
+	color: var(--bookish-muted);
 }
 
 .weekly-top-details-list {
 	margin: 6px 0 0;
 	padding-left: 18px;
 	font-size: 0.82rem;
-	color: #334155;
+	color: var(--bookish-ink);
 }
 
 .weekly-top-action {
@@ -549,8 +549,8 @@ html.dark .book-reminder-button--saved {
 	align-items: center;
 	justify-content: center;
 	padding: 16px;
-	background: #e2e8f0;
-	color: #64748b;
+	background: var(--bookish-soft);
+	color: var(--bookish-muted);
 	font-size: 0.85rem;
 	text-align: center;
 }
@@ -561,7 +561,7 @@ html.dark .book-reminder-button--saved {
 
 .book-detail-eyebrow {
 	margin: 0 0 8px;
-	color: #64748b;
+	color: var(--bookish-muted);
 	font-size: 0.75rem;
 	font-weight: 800;
 	letter-spacing: 0.08em;
@@ -577,7 +577,7 @@ html.dark .book-reminder-button--saved {
 
 .book-detail-author {
 	margin: 10px 0 18px;
-	color: #475569;
+	color: var(--bookish-muted);
 	font-size: 1.05rem;
 }
 
@@ -587,7 +587,7 @@ html.dark .book-reminder-button--saved {
 	flex-wrap: wrap;
 	gap: 8px 18px;
 	align-items: center;
-	color: #475569;
+	color: var(--bookish-muted);
 	font-size: 0.86rem;
 }
 
@@ -599,8 +599,8 @@ html.dark .book-reminder-button--saved {
 .book-detail-meta {
 	margin-top: 20px;
 	padding: 16px 0;
-	border-top: 1px solid #e2e8f0;
-	border-bottom: 1px solid #e2e8f0;
+	border-top: 1px solid var(--bookish-line);
+	border-bottom: 1px solid var(--bookish-line);
 }
 
 .book-detail-meta span {
@@ -617,7 +617,7 @@ html.dark .book-reminder-button--saved {
 
 .book-detail-categories {
 	margin: 14px 0 0;
-	color: #64748b;
+	color: var(--bookish-muted);
 	font-size: 0.82rem;
 }
 
@@ -650,8 +650,8 @@ html.dark .book-reminder-button--saved {
 }
 
 .book-detail-secondary {
-	border: 1px solid #cbd5e1;
-	color: #334155;
+	border: 1px solid var(--bookish-line);
+	color: var(--bookish-ink);
 }
 
 .book-detail-status {
@@ -686,7 +686,7 @@ html.dark .book-reminder-button--saved {
 .book-detail-description-text {
 	max-width: 760px;
 	margin: 0;
-	color: #475569;
+	color: var(--bookish-muted);
 	font-size: 0.96rem;
 	line-height: 1.8;
 	white-space: pre-line;
@@ -713,10 +713,10 @@ html.dark .book-reminder-button--saved {
 	justify-content: center;
 	min-width: 110px;
 	padding: 9px 16px;
-	border: 1px solid #cbd5e1;
+	border: 1px solid var(--bookish-line);
 	border-radius: 8px;
 	background: #ffffff;
-	color: #334155;
+	color: var(--bookish-ink);
 	font-weight: 700;
 	text-decoration: none;
 }
@@ -747,7 +747,7 @@ html.dark .book-reminder-button--saved {
 }
 
 .booktok-section-count {
-	color: #64748b;
+	color: var(--bookish-muted);
 	font-size: 0.82rem;
 }
 
@@ -763,9 +763,9 @@ html.dark .book-reminder-button--saved {
 	gap: 10px;
 	min-width: 0;
 	padding: 12px;
-	border: 1px solid #e2e8f0;
+	border: 1px solid var(--bookish-line);
 	border-radius: 10px;
-	background: #f8fafc;
+	background: var(--bookish-cream);
 	text-decoration: none;
 }
 
@@ -797,23 +797,23 @@ html.dark .book-reminder-button--saved {
 }
 
 .booktok-author-card div span {
-	color: #64748b;
+	color: var(--bookish-muted);
 	font-size: 0.75rem;
 }
 
 html.dark .booktok-section-title,
 html.dark .booktok-author-card strong {
-	color: #e0e7ff;
+	color: var(--bookish-plum);
 }
 
 html.dark .booktok-section-count,
 html.dark .booktok-author-card div span {
-	color: #cbd5e1;
+	color: var(--bookish-muted);
 }
 
 html.dark .booktok-author-card {
-	border-color: #374151;
-	background: #0f172a;
+	border-color: var(--bookish-line);
+	background: var(--bookish-cream);
 }
 
 html.dark .welcome-card {
@@ -894,14 +894,14 @@ html.dark .weekly-top-action {
 
 html.dark .book-detail,
 html.dark .book-detail-description {
-	background: #111827;
-	border-color: #374151;
+	background: var(--bookish-cream);
+	border-color: var(--bookish-line);
 }
 
 html.dark .book-detail-title,
 html.dark .book-detail-section-title,
 html.dark .book-detail-meta strong {
-	color: #e0e7ff;
+	color: var(--bookish-plum);
 }
 
 html.dark .book-detail-author,
@@ -909,16 +909,16 @@ html.dark .book-detail-rating,
 html.dark .book-detail-meta,
 html.dark .book-detail-description-text,
 html.dark .book-detail-categories {
-	color: #cbd5e1;
+	color: var(--bookish-muted);
 }
 
 html.dark .book-detail-meta {
-	border-color: #374151;
+	border-color: var(--bookish-line);
 }
 
 html.dark .book-detail-secondary {
-	border-color: #4b5563;
-	color: #e5e7eb;
+	border-color: var(--bookish-line);
+	color: var(--bookish-ink);
 }
 
 html.dark .weekly-top-cover {
@@ -932,7 +932,7 @@ html.dark .weekly-top-cover--empty {
 
 html.dark .weekly-genre-select,
 html.dark .weekly-year-input {
-	background: #111827;
-	border-color: #4b5563;
-	color: #e5e7eb;
+	background: var(--bookish-cream);
+	border-color: var(--bookish-line);
+	color: var(--bookish-ink);
 }

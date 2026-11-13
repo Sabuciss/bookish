@@ -19,8 +19,11 @@ return new class extends Migration
             $table->unsignedInteger('total_pages')->nullable();
             $table->string('reading_status', 20)->default('in_progress');
             $table->string('emotion', 100);
+            // reading_date / start_time / end_time = pēdējā lasīšanas sesija
             $table->date('reading_date');
             $table->time('start_time');
+            // Kopējais lasīšanas laiks visās sesijās (minūtēs);
+            // pēdējās sesijas ilgumu aprēķina no start_time un end_time.
             $table->unsignedInteger('duration_minutes');
             $table->time('end_time')->nullable();
             $table->timestamps();

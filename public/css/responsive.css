@@ -29,7 +29,9 @@
 	}
 
 	.rp-datetime-row > label,
+	.rp-datetime-row > .rp-datetime-label,
 	.rp-datetime-row .rp-date-control,
+	.rp-datetime-row .rp-time-control,
 	.rp-datetime-row .rp-time-input {
 		width: 100% !important;
 		min-width: 0;

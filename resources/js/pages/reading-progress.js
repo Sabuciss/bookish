@@ -120,6 +120,95 @@ if (root) {
         }
     });
 
+    // Pielāgota 24h laika izvēlne projekta krāsās (aizstāj pārlūka iebūvēto).
+    const timeControls = Array.from(document.querySelectorAll('[data-time-control]'));
+    const pad = (number) => String(number).padStart(2, '0');
+
+    const closeTimePopups = (except = null) => {
+        timeControls.forEach((control) => {
+            if (control !== except) {
+                const popup = control.querySelector('.rp-time-popup');
+                if (popup) popup.hidden = true;
+            }
+        });
+    };
+
+    timeControls.forEach((control) => {
+        const display = control.querySelector('.rp-time-display');
+        const openButton = control.querySelector('.rp-time-open');
+        const valueInput = control.querySelector('[data-time-value]');
+        const popup = control.querySelector('.rp-time-popup');
+        const hourColumn = control.querySelector('[data-time-part="hour"]');
+        const minuteColumn = control.querySelector('[data-time-part="minute"]');
+        if (!display || !valueInput || !popup || !hourColumn || !minuteColumn) return;
+
+        const fillColumn = (column, count) => {
+            column.innerHTML = Array.from({ length: count }, (_, index) => (
+                `<button type="button" class="rp-time-option" data-value="${pad(index)}">${pad(index)}</button>`
+            )).join('');
+        };
+        fillColumn(hourColumn, 24);
+        fillColumn(minuteColumn, 60);
+
+        const getParts = () => {
+            const [hour = '00', minute = '00'] = String(valueInput.value || '00:00').split(':');
+            return { hour: pad(Number(hour) || 0), minute: pad(Number(minute) || 0) };
+        };
+
+        const syncSelection = (scroll = false) => {
+            const parts = getParts();
+            [[hourColumn, parts.hour], [minuteColumn, parts.minute]].forEach(([column, value]) => {
+                column.querySelectorAll('.rp-time-option').forEach((option) => {
+                    const isSelected = option.dataset.value === value;
+                    option.classList.toggle('is-selected', isSelected);
+                    if (isSelected && scroll) {
+                        column.scrollTop = option.offsetTop - (column.clientHeight - option.offsetHeight) / 2;
+                    }
+                });
+            });
+        };
+
+        const setValue = (part, value) => {
+            const parts = getParts();
+            parts[part] = value;
+            valueInput.value = `${parts.hour}:${parts.minute}`;
+            display.value = valueInput.value;
+            syncSelection();
+        };
+
+        const toggle = (open) => {
+            closeTimePopups(control);
+            popup.hidden = !open;
+            if (open) syncSelection(true);
+        };
+
+        openButton?.addEventListener('click', () => toggle(popup.hidden));
+        display.addEventListener('click', () => toggle(popup.hidden));
+
+        hourColumn.addEventListener('click', (event) => {
+            const option = event.target.closest('.rp-time-option');
+            if (option) setValue('hour', option.dataset.value);
+        });
+
+        minuteColumn.addEventListener('click', (event) => {
+            const option = event.target.closest('.rp-time-option');
+            if (!option) return;
+            setValue('minute', option.dataset.value);
+            popup.hidden = true;
+        });
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('[data-time-control]')) closeTimePopups();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeTimePopups();
+            toggleDateCalendar(false);
+        }
+    });
+
     const livePreview       = document.getElementById('live-progress-preview');
     const liveBar            = document.getElementById('live-progress-bar');
     const livePct            = document.getElementById('live-progress-pct');
@@ -127,9 +216,9 @@ if (root) {
     const liveStatusBadge    = document.getElementById('live-progress-status');
 
     const statusLabels = {
-        want_to_read: { text: ' Want to Read', cls: 'status-want' },
-        in_progress:  { text: ' In Progress',  cls: 'status-prog' },
-        read:         { text: ' Read',          cls: 'status-read' },
+        want_to_read: { text: ' Gribu izlasīt', cls: 'status-want' },
+        in_progress:  { text: ' Lasu',         cls: 'status-prog' },
+        read:         { text: ' Izlasīta',      cls: 'status-read' },
     };
 
     const updateLivePreview = () => {

@@ -78,7 +78,7 @@ class StoreReadingProgressRequest extends FormRequest
                 $today = now()->startOfDay();
 
                 if ($readingDate->greaterThan($today)) {
-                    $validator->errors()->add('reading_date', 'Nevar pievienot reading progress ar nākotnes datumu.');
+                    $validator->errors()->add('reading_date', 'Nevar pievienot lasīšanas progresu ar nākotnes datumu.');
                     return;
                 }
 

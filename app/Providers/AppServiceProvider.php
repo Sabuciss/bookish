@@ -24,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
     {
         if (env('APP_ENV') === 'production') {
             URL::forceScheme('https');
+
+            // Drošības tīkls: produkcijā nekad nerādīt kļūdu detaļas (kodu, .env vērtības),
+            // pat ja serverī aizmirsts iestatīt APP_DEBUG=false.
+            config(['app.debug' => false]);
         }
 
         Mail::extend('resend-api', function (array $config): ResendApiTransport {

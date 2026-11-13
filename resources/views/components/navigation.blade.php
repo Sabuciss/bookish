@@ -132,7 +132,7 @@
         @endif
         <form method="POST" action="{{ route('logout') }}" class="hidden sm:block">
           @csrf
-          <button type="submit" class="text-sm text-body hover:text-heading transition-colors">Log out</button>
+          <button type="submit" class="text-sm text-body hover:text-heading transition-colors">Iziet</button>
         </form>
       @else
         <a href="{{ route('login') }}" class="book-notification-login" aria-label="Ielogoties, lai skatītu paziņojumus">
@@ -174,7 +174,7 @@
         <div class="font-medium text-heading">Ielogojies kā: {{ Auth::user()->name }}</div>
         <form method="POST" action="{{ route('logout') }}" class="mt-2">
           @csrf
-          <button type="submit" class="text-body hover:text-heading transition-colors">Log out</button>
+          <button type="submit" class="text-body hover:text-heading transition-colors">Iziet</button>
         </form>
       @else
         <div>Tu neesi ielogojies.</div>
