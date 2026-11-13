@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\ForceHttpsScheme;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,11 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: ['127.0.0.1', '::1', '10.0.0.0/8', '::ffff:10.0.0.0/8']);
-
-        // Force HTTPS in production
-        if (env('APP_ENV') === 'production') {
-            \URL::forceScheme('https');
-        }
+        $middleware->web(append: [ForceHttpsScheme::class]);
 
         $middleware->alias([
             'admin' => AdminMiddleware::class,
