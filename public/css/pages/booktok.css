@@ -1,0 +1,867 @@
+/* =========================================================
+   BookTok tops — tāds pats moderns stils kā sākumlapai
+   Viss ietīts #bookish-booktok (pārspēj style.css !important slāņus)
+   ========================================================= */
+
+#bookish-booktok {
+	--bt-accent: #d599ae;
+	--bt-accent-strong: #a25a74;
+	--bt-shadow: 0 18px 40px -24px rgba(122, 66, 85, 0.45);
+	--bt-serif: 'Playfair Display', Georgia, serif;
+	--bt-sans: 'DM Sans', system-ui, sans-serif;
+
+	display: grid;
+	gap: 24px;
+	width: min(100%, var(--content-max-width));
+	margin: 12px auto 48px;
+	font-family: var(--bt-sans);
+	color: var(--bookish-ink);
+}
+
+html.dark #bookish-booktok {
+	--bt-accent: #e3a6bb;
+	--bt-accent-strong: #f0bfd0;
+	--bt-shadow: 0 20px 44px -24px rgba(0, 0, 0, 0.6);
+}
+
+#bookish-booktok a {
+	text-decoration: none;
+}
+
+#bookish-booktok .bt-eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 10px;
+	color: var(--bt-accent-strong) !important;
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+#bookish-booktok .bt-eyebrow-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--bt-accent-strong);
+	box-shadow: 0 0 0 4px rgba(213, 153, 174, 0.3);
+}
+
+/* ---------------- HERO ---------------- */
+#bookish-booktok .bt-hero {
+	position: relative;
+	display: grid;
+	grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.8fr);
+	align-items: center;
+	gap: 32px;
+	padding: clamp(28px, 5vw, 52px);
+	overflow: hidden;
+	border: 1px solid var(--bookish-line);
+	border-radius: 36px;
+	background:
+		radial-gradient(circle at 90% 10%, rgba(213, 153, 174, 0.38) 0, transparent 34%),
+		radial-gradient(circle at 0% 100%, rgba(185, 143, 136, 0.22) 0, transparent 40%),
+		var(--bookish-paper);
+	box-shadow: var(--bt-shadow);
+}
+
+#bookish-booktok .bt-hero::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image: radial-gradient(var(--bookish-line) 1px, transparent 1px);
+	background-size: 22px 22px;
+	mask-image: linear-gradient(120deg, transparent 40%, #000 100%);
+	-webkit-mask-image: linear-gradient(120deg, transparent 40%, #000 100%);
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+#bookish-booktok .bt-hero > * {
+	position: relative;
+}
+
+#bookish-booktok .bt-hero-title {
+	margin: 0 0 14px;
+	color: var(--bookish-ink) !important;
+	font-family: var(--bt-serif);
+	font-size: clamp(2.3rem, 5vw, 4rem);
+	font-weight: 600;
+	line-height: 1.03;
+	letter-spacing: -0.02em;
+}
+
+#bookish-booktok .bt-hero-title em {
+	font-style: italic;
+	background: linear-gradient(90deg, var(--bt-accent-strong), var(--bt-accent));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+#bookish-booktok .bt-hero-text {
+	max-width: 46ch;
+	margin: 0 0 24px;
+	color: var(--bookish-muted) !important;
+	font-size: 1.05rem;
+	line-height: 1.6;
+}
+
+#bookish-booktok .bt-tabs {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	padding: 5px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 999px;
+	background: var(--bookish-cream);
+}
+
+#bookish-booktok .bt-tab {
+	padding: 9px 18px;
+	border-radius: 999px;
+	color: var(--bookish-muted);
+	font-size: 0.9rem;
+	font-weight: 700;
+	transition: all 0.2s ease;
+}
+
+#bookish-booktok .bt-tab:hover {
+	color: var(--bookish-ink);
+}
+
+#bookish-booktok .bt-tab.is-active {
+	background: linear-gradient(135deg, var(--bt-accent-strong), var(--bt-accent));
+	color: #fff;
+	box-shadow: 0 8px 16px -10px rgba(162, 90, 116, 0.9);
+}
+
+/* Vāku vēdeklis */
+#bookish-booktok .bt-hero-visual {
+	display: grid;
+	place-items: center;
+}
+
+#bookish-booktok .bt-fan {
+	position: relative;
+	width: 280px;
+	height: 260px;
+}
+
+#bookish-booktok .bt-fan-cover {
+	position: absolute;
+	bottom: 10px;
+	width: 130px;
+	height: 195px;
+	border-radius: 10px;
+	object-fit: cover;
+	box-shadow: 0 22px 36px -14px rgba(0, 0, 0, 0.55);
+	transition: transform 0.35s ease;
+}
+
+#bookish-booktok .bt-fan--empty .bt-fan-cover--1 { background: linear-gradient(160deg, #c98fa3, #7a3d55); }
+#bookish-booktok .bt-fan--empty .bt-fan-cover--2 { background: linear-gradient(160deg, #e8c8bd, #a87a72); }
+#bookish-booktok .bt-fan--empty .bt-fan-cover--3 { background: linear-gradient(160deg, #8a5362, #3d2630); }
+
+#bookish-booktok .bt-fan-cover--1 { left: 0; transform: rotate(-12deg); }
+#bookish-booktok .bt-fan-cover--2 { left: 75px; z-index: 2; bottom: 30px; transform: rotate(0deg); }
+#bookish-booktok .bt-fan-cover--3 { left: 150px; transform: rotate(12deg); }
+
+#bookish-booktok .bt-fan:hover .bt-fan-cover--1 { transform: rotate(-18deg) translateX(-10px); }
+#bookish-booktok .bt-fan:hover .bt-fan-cover--2 { transform: translateY(-8px); }
+#bookish-booktok .bt-fan:hover .bt-fan-cover--3 { transform: rotate(18deg) translateX(10px); }
+
+#bookish-booktok .bt-fan-badge {
+	position: absolute;
+	top: 6px;
+	right: 0;
+	z-index: 3;
+	padding: 8px 14px;
+	border-radius: 999px;
+	background: linear-gradient(135deg, var(--bt-accent-strong), var(--bt-accent));
+	color: #fff;
+	font-weight: 800;
+	font-size: 0.85rem;
+	box-shadow: 0 10px 20px -10px rgba(162, 90, 116, 0.9);
+	transform: rotate(6deg);
+}
+
+#bookish-booktok .bt-alert {
+	padding: 14px 18px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 18px;
+	background: var(--bookish-soft);
+	color: var(--bookish-ink);
+	font-weight: 600;
+}
+
+/* ---------------- PANEĻI ---------------- */
+#bookish-booktok .bt-panel {
+	padding: clamp(20px, 3.5vw, 32px);
+	border: 1px solid var(--bookish-line);
+	border-radius: 32px;
+	background: var(--bookish-paper);
+	box-shadow: var(--bt-shadow);
+}
+
+#bookish-booktok .bt-section-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 22px;
+}
+
+#bookish-booktok .bt-section-title {
+	margin: 0;
+	color: var(--bookish-ink) !important;
+	font-family: var(--bt-serif);
+	font-size: clamp(1.6rem, 3vw, 2.2rem);
+	font-weight: 600;
+	line-height: 1.1;
+}
+
+#bookish-booktok .bt-count {
+	padding: 6px 12px;
+	border-radius: 999px;
+	background: var(--bookish-soft);
+	color: var(--bookish-muted);
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+#bookish-booktok .bt-empty {
+	display: grid;
+	justify-items: center;
+	gap: 6px;
+	grid-column: 1 / -1;
+	margin: 0;
+	padding: 34px 16px;
+	border: 2px dashed var(--bookish-line);
+	border-radius: 22px;
+	color: var(--bookish-muted);
+	text-align: center;
+}
+
+#bookish-booktok .bt-empty span {
+	font-size: 2rem;
+}
+
+#bookish-booktok .bt-empty p {
+	margin: 0;
+	color: var(--bookish-muted) !important;
+}
+
+/* ---------------- FILTRS ---------------- */
+#bookish-booktok .bt-filter-panel {
+	padding: 16px;
+	border-radius: 28px;
+}
+
+#bookish-booktok .bt-filter {
+	display: grid;
+	grid-template-columns: 1.2fr 1.2fr 0.8fr 1fr auto;
+	align-items: end;
+	gap: 10px;
+}
+
+#bookish-booktok .bt-field {
+	display: grid;
+	gap: 6px;
+	min-width: 0;
+}
+
+#bookish-booktok .bt-field > span {
+	padding-left: 14px;
+	color: var(--bookish-muted);
+	font-size: 0.72rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+#bookish-booktok .bt-field input,
+#bookish-booktok .bt-field select {
+	width: 100%;
+	height: 46px;
+	margin: 0 !important;
+	padding: 0 16px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 999px !important;
+	background-color: var(--bookish-cream) !important;
+	box-shadow: none !important;
+	color: var(--bookish-ink) !important;
+	font-size: 0.95rem;
+	outline: none;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#bookish-booktok .bt-field--search input {
+	padding-left: 40px !important;
+}
+
+#bookish-booktok .bt-field--search {
+	position: relative;
+}
+
+#bookish-booktok .bt-field--search::after {
+	content: "⌕";
+	position: absolute;
+	bottom: 11px;
+	left: 16px;
+	color: var(--bookish-muted);
+	font-size: 1.2rem;
+	line-height: 1;
+	pointer-events: none;
+}
+
+#bookish-booktok .bt-field input:focus,
+#bookish-booktok .bt-field select:focus {
+	border-color: var(--bt-accent) !important;
+	box-shadow: 0 0 0 4px rgba(213, 153, 174, 0.25) !important;
+}
+
+#bookish-booktok .bt-filter-actions {
+	display: flex;
+	gap: 8px;
+}
+
+#bookish-booktok .bt-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 46px;
+	min-height: 0;
+	margin: 0 !important;
+	padding: 0 22px;
+	border: 0;
+	border-radius: 999px;
+	background: linear-gradient(135deg, var(--bt-accent-strong), var(--bt-accent));
+	color: #fff !important;
+	font-family: var(--bt-sans);
+	font-weight: 800;
+	cursor: pointer;
+	white-space: nowrap;
+	box-shadow: 0 10px 20px -10px rgba(162, 90, 116, 0.8);
+	transition: transform 0.2s ease;
+}
+
+html.dark #bookish-booktok .bt-button {
+	background: linear-gradient(135deg, #a25a74, #c97b97);
+}
+
+#bookish-booktok .bt-button:hover {
+	transform: translateY(-2px);
+}
+
+#bookish-booktok .bt-button--ghost {
+	border: 1px solid var(--bookish-line);
+	background: transparent !important;
+	color: var(--bookish-muted) !important;
+	box-shadow: none;
+}
+
+/* ---------------- PJEDESTĀLS (top 3) ---------------- */
+#bookish-booktok .bt-podium {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+	margin-bottom: 22px;
+}
+
+#bookish-booktok .bt-podium-card {
+	position: relative;
+	display: grid;
+	grid-template-columns: 104px minmax(0, 1fr);
+	align-items: center;
+	gap: 16px;
+	min-height: 190px;
+	padding: 20px;
+	overflow: hidden;
+	border-radius: 24px;
+	background: linear-gradient(135deg, var(--bt-accent-strong), var(--bookish-rose));
+	box-shadow: 0 18px 32px -18px rgba(122, 66, 85, 0.7);
+	transition: transform 0.25s ease;
+}
+
+#bookish-booktok .bt-podium-card::before {
+	content: "";
+	position: absolute;
+	inset: -30px;
+	background-image: var(--cover, none);
+	background-position: center;
+	background-size: cover;
+	filter: blur(22px) saturate(1.3);
+	transform: scale(1.1);
+}
+
+#bookish-booktok .bt-podium-card::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(90deg, rgba(40, 18, 28, 0.15), rgba(40, 18, 28, 0.6));
+}
+
+#bookish-booktok .bt-podium-card:hover {
+	transform: translateY(-4px);
+}
+
+#bookish-booktok .bt-podium-card > * {
+	position: relative;
+	z-index: 1;
+}
+
+#bookish-booktok .bt-podium-rank {
+	position: absolute;
+	top: 12px;
+	right: 16px;
+	z-index: 2;
+	color: rgba(255, 255, 255, 0.9);
+	font-family: var(--bt-serif);
+	font-size: 2.4rem;
+	font-weight: 700;
+	line-height: 1;
+	text-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+#bookish-booktok .bt-podium-cover,
+#bookish-booktok .bt-row-cover {
+	display: grid;
+	place-items: center;
+	overflow: hidden;
+	background: var(--bookish-soft);
+}
+
+#bookish-booktok .bt-podium-cover {
+	width: 104px;
+	height: 152px;
+	border-radius: 10px;
+	box-shadow: 0 16px 26px -10px rgba(0, 0, 0, 0.6);
+	font-size: 2rem;
+}
+
+/* Vāki (arī tie, ko JS ieliek vēlāk ar inline izmēriem) */
+#bookish-booktok .bt-podium-cover img,
+#bookish-booktok .bt-row-cover img,
+#bookish-booktok .bt-podium-cover a,
+#bookish-booktok .bt-row-cover a {
+	display: block;
+	width: 100% !important;
+	height: 100% !important;
+	border-radius: 0 !important;
+	object-fit: cover;
+}
+
+#bookish-booktok .bt-podium-body {
+	min-width: 0;
+	padding-right: 36px;
+}
+
+#bookish-booktok .bt-podium-body h3 {
+	display: -webkit-box;
+	margin: 0 0 6px;
+	overflow: hidden;
+	font-family: var(--bt-serif);
+	font-size: 1.15rem;
+	line-height: 1.2;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+}
+
+#bookish-booktok .bt-podium-body h3 a {
+	color: #fff !important;
+	text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+#bookish-booktok .bt-podium-author {
+	display: block;
+	overflow: hidden;
+	color: rgba(255, 255, 255, 0.88) !important;
+	font-size: 0.85rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#bookish-booktok .bt-podium-year {
+	display: inline-block;
+	margin-top: 8px;
+	padding: 3px 10px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.22);
+	color: #fff;
+	font-size: 0.72rem;
+	font-weight: 700;
+	backdrop-filter: blur(4px);
+}
+
+#bookish-booktok .bt-podium-action {
+	margin-top: 12px;
+}
+
+#bookish-booktok .bt-podium-action .bt-want-button {
+	border-color: rgba(255, 255, 255, 0.7) !important;
+	background: rgba(255, 255, 255, 0.92) !important;
+	color: #7a3550 !important;
+}
+
+#bookish-booktok .bt-podium-action .bt-status {
+	background: rgba(255, 255, 255, 0.22);
+	color: #fff;
+	backdrop-filter: blur(4px);
+}
+
+/* ---------------- SARAKSTS (4+) ---------------- */
+#bookish-booktok .bt-list {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 6px 28px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#bookish-booktok .bt-row {
+	display: grid;
+	grid-template-columns: 40px 54px minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 14px;
+	padding: 12px;
+	border-radius: 20px;
+	transition: background 0.2s ease;
+}
+
+#bookish-booktok .bt-row:hover {
+	background: var(--bookish-cream);
+}
+
+#bookish-booktok .bt-row-rank {
+	color: var(--bookish-line);
+	font-family: var(--bt-serif);
+	font-size: 1.8rem;
+	font-weight: 700;
+	line-height: 1;
+	text-align: center;
+}
+
+#bookish-booktok .bt-row-cover {
+	width: 54px;
+	height: 80px;
+	border-radius: 8px;
+	box-shadow: 0 10px 18px -8px rgba(0, 0, 0, 0.5);
+	transition: transform 0.25s ease;
+}
+
+#bookish-booktok .bt-row:hover .bt-row-cover {
+	transform: rotate(-3deg) scale(1.05);
+}
+
+#bookish-booktok .bt-row-body {
+	min-width: 0;
+}
+
+#bookish-booktok .bt-row-body h3 {
+	margin: 0;
+	overflow: hidden;
+	font-family: var(--bt-serif);
+	font-size: 1rem;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#bookish-booktok .bt-row-body h3 a {
+	color: var(--bookish-ink) !important;
+}
+
+#bookish-booktok .bt-row-body h3 a:hover {
+	color: var(--bt-accent-strong) !important;
+}
+
+#bookish-booktok .bt-row-body p {
+	margin: 3px 0 0;
+	overflow: hidden;
+	color: var(--bookish-muted) !important;
+	font-size: 0.82rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#bookish-booktok .bt-row-body p a {
+	color: var(--bookish-muted) !important;
+}
+
+#bookish-booktok .bt-row-body p a:hover {
+	color: var(--bt-accent-strong) !important;
+}
+
+/* "Gribu izlasīt" poga un statusi */
+#bookish-booktok .bt-want-form {
+	margin: 0;
+}
+
+#bookish-booktok .bt-want-button {
+	display: inline-flex;
+	align-items: center;
+	min-height: 0;
+	margin: 0 !important;
+	padding: 6px 12px !important;
+	border: 1px solid var(--bt-accent) !important;
+	border-radius: 999px !important;
+	background: transparent !important;
+	color: var(--bt-accent-strong) !important;
+	font-family: var(--bt-sans);
+	font-size: 0.76rem;
+	font-weight: 800;
+	white-space: nowrap;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+#bookish-booktok .bt-want-button:hover {
+	background: var(--bt-accent) !important;
+	color: #fff !important;
+}
+
+#bookish-booktok .bt-status {
+	display: inline-flex;
+	padding: 5px 11px;
+	border-radius: 999px;
+	background: var(--bookish-soft);
+	color: var(--bookish-ink);
+	font-size: 0.74rem;
+	font-weight: 800;
+	white-space: nowrap;
+}
+
+#bookish-booktok .bt-status--read {
+	background: rgba(63, 157, 107, 0.18);
+	color: #2f7d54;
+}
+
+html.dark #bookish-booktok .bt-status--read {
+	color: #9be3bd;
+}
+
+/* ---------------- AUTORI ---------------- */
+#bookish-booktok .bt-authors {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+	gap: 12px;
+}
+
+#bookish-booktok .bt-author {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 12px 12px 14px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 20px;
+	background: var(--bookish-cream);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#bookish-booktok .bt-author:hover {
+	transform: translateY(-3px);
+	box-shadow: var(--bt-shadow);
+}
+
+#bookish-booktok .bt-author form {
+	margin: 0;
+}
+
+#bookish-booktok .bt-author-link {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+}
+
+#bookish-booktok .bt-author-avatar {
+	display: grid;
+	place-items: center;
+	flex: 0 0 auto;
+	width: 46px;
+	height: 46px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, var(--bt-accent), var(--bt-accent-strong));
+	color: #fff;
+	font-family: var(--bt-serif);
+	font-size: 1.2rem;
+	font-weight: 700;
+	box-shadow: 0 6px 14px -6px rgba(162, 90, 116, 0.8);
+}
+
+#bookish-booktok .bt-author:nth-child(3n + 2) .bt-author-avatar {
+	background: linear-gradient(135deg, #c9a4d6, #8a5a9e);
+}
+
+#bookish-booktok .bt-author:nth-child(3n) .bt-author-avatar {
+	background: linear-gradient(135deg, #e8c3a8, #b07a5a);
+}
+
+#bookish-booktok .bt-author-info {
+	display: grid;
+	min-width: 0;
+}
+
+#bookish-booktok .bt-author-info strong {
+	overflow: hidden;
+	color: var(--bookish-ink);
+	font-size: 0.95rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#bookish-booktok .bt-author-info span {
+	color: var(--bookish-muted);
+	font-size: 0.78rem;
+}
+
+#bookish-booktok .bt-heart {
+	display: grid;
+	place-items: center;
+	width: 38px;
+	height: 38px;
+	min-height: 0;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 50% !important;
+	background: var(--bookish-paper) !important;
+	color: var(--bt-accent-strong) !important;
+	font-size: 1.1rem;
+	line-height: 1;
+	cursor: pointer;
+	transition: transform 0.2s ease;
+}
+
+#bookish-booktok .bt-heart:hover {
+	transform: scale(1.12);
+}
+
+#bookish-booktok .bt-heart.is-favorite {
+	border-color: transparent !important;
+	background: linear-gradient(135deg, var(--bt-accent-strong), var(--bt-accent)) !important;
+	color: #fff !important;
+}
+
+/* Autora grāmatu plaukts */
+#bookish-booktok .bt-shelf {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: 140px;
+	gap: 18px;
+	padding: 4px 4px 16px;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: thin;
+	scrollbar-color: var(--bt-accent) transparent;
+}
+
+#bookish-booktok .bt-shelf-book {
+	display: grid;
+	gap: 6px;
+	min-width: 0;
+	scroll-snap-align: start;
+}
+
+#bookish-booktok .bt-shelf-cover {
+	display: grid;
+	place-items: center;
+	width: 140px;
+	height: 210px;
+	overflow: hidden;
+	border-radius: 12px;
+	background: linear-gradient(160deg, var(--bookish-soft), var(--bookish-cream));
+	box-shadow: 0 16px 28px -14px rgba(0, 0, 0, 0.55);
+	font-size: 2rem;
+	transition: transform 0.3s ease;
+}
+
+#bookish-booktok .bt-shelf-book:hover .bt-shelf-cover {
+	transform: translateY(-5px) rotate(-1deg);
+}
+
+#bookish-booktok .bt-shelf-cover img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+#bookish-booktok .bt-shelf-book strong {
+	display: -webkit-box;
+	overflow: hidden;
+	color: var(--bookish-ink);
+	font-size: 0.88rem;
+	line-height: 1.25;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+#bookish-booktok .bt-shelf-book small {
+	color: var(--bookish-muted);
+	font-size: 0.75rem;
+}
+
+/* ---------------- Responsīvi ---------------- */
+@media (max-width: 1024px) {
+	#bookish-booktok .bt-filter {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	#bookish-booktok .bt-filter-actions {
+		grid-column: 1 / -1;
+	}
+
+	#bookish-booktok .bt-podium {
+		grid-template-columns: 1fr;
+	}
+
+	#bookish-booktok .bt-list {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 760px) {
+	#bookish-booktok .bt-hero {
+		grid-template-columns: 1fr;
+	}
+
+	#bookish-booktok .bt-fan {
+		transform: scale(0.85);
+	}
+}
+
+@media (max-width: 560px) {
+	#bookish-booktok .bt-filter {
+		grid-template-columns: 1fr;
+	}
+
+	#bookish-booktok .bt-filter-actions .bt-button {
+		flex: 1;
+	}
+
+	#bookish-booktok .bt-row {
+		grid-template-columns: 30px 48px minmax(0, 1fr);
+	}
+
+	#bookish-booktok .bt-row-action {
+		grid-column: 3;
+	}
+
+	#bookish-booktok .bt-row-cover {
+		width: 48px;
+		height: 72px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#bookish-booktok *,
+	#bookish-booktok *::before {
+		animation: none !important;
+		transition: none !important;
+	}
+}
