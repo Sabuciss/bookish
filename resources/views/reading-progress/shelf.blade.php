@@ -108,30 +108,34 @@
                                         $btnLabel = $statusKey === 'want_to_read' ? '📖 Sākt lasīt' : '🔄 Atjaunot';
                                         $prefillStatus = $statusKey === 'want_to_read' ? 'in_progress' : 'in_progress';
                                     @endphp
-                                    <a
-                                        href="{{ route('reading-progress.index', [
-                                            'entry_id' => $snapshot['entry_id'] ?? '',
-                                            'challenge_id' => $snapshot['challenge_id'] ?? '',
-                                            'book_title' => $snapshot['book_title'],
-                                            'google_volume_id' => $snapshot['google_volume_id'] ?? '',
-                                            'book_cover_url' => $snapshot['book_cover_url'] ?? '',
-                                            'pages_read' => $snapshot['pages_read'],
-                                            'total_pages' => $snapshot['total_pages'] ?? '',
-                                            'reading_status' => $prefillStatus,
-                                            'emotion' => $snapshot['emotion'] ?? '',
-                                            'reading_date' => now()->format('Y-m-d'),
-                                            'start_time' => '00:00',
-                                            'end_time' => '00:01',
-                                        ]) }}"
-                                        class="login-button"
-                                        style="display: inline-block; text-decoration: none;"
-                                    >{{ $btnLabel }}</a>
                                 @endif
-                                <form method="POST" action="{{ route('reading-progress.destroy', $snapshot['entry_id']) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="book-listing-secondary-action">Noņemt no plaukta</button>
-                                </form>
+                                <div class="rp-snapshot-actions">
+                                    @if ($statusKey !== 'read')
+                                        <a
+                                            href="{{ route('reading-progress.index', [
+                                                'entry_id' => $snapshot['entry_id'] ?? '',
+                                                'challenge_id' => $snapshot['challenge_id'] ?? '',
+                                                'book_title' => $snapshot['book_title'],
+                                                'google_volume_id' => $snapshot['google_volume_id'] ?? '',
+                                                'book_cover_url' => $snapshot['book_cover_url'] ?? '',
+                                                'pages_read' => $snapshot['pages_read'],
+                                                'total_pages' => $snapshot['total_pages'] ?? '',
+                                                'reading_status' => $prefillStatus,
+                                                'emotion' => $snapshot['emotion'] ?? '',
+                                                'reading_date' => now()->format('Y-m-d'),
+                                                'start_time' => '00:00',
+                                                'end_time' => '00:01',
+                                            ]) }}"
+                                            class="login-button"
+                                            style="text-decoration: none;"
+                                        >{{ $btnLabel }}</a>
+                                    @endif
+                                    <form method="POST" action="{{ route('reading-progress.destroy', $snapshot['entry_id']) }}" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="book-listing-secondary-action">Noņemt no plaukta</button>
+                                    </form>
+                                </div>
                             </article>
                         @empty
                             <p class="rp-snapshot-meta">Šeit vēl nav grāmatu.</p>

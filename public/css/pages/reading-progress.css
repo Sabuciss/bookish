@@ -5,6 +5,44 @@
 	font-family: Arial, sans-serif;
 }
 
+.rp-snapshot-actions {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	justify-items: center;
+	flex-wrap: wrap;
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid var(--bookish-line);
+}
+
+.rp-snapshot-actions .login-button,
+.rp-snapshot-actions .book-listing-secondary-action {
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 14px;
+	margin: 0;
+	border: 1px solid var(--bookish-line);
+	border-radius: 8px;
+	background: var(--bookish-cream);
+	color: var(--bookish-ink);
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.rp-snapshot-actions .login-button:hover,
+.rp-snapshot-actions .book-listing-secondary-action:hover {
+	background: var(--bookish-soft);
+	border-color: var(--bookish-rose);
+	transform: translateY(-2px);
+	box-shadow: 0 2px 8px rgba(185, 143, 136, 0.15);
+}
+
 .reading-progress-page h1,
 .reading-progress-page h2,
 .reading-progress-page h3,
@@ -35,7 +73,7 @@
 	color: var(--bookish-ink);
 	font-size: 0.85rem;
 	font-weight: 700;
-	margin-bottom: 4px;
+	margin-bottom: 8px;
 }
 
 .rp-search-row {
@@ -243,14 +281,16 @@
 .rp-datetime-row {
 	display: grid;
 	grid-template-columns: 1.5fr 1fr 1fr;
-	gap: 12px;
-	align-items: start;
-	padding: 14px;
-	border: 1px solid var(--bookish-line);
-	border-radius: 12px;
-	background: var(--bookish-paper);
+	gap: 16px;
+	align-items: end;
+	padding: 20px;
+	border: 2px solid #b98f88;
+	border-radius: 16px;
+	background: linear-gradient(135deg, var(--bookish-paper) 0%, rgba(245, 241, 239, 0.5) 100%);
 	overflow: visible;
 	position: relative;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	z-index: 10;
 }
 
 .rp-date-input,
@@ -280,18 +320,37 @@ input[type="time"]::-webkit-inner-spin-button {
 input[type="time"] {
 	-moz-appearance: none;
 	appearance: none;
+	accent-color: var(--bookish-rose);
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+	cursor: pointer;
+	accent-color: var(--bookish-rose);
 }
 
 .rp-datetime-row label {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 6px;
 	min-width: 110px;
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: var(--bookish-ink);
+}
+
+.rp-datetime-label {
+	min-width: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: relative;
+	z-index: 1;
 }
 
 .rp-date-control {
 	position: relative;
 	overflow: visible;
+	z-index: 100;
 }
 
 .rp-date-control .rp-date-display,
@@ -300,28 +359,31 @@ input[type="time"] {
 	width: 100%;
 	height: 50px;
 	min-height: 50px;
-	border: 1px solid var(--bookish-line);
+	border: 2px solid #b98f88;
 	border-radius: 10px;
 	background: var(--bookish-cream);
 	color: var(--bookish-ink);
-	accent-color: var(--bookish-rose);
+	accent-color: #b98f88;
 	font-weight: 500;
-	transition: border-color 0.2s ease, box-shadow 0.2s ease;
-	padding: 0 12px;
+	transition: all 0.2s ease;
+	padding: 0 14px;
 	font-size: 0.95rem;
+	letter-spacing: 0.3px;
 }
 
 .rp-date-control .rp-date-display:hover,
 .rp-datetime-row .rp-time-input:hover {
 	border-color: var(--bookish-rose);
-	box-shadow: 0 2px 8px rgba(185, 143, 136, 0.1);
+	background: rgba(245, 241, 239, 0.8);
+	box-shadow: 0 4px 12px rgba(185, 143, 136, 0.12);
 }
 
 .rp-date-control .rp-date-display:focus,
 .rp-datetime-row .rp-time-input:focus {
 	outline: none;
 	border-color: var(--bookish-rose);
-	box-shadow: 0 0 0 3px rgba(185, 143, 136, 0.1);
+	background: var(--bookish-cream);
+	box-shadow: 0 0 0 4px rgba(185, 143, 136, 0.15);
 }
 
 .rp-date-display {
@@ -427,10 +489,10 @@ input[type="time"] {
 	position: absolute;
 	top: 50%;
 	right: 8px;
-	width: 36px;
-	height: 36px;
+	width: 38px;
+	height: 38px;
 	transform: translateY(-50%);
-	border: 1px solid var(--bookish-rose);
+	border: 2px solid var(--bookish-rose);
 	border-radius: 8px;
 	background: var(--bookish-rose);
 	color: var(--bookish-paper);
@@ -446,8 +508,8 @@ input[type="time"] {
 .rp-date-open:hover {
 	background: var(--bookish-plum);
 	border-color: var(--bookish-plum);
-	transform: translateY(-50%) scale(1.05);
-	box-shadow: 0 2px 8px rgba(185, 143, 136, 0.2);
+	transform: translateY(-50%) scale(1.08);
+	box-shadow: 0 4px 12px rgba(185, 143, 136, 0.2);
 }
 
 .rp-date-picker {
@@ -463,20 +525,37 @@ input[type="time"] {
 .rp-calendar {
 	position: absolute;
 	top: auto;
-	bottom: calc(100% + 8px);
+	bottom: calc(100% + 12px);
 	left: 50%;
-	z-index: 1000;
+	z-index: 2000;
 	width: 280px;
 	max-width: calc(100vw - 32px);
 	box-sizing: border-box;
 	padding: 14px 16px;
-	border: 1px solid var(--bookish-line);
+	border: 2px solid var(--bookish-rose);
 	border-radius: 12px;
-	background: var(--bookish-paper);
-	box-shadow: 0 12px 26px rgba(77, 38, 57, 0.2);
+	background: var(--bookish-cream);
+	box-shadow: 0 12px 28px rgba(185, 143, 136, 0.25);
 	color: var(--bookish-ink);
 	transform: translateX(-50%);
 	pointer-events: auto;
+	display: block;
+	animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 0;
+		transform: translateX(-50%) translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+}
+
+.rp-calendar[hidden] {
+	display: none !important;
 }
 
 .rp-calendar-header {
@@ -484,28 +563,40 @@ input[type="time"] {
 	grid-template-columns: 30px 1fr 30px;
 	gap: 6px;
 	align-items: center;
-	margin-bottom: 8px;
+	margin-bottom: 12px;
 	text-align: center;
+	padding-bottom: 8px;
+	border-bottom: 2px solid var(--bookish-line);
+}
+
+.rp-calendar-header strong {
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: var(--bookish-ink);
 }
 
 .rp-calendar-nav {
 	width: 30px;
 	height: 30px;
 	padding: 0;
-	border: 1px solid var(--bookish-line);
-	border-radius: 7px;
-	background: var(--bookish-soft);
-	color: var(--bookish-plum-deep);
+	border: 2px solid var(--bookish-line);
+	border-radius: 8px;
+	background: var(--bookish-cream);
+	color: var(--bookish-ink);
 	font-size: 1.1rem;
 	line-height: 1;
 	cursor: pointer;
+	transition: all 0.2s ease;
+	font-weight: 700;
 }
 
 .rp-calendar-nav:hover,
 .rp-calendar-nav:focus-visible {
 	background: var(--bookish-rose);
+	border-color: var(--bookish-rose);
 	color: var(--bookish-paper);
 	outline: none;
+	transform: scale(1.08);
 }
 
 .rp-calendar-weekdays,
@@ -595,11 +686,9 @@ button.rp-calendar-day:focus-visible {
 	justify-content: space-between;
 	align-items: center;
 	gap: 12px;
-	width: 100%;
-	margin: 4px 0 0;
-	padding: 14px 0 0;
-	border-top: 1px solid var(--bookish-line);
-	background: transparent;
+	margin-top: 24px;
+	padding-top: 20px;
+	border-top: 2px solid var(--bookish-line);
 }
 
 .rp-back-button {
@@ -810,6 +899,244 @@ button.rp-calendar-day:focus-visible {
 	overflow-wrap: anywhere;
 }
 
+/* Card Grid Layout for Reading Progress Entries */
+.rp-entries-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+.rp-entry-card {
+	position: relative;
+	border: 2px solid var(--bookish-line);
+	border-radius: 14px;
+	background: linear-gradient(135deg, var(--bookish-cream) 0%, rgba(252, 250, 248, 0.8) 100%);
+	overflow: hidden;
+	transition: all 0.3s ease;
+	cursor: pointer;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.rp-entry-card:hover {
+	border-color: var(--bookish-rose);
+	background: linear-gradient(135deg, #fcfaf8 0%, #faf8f6 100%);
+	box-shadow: 0 12px 28px rgba(185, 143, 136, 0.22);
+	transform: translateY(-6px);
+}
+
+.rp-entry-preview {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 14px;
+	flex-grow: 1;
+}
+
+.rp-entry-cover {
+	width: 100%;
+	height: 200px;
+	object-fit: cover;
+	object-position: center;
+	border-radius: 12px;
+	background: linear-gradient(135deg, var(--bookish-soft) 0%, var(--bookish-line) 100%);
+	border: 2px solid var(--bookish-line);
+	display: block;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rp-entry-card:hover .rp-entry-cover {
+	transform: scale(1.02);
+	box-shadow: 0 4px 12px rgba(185, 143, 136, 0.15);
+	border-color: var(--bookish-rose);
+}
+
+.rp-entry-cover-placeholder {
+	width: 100%;
+	height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 3rem;
+	background: linear-gradient(135deg, var(--bookish-soft) 0%, var(--bookish-line) 100%);
+	border-radius: 12px;
+	border: 2px solid var(--bookish-line);
+	color: var(--bookish-muted);
+}
+
+.rp-entry-brief {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	flex-grow: 1;
+}
+
+.rp-entry-title {
+	font-size: 1rem;
+	font-weight: 700;
+	color: var(--bookish-ink);
+	margin: 0;
+	line-height: 1.3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+.rp-entry-progress {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.rp-progress-bar {
+	flex: 1;
+	height: 6px;
+	background: var(--bookish-line);
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+.rp-progress-fill {
+	height: 100%;
+	background: linear-gradient(90deg, var(--bookish-plum-deep), var(--bookish-rose));
+	border-radius: 999px;
+	transition: width 0.3s ease;
+}
+
+.rp-progress-text {
+	font-size: 0.85rem;
+	font-weight: 700;
+	color: var(--bookish-rose);
+	min-width: 35px;
+	text-align: right;
+}
+
+.rp-entry-emotions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.rp-emotion-badge {
+	font-size: 1.2rem;
+	line-height: 1;
+	padding: 4px 6px;
+	border-radius: 6px;
+	background: rgba(245, 241, 239, 0.6);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Hover Details - Initially Hidden */
+.rp-entry-details {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 14px;
+	background: var(--bookish-cream);
+	border-radius: 12px;
+	flex-direction: column;
+	gap: 10px;
+	overflow-y: auto;
+	z-index: 10;
+	animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.rp-entry-card:hover .rp-entry-details {
+	display: flex;
+}
+
+.rp-detail-row {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.85rem;
+	line-height: 1.4;
+}
+
+.rp-detail-row strong {
+	color: var(--bookish-ink);
+	font-weight: 600;
+	margin-right: 8px;
+	flex-shrink: 0;
+}
+
+.rp-detail-row span {
+	color: var(--bookish-muted);
+	text-align: right;
+	word-break: break-word;
+}
+
+.rp-entry-actions {
+	display: flex;
+	gap: 8px;
+	margin-top: auto;
+	padding-top: 10px;
+	border-top: 1px solid var(--bookish-line);
+}
+
+.rp-action-btn {
+	flex: 1;
+	padding: 8px 12px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 8px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	cursor: pointer;
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	transition: all 0.2s ease;
+	white-space: nowrap;
+}
+
+.rp-action-edit {
+	background: var(--bookish-rose);
+	color: var(--bookish-paper);
+	border-color: var(--bookish-rose);
+}
+
+.rp-action-edit:hover {
+	background: var(--bookish-plum);
+	border-color: var(--bookish-plum);
+	transform: translateY(-1px);
+	box-shadow: 0 2px 8px rgba(185, 143, 136, 0.15);
+}
+
+.rp-action-delete {
+	background: #f3e8e6;
+	color: #c2185b;
+	border-color: #c2185b;
+}
+
+.rp-action-delete:hover {
+	background: #c2185b;
+	color: var(--bookish-paper);
+	transform: translateY(-1px);
+	box-shadow: 0 2px 8px rgba(194, 24, 91, 0.15);
+}
+
 .reading-progress-emotion-label {
 	display: block;
 	margin-bottom: 10px;
@@ -821,33 +1148,35 @@ button.rp-calendar-day:focus-visible {
 .emotion-picker {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px;
+	gap: 10px;
+	margin-top: 4px;
 }
 
 .emotion-tag {
-	padding: 8px 14px;
+	padding: 9px 16px;
 	border-radius: 999px;
 	font-size: 0.875rem;
 	font-weight: 500;
 	cursor: pointer;
-	border: 1px solid var(--bookish-line);
+	border: 1.5px solid var(--bookish-line);
 	background: var(--bookish-cream);
 	color: var(--bookish-ink);
-	transition: all 0.18s ease;
+	transition: all 0.2s ease;
+	white-space: nowrap;
 }
 
 .emotion-tag:hover {
 	background: var(--bookish-soft);
 	border-color: var(--bookish-rose);
 	transform: translateY(-2px);
-	box-shadow: 0 2px 8px rgba(185, 143, 136, 0.15);
+	box-shadow: 0 4px 12px rgba(185, 143, 136, 0.18);
 }
 
 .emotion-tag.selected {
 	background: var(--bookish-rose);
 	color: var(--bookish-paper);
 	border-color: var(--bookish-rose);
-	box-shadow: 0 4px 12px rgba(185, 143, 136, 0.3);
+	box-shadow: 0 4px 14px rgba(185, 143, 136, 0.35);
 }
 
 @media (min-width: 1200px) {
@@ -915,16 +1244,17 @@ html.dark .reading-progress-form > label {
 }
 
 html.dark .rp-datetime-row {
-	border-color: var(--bookish-plum);
-	background: var(--bookish-paper);
+	border-color: #8a5362;
+	background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
 }
 
 html.dark .rp-date-control .rp-date-display,
 html.dark .rp-datetime-row .rp-time-input {
-	border-color: var(--bookish-plum);
-	background: var(--bookish-cream);
-	color: var(--bookish-ink);
+	border-color: #8a5362;
+	background: #351923;
+	color: #f8ece9;
 	color-scheme: dark;
+	accent-color: #8a5362;
 }
 
 html.dark .rp-time-picker {
@@ -1037,4 +1367,133 @@ html.dark .reading-progress-table th {
 
 html.dark .reading-progress-table td {
 	border-bottom-color: #374151;
+}
+
+/* Dark mode card grid */
+html.dark .rp-entry-card {
+	background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+	border-color: #374151;
+	color: #e5e7eb;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .rp-entry-card:hover {
+	border-color: var(--bookish-rose);
+	background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+	box-shadow: 0 12px 28px rgba(185, 143, 136, 0.25);
+}
+
+html.dark .rp-entry-cover-placeholder {
+	background: linear-gradient(135deg, #2d3748 0%, #374151 100%);
+	border-color: #4b5563;
+	color: #9ca3af;
+}
+
+html.dark .rp-entry-title {
+	color: #e5e7eb;
+}
+
+html.dark .rp-progress-bar {
+	background: #374151;
+}
+
+html.dark .rp-emotion-badge {
+	background: rgba(0, 0, 0, 0.2);
+}
+
+html.dark .rp-entry-details {
+	background: linear-gradient(135deg, rgba(185, 143, 136, 0.12) 0%, rgba(212, 175, 169, 0.06) 100%);
+	backdrop-filter: blur(2px);
+	border: 1px solid rgba(185, 143, 136, 0.15);
+}
+
+html.dark .rp-detail-row strong {
+	color: var(--bookish-rose);
+	font-weight: 700;
+}
+
+html.dark .rp-detail-row span {
+	color: #e5e7eb;
+	font-weight: 500;
+}
+
+html.dark .rp-entry-actions {
+	border-top-color: rgba(185, 143, 136, 0.2);
+}
+
+html.dark .rp-action-btn {
+	border-color: #374151;
+}
+
+html.dark .rp-action-edit {
+	background: var(--bookish-rose);
+	color: var(--bookish-paper);
+	border-color: var(--bookish-rose);
+}
+
+html.dark .rp-action-edit:hover {
+	background: var(--bookish-plum);
+	border-color: var(--bookish-plum);
+}
+
+html.dark .rp-action-delete {
+	background: rgba(194, 24, 91, 0.15);
+	color: #ff4081;
+	border-color: #ff4081;
+}
+
+html.dark .rp-action-delete:hover {
+	background: #ff4081;
+	color: #fff;
+}
+
+/* Dark mode calendar */
+html.dark .rp-calendar {
+	border-color: var(--bookish-rose);
+	background: #1f2937;
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .rp-calendar-header {
+	border-bottom-color: #374151;
+}
+
+html.dark .rp-calendar-header strong {
+	color: #e5e7eb;
+}
+
+html.dark .rp-calendar-nav {
+	background: #2d3748;
+	border-color: #4b5563;
+	color: #e5e7eb;
+}
+
+html.dark .rp-calendar-nav:hover,
+html.dark .rp-calendar-nav:focus-visible {
+	background: var(--bookish-rose);
+	border-color: var(--bookish-rose);
+	color: var(--bookish-paper);
+}
+
+html.dark .rp-calendar-weekdays {
+	color: #9ca3af;
+}
+
+html.dark .rp-calendar-day {
+	color: #e5e7eb;
+}
+
+html.dark button.rp-calendar-day:hover,
+html.dark button.rp-calendar-day:focus-visible {
+	background: rgba(185, 143, 136, 0.15);
+	border-color: var(--bookish-rose);
+}
+
+html.dark .rp-calendar-day.is-selected {
+	background: var(--bookish-rose);
+	color: var(--bookish-paper);
+}
+
+html.dark .rp-calendar-day.is-today {
+	border-color: var(--bookish-rose);
 }

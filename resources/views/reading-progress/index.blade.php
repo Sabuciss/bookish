@@ -43,66 +43,77 @@
                 @if ($progressEntries->isEmpty())
                     <p>Vēl nav neviena progresa ieraksta.</p>
                 @else
-                    <div class="reading-progress-table-wrap">
-                        <table class="reading-progress-table">
-                            <thead>
-                                <tr>
-                                    <th>Datums</th>
-                                    <th>Grāmata</th>
-                                    <th>Vāks</th>
-                                    <th>Izlasītās lpp</th>
-                                    <th>Kopā lpp</th>
-                                    <th>Progress</th>
-                                    <th>Statuss</th>
-                                    <th>Emocijas</th>
-                                    <th>No cikiem</th>
-                                    <th>Līdz cikiem</th>
-                                    <th>Ilgums</th>
-                                    <th>Darbības</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($progressEntries as $entry)
-                                    @php
-                                        $progressPercent = $entry->total_pages ? min(100, (int) round(($entry->pages_read / $entry->total_pages) * 100)) : null;
-                                        $emotionToEmoji = [
-                                            'Priecīgs' => '😊',
-                                            'Mierīgs' => '😌',
-                                            'Iedvesmots' => '🤩',
-                                            'Skumīgs' => '😢',
-                                            'Satraukts' => '😱',
-                                            'Noguris' => '😴',
-                                            'Pārsteigts' => '😮',
-                                            'Sarūgtināts' => '😠',
-                                            'Domājošs' => '🤔',
-                                            'Aizkustināts' => '🥺',
-                                            'Saspringts' => '😤',
-                                            'Smieklīgs' => '😂',
-                                            'Apjucis' => '🤯',
-                                            'Skeptisks' => '🙄',
-                                            'Motivēts' => '💪',
-                                            'Mīlošs' => '🥰',
-                                        ];
-                                        $emotionNames = collect(explode(',', (string) $entry->emotion))
-                                            ->map(fn (string $emotion) => trim($emotion))
-                                            ->filter()
-                                            ->unique()
-                                            ->values();
-                                    @endphp
-                                    <tr>
-                                        <td>{{ $entry->reading_date->format('Y-m-d') }}</td>
-                                        <td>{{ $entry->book_title }}</td>
-                                        <td>
-                                            @if ($entry->book_cover_url)
-                                                <img src="{{ $entry->book_cover_url }}" alt="{{ $entry->book_title }} vāks" style="width: 38px; height: 56px; object-fit: cover; border-radius: 6px;">
+                    <div class="rp-entries-grid">
+                        @foreach ($progressEntries as $entry)
+                            @php
+                                $progressPercent = $entry->total_pages ? min(100, (int) round(($entry->pages_read / $entry->total_pages) * 100)) : null;
+                                $emotionToEmoji = [
+                                    'Priecīgs' => '😊',
+                                    'Mierīgs' => '😌',
+                                    'Iedvesmots' => '🤩',
+                                    'Skumīgs' => '😢',
+                                    'Satraukts' => '😱',
+                                    'Noguris' => '😴',
+                                    'Pārsteigts' => '😮',
+                                    'Sarūgtināts' => '😠',
+                                    'Domājošs' => '🤔',
+                                    'Aizkustināts' => '🥺',
+                                    'Saspringts' => '😤',
+                                    'Smieklīgs' => '😂',
+                                    'Apjucis' => '🤯',
+                                    'Skeptisks' => '🙄',
+                                    'Motivēts' => '💪',
+                                    'Mīlošs' => '🥰',
+                                ];
+                                $emotionNames = collect(explode(',', (string) $entry->emotion))
+                                    ->map(fn (string $emotion) => trim($emotion))
+                                    ->filter()
+                                    ->unique()
+                                    ->values();
+                            @endphp
+                            <article class="rp-entry-card">
+                                <div class="rp-entry-preview">
+                                    @if ($entry->book_cover_url)
+                                        <img src="{{ $entry->book_cover_url }}" alt="{{ $entry->book_title }} vāks" class="rp-entry-cover">
+                                    @else
+                                        <div class="rp-entry-cover-placeholder">📖</div>
+                                    @endif
+                                    <div class="rp-entry-brief">
+                                        <h3 class="rp-entry-title">{{ $entry->book_title }}</h3>
+                                        <div class="rp-entry-progress">
+                                            @if ($progressPercent !== null)
+                                                <div class="rp-progress-bar">
+                                                    <div class="rp-progress-fill" style="width: {{ $progressPercent }}%"></div>
+                                                </div>
+                                                <span class="rp-progress-text">{{ $progressPercent }}%</span>
                                             @else
-                                                -
+                                                <span class="rp-progress-text">-</span>
                                             @endif
-                                        </td>
-                                        <td>{{ $entry->pages_read }}</td>
-                                        <td>{{ $entry->total_pages ?? '-' }}</td>
-                                        <td>{{ $progressPercent !== null ? $progressPercent.'%' : '-' }}</td>
-                                        <td>
+                                        </div>
+                                        @if ($emotionNames->isNotEmpty())
+                                            <div class="rp-entry-emotions" aria-label="Ieraksta emocijas">
+                                                @foreach ($emotionNames as $emotionName)
+                                                    @if (isset($emotionToEmoji[$emotionName]))
+                                                        <span class="rp-emotion-badge" title="{{ $emotionName }}">{{ $emotionToEmoji[$emotionName] }}</span>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="rp-entry-details">
+                                    <div class="rp-detail-row">
+                                        <strong>Datums:</strong>
+                                        <span>{{ $entry->reading_date->format('Y-m-d') }}</span>
+                                    </div>
+                                    <div class="rp-detail-row">
+                                        <strong>Izlasīts:</strong>
+                                        <span>{{ $entry->pages_read }} / {{ $entry->total_pages ?? '?' }} lpp</span>
+                                    </div>
+                                    <div class="rp-detail-row">
+                                        <strong>Statuss:</strong>
+                                        <span>
                                             @if ($entry->reading_status === 'read')
                                                 <span class="reading-progress-status-badge">READ</span>
                                             @elseif ($entry->reading_status === 'want_to_read')
@@ -110,48 +121,40 @@
                                             @else
                                                 In Progress
                                             @endif
-                                        </td>
-                                        <td>
-                                            @if ($emotionNames->isNotEmpty())
-                                                <div class="rp-emotion-icons" aria-label="Ieraksta emocijas">
-                                                    @foreach ($emotionNames as $emotionName)
-                                                        @if (isset($emotionToEmoji[$emotionName]))
-                                                            <span class="rp-emotion-icon" title="{{ $emotionName }}">{{ $emotionToEmoji[$emotionName] }}</span>
-                                                        @endif
-                                                    @endforeach
-                                                </div>
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
-                                        <td>{{ $entry->start_time ? \Illuminate\Support\Carbon::parse($entry->start_time)->format('H:i') : '-' }}</td>
-                                        <td>{{ $entry->end_time ? \Illuminate\Support\Carbon::parse($entry->end_time)->format('H:i') : '-' }}</td>
-                                        <td>{{ $entry->duration_minutes }} min</td>
-                                        <td>
-                                            <a href="{{ route('reading-progress.index', [
-                                                'entry_id' => $entry->id,
-                                                'challenge_id' => $entry->challenge_id,
-                                                'book_title' => $entry->book_title,
-                                                'google_volume_id' => $entry->google_volume_id,
-                                                'book_cover_url' => $entry->book_cover_url,
-                                                'pages_read' => $entry->pages_read,
-                                                'total_pages' => $entry->total_pages,
-                                                'reading_status' => $entry->reading_status,
-                                                'emotion' => $entry->emotion,
-                                                'reading_date' => $entry->reading_date->toDateString(),
-                                                'start_time' => \Illuminate\Support\Carbon::parse($entry->start_time)->format('H:i'),
-                                                'end_time' => \Illuminate\Support\Carbon::parse($entry->end_time)->format('H:i'),
-                                            ]) }}" class="reading-progress-submit">Rediģēt</a>
-                                            <form method="POST" action="{{ route('reading-progress.destroy', $entry->id) }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="book-listing-secondary-action">Dzēst</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                        </span>
+                                    </div>
+                                    <div class="rp-detail-row">
+                                        <strong>Laiks:</strong>
+                                        <span>{{ $entry->start_time ? \Illuminate\Support\Carbon::parse($entry->start_time)->format('H:i') : '-' }} - {{ $entry->end_time ? \Illuminate\Support\Carbon::parse($entry->end_time)->format('H:i') : '-' }}</span>
+                                    </div>
+                                    <div class="rp-detail-row">
+                                        <strong>Ilgums:</strong>
+                                        <span>{{ $entry->duration_minutes }} min</span>
+                                    </div>
+                                    <div class="rp-entry-actions">
+                                        <a href="{{ route('reading-progress.index', [
+                                            'entry_id' => $entry->id,
+                                            'challenge_id' => $entry->challenge_id,
+                                            'book_title' => $entry->book_title,
+                                            'google_volume_id' => $entry->google_volume_id,
+                                            'book_cover_url' => $entry->book_cover_url,
+                                            'pages_read' => $entry->pages_read,
+                                            'total_pages' => $entry->total_pages,
+                                            'reading_status' => $entry->reading_status,
+                                            'emotion' => $entry->emotion,
+                                            'reading_date' => $entry->reading_date->toDateString(),
+                                            'start_time' => \Illuminate\Support\Carbon::parse($entry->start_time)->format('H:i'),
+                                            'end_time' => \Illuminate\Support\Carbon::parse($entry->end_time)->format('H:i'),
+                                        ]) }}" class="rp-action-btn rp-action-edit">✎ Rediģēt</a>
+                                        <form method="POST" action="{{ route('reading-progress.destroy', $entry->id) }}" style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="rp-action-btn rp-action-delete">✕ Dzēst</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </article>
+                        @endforeach
                     </div>
                     <div class="reading-progress-pagination">{{ $progressEntries->links() }}</div>
                 @endif
@@ -270,7 +273,7 @@
                         </div>
 
                         <div class="rp-datetime-row">
-                            <label style="flex: 1.5;">
+                            <label class="rp-datetime-label">
                                 Datums
                                 <div class="rp-date-control">
                                     <input type="text" id="reading-date-display" value="{{ \Illuminate\Support\Carbon::parse(old('reading_date', $prefill['reading_date'] ?? now()->toDateString()))->format('d.m.Y') }}" readonly class="reading-progress-input input rp-date-display" aria-label="Datums, diena mēnesis gads">
@@ -289,11 +292,11 @@
                                     </div>
                                 </div>
                             </label>
-                            <label style="flex: 1;">
+                            <label class="rp-datetime-label">
                                 No cikiem
                                 <input type="time" name="start_time" value="{{ old('start_time', $prefill['start_time'] ?? '00:00') }}" required class="reading-progress-input input rp-time-input" lang="lv-LV" step="60" aria-label="Sākuma laiks, 24 stundu formāts">
                             </label>
-                            <label style="flex: 1;">
+                            <label class="rp-datetime-label">
                                 Līdz cikiem
                                 <input type="time" name="end_time" value="{{ old('end_time', $prefill['end_time'] ?? '00:01') }}" required class="reading-progress-input input rp-time-input" lang="lv-LV" step="60" aria-label="Beigu laiks, 24 stundu formāts">
                             </label>

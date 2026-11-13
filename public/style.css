@@ -1282,7 +1282,7 @@ html.dark .uiverse-container .form .input {
 	color: var(--bookish-ink) !important;
 }
 
-html.dark input:not([type='hidden']):not([type='checkbox']):not([type='radio']),
+html.dark input:not([type='hidden']):not([type='checkbox']):not([type='radio']):not([type='time']),
 html.dark select,
 html.dark textarea {
 	background: var(--bookish-cream) !important;
