@@ -31,7 +31,7 @@ class AdminController extends Controller
                 'challenges' => ReadingChallenge::query()->count(),
                 'bookListings' => BookListing::query()->count(),
             ],
-            'users' => User::query()->latest()->get(),
+            'users' => User::query()->latest()->paginate(50),
             'highlights' => ReadingHighlight::query()
                 ->with('user:id,name,email')
                 ->latest()
@@ -106,6 +106,25 @@ class AdminController extends Controller
         if ($request->user()->is($user)) {
             return to_route('admin.dashboard')
                 ->with('status', 'Admins nevar izdzēst pats savu kontu.');
+        }
+
+        $hasActiveTransactions = DB::transaction(function () use ($user): bool {
+            $userListingsWithActiveApplications = $user->bookListings()
+                ->whereHas('applications', function ($query) {
+                    $query->whereIn('status', ['accepted', 'completed']);
+                })
+                ->exists();
+
+            $userApplicationsActive = $user->applications()
+                ->whereIn('status', ['accepted', 'completed'])
+                ->exists();
+
+            return $userListingsWithActiveApplications || $userApplicationsActive;
+        });
+
+        if ($hasActiveTransactions) {
+            return to_route('admin.dashboard')
+                ->with('status', 'Lietotāju ar aktīviem darījumiem nevar izdzēst. Vispirms jāpabeigtas vai jāatsauc aktīvās transakcijas.');
         }
 
         $user->delete();

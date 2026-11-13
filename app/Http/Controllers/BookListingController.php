@@ -20,6 +20,7 @@ class BookListingController extends Controller
     public function index(Request $request): View
     {
         $listingType = $request->routeIs('book-exchange.*') ? 'exchange' : 'sale';
+        $userId = $request->user()?->id;
 
         return view('book-listings.index', [
             'listingType' => $listingType,
@@ -27,7 +28,16 @@ class BookListingController extends Controller
                 ->where('listing_type', $listingType)
                 ->when($request->filled('listing_id'), fn ($query) => $query->whereKey($request->integer('listing_id')))
                 ->with('user:id,name')
-                ->with(['applications.user:id,name', 'applications.messages.user:id,name'])
+                ->with(['applications' => fn ($query) => $query
+                    ->when($userId, fn ($q) => $q
+                        ->where(fn ($q2) => $q2
+                            ->whereHas('listing', fn ($q3) => $q3->where('user_id', $userId))
+                            ->orWhere('user_id', $userId)
+                        )
+                    )
+                    ->with('user:id,name')
+                    ->with('messages.user:id,name')
+                ])
                 ->latest()
                 ->paginate(12),
         ]);
@@ -112,7 +122,7 @@ class BookListingController extends Controller
                 ->findOrFail($bookListing->id);
 
             if ($lockedListing->applications()->whereIn('status', ['accepted', 'completed'])->exists()) {
-                return ['state' => 'blocked', 'type' => $lockedListing->listing_type];
+                return ['state' => 'blocked', 'type' => $lockedListing->listing_type, 'notifications' => []];
             }
 
             $type = $lockedListing->listing_type;
@@ -121,21 +131,28 @@ class BookListingController extends Controller
                 ->with('user')
                 ->get();
 
+            $notifications = [];
             if ($lockedListing->applications()->exists()) {
                 foreach ($applications as $application) {
                     $application->transitionTo('cancelled', (int) $request->user()->id, 'listing_withdrawn');
-                    $application->user?->notify(new BookListingApplicationStatusChanged($application, 'cancelled', 'listing_withdrawn'));
+                    $notifications[] = function () use ($application) {
+                        $application->user?->notify(new BookListingApplicationStatusChanged($application, 'cancelled', 'listing_withdrawn'));
+                    };
                 }
 
                 $lockedListing->update(['availability' => 'unavailable']);
 
-                return ['state' => 'withdrawn', 'type' => $type];
+                return ['state' => 'withdrawn', 'type' => $type, 'notifications' => $notifications];
             }
 
             $lockedListing->delete();
 
-            return ['state' => 'deleted', 'type' => $type];
+            return ['state' => 'deleted', 'type' => $type, 'notifications' => []];
         });
+
+        foreach ($result['notifications'] as $notification) {
+            DB::afterCommit($notification);
+        }
 
         if ($result['state'] === 'blocked') {
             return back()->with('status', 'Sludinājumu ar pieņemtu pieteikumu vairs nevar dzēst.');
@@ -156,7 +173,7 @@ class BookListingController extends Controller
             404,
         );
 
-        $withdrawn = DB::transaction(function () use ($request, $bookListing, $application): bool {
+        [$withdrawn, $notificationCallback] = DB::transaction(function () use ($request, $bookListing, $application): array {
             $lockedListing = BookListing::query()
                 ->lockForUpdate()
                 ->findOrFail($bookListing->id);
@@ -171,12 +188,12 @@ class BookListingController extends Controller
             $wasAccepted = $lockedApplication->status === 'accepted';
 
             if (($lockedApplication->status !== 'pending' || ! $isApplicant) && ! ($wasAccepted && ($isApplicant || $isOwner))) {
-                return false;
+                return [false, null];
             }
 
             $reason = $isApplicant ? 'applicant_cancelled' : 'owner_cancelled';
             if (! $lockedApplication->transitionTo('cancelled', $actorId, $reason)) {
-                return false;
+                return [false, null];
             }
 
             if ($wasAccepted) {
@@ -184,10 +201,16 @@ class BookListingController extends Controller
             }
 
             $recipient = $isApplicant ? $lockedListing->user : $lockedApplication->user;
-            $recipient?->notify(new BookListingApplicationStatusChanged($lockedApplication, 'cancelled', $reason));
+            $notificationCallback = function () use ($lockedApplication, $reason, $recipient) {
+                $recipient?->notify(new BookListingApplicationStatusChanged($lockedApplication, 'cancelled', $reason));
+            };
 
-            return true;
+            return [true, $notificationCallback];
         });
+
+        if ($notificationCallback !== null) {
+            DB::afterCommit($notificationCallback);
+        }
 
         return back()->with('status', $withdrawn
             ? 'Pieteikums atcelts. Darījuma vēsture ir saglabāta.'
@@ -233,7 +256,7 @@ class BookListingController extends Controller
         abort_unless($application->book_listing_id === $bookListing->id, 404);
         abort_unless($bookListing->user_id === $request->user()->id || $application->user_id === $request->user()->id, 404);
 
-        $completed = DB::transaction(function () use ($request, $bookListing, $application): bool {
+        [$completed, $notificationCallback] = DB::transaction(function () use ($request, $bookListing, $application): array {
             $lockedListing = BookListing::query()
                 ->lockForUpdate()
                 ->findOrFail($bookListing->id);
@@ -243,11 +266,11 @@ class BookListingController extends Controller
                 ->findOrFail($application->id);
 
             if ($lockedApplication->status !== 'accepted') {
-                return false;
+                return [false, null];
             }
 
             if (! $lockedApplication->transitionTo('completed', (int) $request->user()->id)) {
-                return false;
+                return [false, null];
             }
 
             $lockedListing->update(['availability' => 'unavailable']);
@@ -255,10 +278,16 @@ class BookListingController extends Controller
             $recipient = $lockedApplication->user_id === $request->user()->id
                 ? $lockedListing->user
                 : $lockedApplication->user;
-            $recipient?->notify(new BookListingApplicationStatusChanged($lockedApplication, 'completed'));
+            $notificationCallback = function () use ($lockedApplication, $recipient) {
+                $recipient?->notify(new BookListingApplicationStatusChanged($lockedApplication, 'completed'));
+            };
 
-            return true;
+            return [true, $notificationCallback];
         });
+
+        if ($notificationCallback !== null) {
+            DB::afterCommit($notificationCallback);
+        }
 
         return back()->with('status', $completed
             ? 'Darījums atzīmēts kā pabeigts.'
@@ -275,18 +304,18 @@ class BookListingController extends Controller
             return back()->with('status', 'Uz savu sludinājumu pieteikties nevar.');
         }
 
-        $created = DB::transaction(function () use ($bookListing, $request): bool {
+        [$created, $notificationCallback] = DB::transaction(function () use ($bookListing, $request): array {
             $lockedListing = BookListing::query()
                 ->lockForUpdate()
                 ->findOrFail($bookListing->id);
 
             if (! $lockedListing->isAvailable()) {
-                return false;
+                return [false, null];
             }
 
             $data = $request->validated();
             if ($lockedListing->isExchange() && blank($data['offered_book_title'] ?? null)) {
-                return false;
+                return [false, null];
             }
             if (! $lockedListing->isExchange()) {
                 unset($data['offered_book_title']);
@@ -299,7 +328,7 @@ class BookListingController extends Controller
 
             if ($application) {
                 if (! in_array($application->status, ['rejected', 'cancelled'], true)) {
-                    return false;
+                    return [false, null];
                 }
 
                 $before = array_intersect_key($application->only(['offered_book_title', 'message']), $data);
@@ -308,7 +337,7 @@ class BookListingController extends Controller
                 $application->recordListingSnapshot('reapplied', $lockedListing->transactionSnapshot());
 
                 if (! $application->transitionTo('pending', (int) $request->user()->id, 'reapplied')) {
-                    return false;
+                    return [false, null];
                 }
             } else {
                 $application = $lockedListing->applications()->create([
@@ -329,10 +358,16 @@ class BookListingController extends Controller
                 ]);
             }
 
-            $lockedListing->user->notify(new BookListingApplicationReceived($application));
+            $notificationCallback = function () use ($lockedListing, $application) {
+                $lockedListing->user->notify(new BookListingApplicationReceived($application));
+            };
 
-            return true;
+            return [true, $notificationCallback];
         });
+
+        if ($notificationCallback !== null) {
+            DB::afterCommit($notificationCallback);
+        }
 
         if (! $created) {
             return back()->with('status', 'Pieteikumu vairs nevar iesniegt šim sludinājumam.');
@@ -352,7 +387,7 @@ class BookListingController extends Controller
             'status' => ['required', 'in:accepted,rejected'],
         ])['status'];
 
-        $updated = DB::transaction(function () use ($request, $application, $bookListing, $status): bool {
+        [$updated, $notificationCallbacks] = DB::transaction(function () use ($request, $application, $bookListing, $status): array {
             $lockedListing = BookListing::query()
                 ->lockForUpdate()
                 ->findOrFail($bookListing->id);
@@ -362,19 +397,22 @@ class BookListingController extends Controller
                 ->findOrFail($application->id);
 
             if ($lockedApplication->status !== 'pending') {
-                return false;
+                return [false, []];
             }
 
             if ($status === 'accepted' && ! $lockedListing->isAvailable()) {
-                return false;
+                return [false, []];
             }
 
             $snapshot = $status === 'accepted' ? $lockedListing->transactionSnapshot() : null;
             if (! $lockedApplication->transitionTo($status, (int) $request->user()->id, null, $snapshot)) {
-                return false;
+                return [false, []];
             }
             $lockedApplication->load('user');
-            $lockedApplication->user->notify(new BookListingApplicationStatusChanged($lockedApplication, $status));
+            $notificationCallbacks = [];
+            $notificationCallbacks[] = function () use ($lockedApplication, $status) {
+                $lockedApplication->user->notify(new BookListingApplicationStatusChanged($lockedApplication, $status));
+            };
 
             if ($status === 'accepted') {
                 $lockedListing->update(['availability' => 'unavailable']);
@@ -386,12 +424,18 @@ class BookListingController extends Controller
 
                 foreach ($rejectedApplications as $rejectedApplication) {
                     $rejectedApplication->transitionTo('rejected', (int) $request->user()->id, 'listing_unavailable');
-                    $rejectedApplication->user->notify(new BookListingApplicationStatusChanged($rejectedApplication, 'rejected', 'unavailable'));
+                    $notificationCallbacks[] = function () use ($rejectedApplication) {
+                        $rejectedApplication->user->notify(new BookListingApplicationStatusChanged($rejectedApplication, 'rejected', 'unavailable'));
+                    };
                 }
             }
 
-            return true;
+            return [true, $notificationCallbacks];
         });
+
+        foreach ($notificationCallbacks as $callback) {
+            DB::afterCommit($callback);
+        }
 
         if (! $updated) {
             return back()->with('status', 'Šo pieteikumu vairs nevar mainīt.');
@@ -411,7 +455,7 @@ class BookListingController extends Controller
             'message' => ['required', 'string', 'max:2000'],
         ]);
 
-        $sent = DB::transaction(function () use ($request, $bookListing, $application, $validated): bool {
+        [$sent, $notificationCallback] = DB::transaction(function () use ($request, $bookListing, $application, $validated): array {
             $lockedListing = BookListing::query()
                 ->lockForUpdate()
                 ->findOrFail($bookListing->id);
@@ -421,7 +465,7 @@ class BookListingController extends Controller
                 ->findOrFail($application->id);
 
             if (! in_array($lockedApplication->status, ['pending', 'accepted'], true)) {
-                return false;
+                return [false, null];
             }
 
             $message = BookListingMessage::create([
@@ -433,10 +477,16 @@ class BookListingController extends Controller
             $recipient = $lockedListing->user_id === $request->user()->id
                 ? $lockedApplication->user
                 : $lockedListing->user;
-            $recipient?->notify(new BookListingMessageReceived($message));
+            $notificationCallback = function () use ($recipient, $message) {
+                $recipient?->notify(new BookListingMessageReceived($message));
+            };
 
-            return true;
+            return [true, $notificationCallback];
         });
+
+        if ($notificationCallback !== null) {
+            DB::afterCommit($notificationCallback);
+        }
 
         if (! $sent) {
             return back()->with('status', 'Ziņu vairs nevar nosūtīt šim pieteikumam.');

@@ -52,6 +52,9 @@ class User extends Authenticatable implements MustVerifyEmail
             }
 
             $user->notifications()->delete();
+
+            $user->applications()->whereIn('status', ['pending', 'rejected', 'cancelled'])->delete();
+            $user->bookListings()->doesntHave('applications')->delete();
         });
     }
 

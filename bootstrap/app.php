@@ -13,14 +13,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->trustProxies(at: '*');
+        $middleware->trustProxies(at: ['127.0.0.1', '::1']);
 
         $middleware->alias([
             'admin' => AdminMiddleware::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule): void {
-        $schedule->command('bookish:send-release-reminders')->daily();
+        $schedule->command('bookish:send-release-reminders')->daily()->withoutOverlapping();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

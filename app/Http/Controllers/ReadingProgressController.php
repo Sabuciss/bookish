@@ -145,11 +145,8 @@ class ReadingProgressController extends Controller
         if ($entryId > 0) {
             $existingEntry = ReadingProgress::query()
                 ->where('user_id', $data['user_id'])
-                ->where('id', $entryId)
-                ->first();
-        }
-
-        if (!$existingEntry) {
+                ->findOrFail($entryId);
+        } else {
             $existingEntry = $this->findExistingEntry(
             $data['user_id'],
             $data['book_title'],
@@ -157,22 +154,26 @@ class ReadingProgressController extends Controller
             );
         }
 
-        $wasUpdate = $existingEntry !== null;
-        $previousChallengeId = $existingEntry?->challenge_id;
+        [$wasUpdate, $existingEntry] = DB::transaction(function () use ($data, $existingEntry, $request) {
+            $wasUpdate = $existingEntry !== null;
+            $previousChallengeId = $existingEntry?->challenge_id;
 
-        if ($existingEntry) {
-            $existingEntry->update($data);
-        } else {
-            $existingEntry = ReadingProgress::create($data);
-        }
+            if ($existingEntry) {
+                $existingEntry->update($data);
+            } else {
+                $existingEntry = ReadingProgress::create($data);
+            }
 
-        foreach (array_unique(array_filter([$previousChallengeId, $existingEntry->challenge_id])) as $challengeId) {
-            $challenge = ReadingChallenge::query()
-                ->where('user_id', $request->user()->id)
-                ->find($challengeId);
+            foreach (array_unique(array_filter([$previousChallengeId, $existingEntry->challenge_id])) as $challengeId) {
+                $challenge = ReadingChallenge::query()
+                    ->where('user_id', $request->user()->id)
+                    ->find($challengeId);
 
-            $challenge?->refreshCompletionFromProgress();
-        }
+                $challenge?->refreshCompletionFromProgress();
+            }
+
+            return [$wasUpdate, $existingEntry];
+        });
 
         if ($wasUpdate) {
             return redirect()->route('reading-shelf.show')
