@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: ['127.0.0.1', '::1', '10.0.0.0/8', '::ffff:10.0.0.0/8']);
 
         // Force HTTPS in production
-        if (app()->environment('production')) {
+        if (env('APP_ENV') === 'production') {
             \URL::forceScheme('https');
         }
 
