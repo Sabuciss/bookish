@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BooktokTopController;
 use App\Http\Controllers\BookReleaseReminderController;
@@ -12,9 +13,7 @@ use App\Http\Controllers\BookListingController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::view('/privacy-policy', 'legal.privacy')->name('privacy-policy');
 Route::view('/terms', 'legal.terms')->name('terms');

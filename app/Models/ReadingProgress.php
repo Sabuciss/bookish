@@ -98,6 +98,12 @@ class ReadingProgress extends Model
             ->first();
     }
 
+    /** Katras grāmatas jaunākais ieraksts (viens ieraksts uz grāmatu). */
+    public static function latestSnapshotEntriesForUser(int $userId): \Illuminate\Support\Collection
+    {
+        return static::latestSnapshotQueryForUser($userId)->get();
+    }
+
     /** @return array<string, int> */
     public static function latestPageCountsForUser(int $userId): array
     {

@@ -39,4 +39,8 @@ return [
         'api_key' => env('GOOGLE_BOOKS_API_KEY'),
     ],
 
+    'nyt_books' => [
+        'api_key' => env('NYT_BOOKS_API_KEY'),
+    ],
+
 ];

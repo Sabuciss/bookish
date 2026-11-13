@@ -1,0 +1,1089 @@
+/* =========================================================
+   Sākumlapa "Bookish jaunumi" — moderns, redakcionāls stils
+   Viss ir ietīts #bookish-home, lai pārspētu style.css !important
+   slāņus un neietekmētu citas lapas.
+   ========================================================= */
+
+#bookish-home {
+	--home-accent: #d599ae;
+	--home-accent-strong: #a25a74;
+	--home-radius: 28px;
+	--home-shadow: 0 18px 40px -24px rgba(122, 66, 85, 0.45);
+	--home-serif: 'Playfair Display', Georgia, serif;
+	--home-sans: 'DM Sans', system-ui, sans-serif;
+
+	display: grid;
+	gap: 28px;
+	margin: 12px auto 48px;
+	font-family: var(--home-sans);
+	color: var(--bookish-ink);
+}
+
+html.dark #bookish-home {
+	--home-accent: #e3a6bb;
+	--home-accent-strong: #f0bfd0;
+	--home-shadow: 0 20px 44px -24px rgba(0, 0, 0, 0.6);
+}
+
+#bookish-home .home-eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 10px;
+	color: var(--home-accent-strong) !important;
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+#bookish-home .home-eyebrow-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--home-accent-strong);
+	box-shadow: 0 0 0 4px rgba(213, 153, 174, 0.3);
+	animation: homePulse 2s ease-in-out infinite;
+}
+
+@keyframes homePulse {
+	50% { box-shadow: 0 0 0 8px rgba(213, 153, 174, 0); }
+}
+
+/* ---------------- HERO ---------------- */
+#bookish-home .home-hero {
+	position: relative;
+	display: grid;
+	grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.85fr);
+	align-items: center;
+	gap: 40px;
+	padding: clamp(28px, 5vw, 56px);
+	overflow: hidden;
+	border: 1px solid var(--bookish-line);
+	border-radius: 36px;
+	background:
+		radial-gradient(circle at 92% 8%, rgba(213, 153, 174, 0.35) 0, transparent 32%),
+		radial-gradient(circle at 0% 100%, rgba(185, 143, 136, 0.22) 0, transparent 38%),
+		var(--bookish-paper);
+	box-shadow: var(--home-shadow);
+}
+
+#bookish-home .home-hero::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image: radial-gradient(var(--bookish-line) 1px, transparent 1px);
+	background-size: 22px 22px;
+	mask-image: linear-gradient(120deg, transparent 40%, #000 100%);
+	-webkit-mask-image: linear-gradient(120deg, transparent 40%, #000 100%);
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+#bookish-home .home-hero > * {
+	position: relative;
+}
+
+#bookish-home .home-hero-title {
+	margin: 0 0 16px;
+	color: var(--bookish-ink) !important;
+	font-family: var(--home-serif);
+	font-size: clamp(2.4rem, 5.2vw, 4.2rem);
+	font-weight: 600;
+	line-height: 1.02;
+	letter-spacing: -0.02em;
+}
+
+#bookish-home .home-hero-title em {
+	font-style: italic;
+	background: linear-gradient(90deg, var(--home-accent-strong), var(--home-accent));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+#bookish-home .home-hero-text {
+	max-width: 46ch;
+	margin: 0 0 26px;
+	color: var(--bookish-muted) !important;
+	font-size: 1.05rem;
+	line-height: 1.6;
+}
+
+/* Meklēšana */
+#bookish-home .home-search {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	max-width: 520px;
+	padding: 6px 6px 6px 18px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 999px;
+	background: var(--bookish-cream);
+	box-shadow: 0 10px 24px -16px rgba(122, 66, 85, 0.5);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#bookish-home .home-search:focus-within {
+	border-color: var(--home-accent);
+	box-shadow: 0 0 0 4px rgba(213, 153, 174, 0.25);
+}
+
+#bookish-home .home-search-icon {
+	color: var(--bookish-muted);
+	font-size: 1.3rem;
+	line-height: 1;
+}
+
+#bookish-home .home-search-input {
+	flex: 1 1 auto;
+	min-width: 0;
+	height: 44px;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	color: var(--bookish-ink) !important;
+	font-size: 1rem;
+	outline: none;
+}
+
+#bookish-home .home-search-button,
+#bookish-home .home-continue-button,
+#bookish-home .home-hero-cta {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	margin: 0 !important;
+	padding: 0 22px;
+	border: 0 !important;
+	border-radius: 999px !important;
+	background: linear-gradient(135deg, var(--home-accent-strong), var(--home-accent)) !important;
+	color: #fff !important;
+	font-family: var(--home-sans);
+	font-weight: 800;
+	text-decoration: none;
+	cursor: pointer;
+	box-shadow: 0 10px 20px -10px rgba(162, 90, 116, 0.8) !important;
+	transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+html.dark #bookish-home .home-search-button,
+html.dark #bookish-home .home-continue-button,
+html.dark #bookish-home .home-hero-cta {
+	background: linear-gradient(135deg, #a25a74, #c97b97) !important;
+}
+
+#bookish-home .home-search-button:hover,
+#bookish-home .home-continue-button:hover,
+#bookish-home .home-hero-cta:hover {
+	transform: translateY(-2px);
+	filter: brightness(1.05);
+}
+
+#bookish-home .home-hero-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+#bookish-home .home-chip {
+	margin: 0 !important;
+	padding: 7px 14px;
+	border: 1px dashed var(--bookish-line);
+	border-radius: 999px;
+	background: transparent;
+	color: var(--bookish-muted);
+	font-size: 0.82rem;
+	font-weight: 700;
+	cursor: pointer;
+	min-height: 0;
+	transition: all 0.2s ease;
+}
+
+#bookish-home .home-chip:hover {
+	border-style: solid;
+	border-color: var(--home-accent);
+	background: var(--bookish-soft);
+	color: var(--bookish-ink);
+}
+
+/* Hero labā puse: turpini lasīt */
+#bookish-home .home-hero-visual {
+	display: grid;
+	justify-items: center;
+	gap: 18px;
+}
+
+#bookish-home .home-continue {
+	width: min(100%, 320px);
+	padding: 22px;
+	border: 1px solid var(--bookish-line);
+	border-radius: var(--home-radius);
+	background: var(--bookish-cream);
+	box-shadow: var(--home-shadow);
+	text-align: center;
+	transform: rotate(1.5deg);
+	transition: transform 0.3s ease;
+}
+
+#bookish-home .home-continue:hover {
+	transform: rotate(0deg) translateY(-4px);
+}
+
+#bookish-home .home-continue-label {
+	margin: 0 0 14px;
+	color: var(--bookish-muted) !important;
+	font-size: 0.72rem;
+	font-weight: 800;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+#bookish-home .home-continue-cover {
+	display: grid;
+	place-items: center;
+	width: 130px;
+	aspect-ratio: 2 / 3;
+	margin: 0 auto 16px;
+	overflow: hidden;
+	border-radius: 10px;
+	background: var(--bookish-soft);
+	box-shadow: 0 18px 30px -12px rgba(0, 0, 0, 0.45);
+	font-size: 2.4rem;
+}
+
+#bookish-home .home-continue-cover img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+#bookish-home .home-continue-title {
+	margin: 0 0 12px;
+	color: var(--bookish-ink) !important;
+	font-family: var(--home-serif);
+	font-size: 1.3rem;
+	line-height: 1.2;
+}
+
+#bookish-home .home-continue-progress {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+#bookish-home .home-continue-track {
+	flex: 1;
+	height: 8px;
+	border-radius: 999px;
+	background: var(--bookish-soft);
+	overflow: hidden;
+}
+
+#bookish-home .home-continue-track span {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background: linear-gradient(90deg, var(--home-accent), var(--home-accent-strong));
+}
+
+#bookish-home .home-continue-progress b {
+	color: var(--home-accent-strong);
+	font-size: 0.9rem;
+}
+
+#bookish-home .home-continue-meta {
+	margin: 8px 0 16px;
+	color: var(--bookish-muted) !important;
+	font-size: 0.8rem;
+}
+
+#bookish-home .home-continue-button {
+	width: 100%;
+}
+
+#bookish-home .home-continue-more {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 16px;
+	padding-top: 14px;
+	border-top: 1px dashed var(--bookish-line);
+}
+
+#bookish-home .home-continue-more a {
+	display: grid;
+	place-items: center;
+	width: 42px;
+	height: 60px;
+	overflow: hidden;
+	border-radius: 6px;
+	background: var(--bookish-soft);
+	box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+	transition: transform 0.2s ease;
+}
+
+#bookish-home .home-continue-more a:hover {
+	transform: translateY(-3px);
+}
+
+#bookish-home .home-continue-more img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Hero labā puse: dekoratīvas grāmatas (viesiem) */
+#bookish-home .home-stack {
+	position: relative;
+	width: min(100%, 300px);
+	height: 300px;
+}
+
+#bookish-home .home-stack-sun {
+	position: absolute;
+	top: 10px;
+	right: 20px;
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	background: radial-gradient(circle at 35% 35%, var(--home-accent), var(--home-accent-strong));
+	opacity: 0.85;
+	filter: blur(0.3px);
+}
+
+#bookish-home .home-stack-book {
+	position: absolute;
+	bottom: 10px;
+	display: flex;
+	align-items: flex-end;
+	width: 140px;
+	height: 210px;
+	padding: 16px;
+	border-radius: 6px 14px 14px 6px;
+	box-shadow: 0 22px 36px -14px rgba(0, 0, 0, 0.45), inset 6px 0 0 rgba(0, 0, 0, 0.12);
+	color: #fff;
+	font-family: var(--home-serif);
+	font-size: 1.05rem;
+	font-weight: 600;
+	line-height: 1.15;
+	transition: transform 0.35s ease;
+}
+
+#bookish-home .home-stack-book--1 {
+	left: 0;
+	background: linear-gradient(160deg, #c98fa3, #7a3d55);
+	transform: rotate(-10deg);
+}
+
+#bookish-home .home-stack-book--2 {
+	left: 70px;
+	z-index: 2;
+	background:
+		radial-gradient(circle at 70% 25%, #f6d6c9 0 18px, transparent 19px),
+		linear-gradient(180deg, #e8c8bd 0 45%, #a87a72 45% 60%, #6c4a48 60%);
+	color: #3d2630;
+	transform: rotate(2deg);
+}
+
+#bookish-home .home-stack-book--3 {
+	left: 150px;
+	background: linear-gradient(160deg, #8a5362, #3d2630);
+	transform: rotate(12deg);
+}
+
+#bookish-home .home-stack:hover .home-stack-book--1 { transform: rotate(-16deg) translateX(-10px); }
+#bookish-home .home-stack:hover .home-stack-book--3 { transform: rotate(18deg) translateX(10px); }
+
+/* ---------------- PANEĻI ---------------- */
+#bookish-home .home-panel {
+	padding: clamp(20px, 3.5vw, 34px);
+	border: 1px solid var(--bookish-line);
+	border-radius: 32px;
+	background: var(--bookish-paper);
+	box-shadow: var(--home-shadow);
+}
+
+#bookish-home .home-section-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 14px;
+	margin-bottom: 20px;
+}
+
+#bookish-home .home-section-title {
+	margin: 0;
+	color: var(--bookish-ink) !important;
+	font-family: var(--home-serif);
+	font-size: clamp(1.6rem, 3vw, 2.2rem);
+	font-weight: 600;
+	line-height: 1.1;
+}
+
+#bookish-home .home-note {
+	padding: 6px 12px;
+	border-radius: 999px;
+	background: var(--bookish-soft);
+	color: var(--bookish-muted);
+	font-size: 0.75rem;
+	font-weight: 700;
+}
+
+#bookish-home .home-empty {
+	display: grid;
+	justify-items: center;
+	gap: 8px;
+	padding: 34px 16px;
+	border: 2px dashed var(--bookish-line);
+	border-radius: 22px;
+	text-align: center;
+}
+
+#bookish-home .home-empty span {
+	font-size: 2rem;
+}
+
+#bookish-home .welcome-card-text {
+	margin: 0;
+	color: var(--bookish-muted) !important;
+}
+
+/* ---------------- GAIDĀMIE (JS rezultāti) ---------------- */
+#bookish-home .home-upcoming {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 14px;
+}
+
+#bookish-home .home-upcoming > .welcome-card-text,
+#bookish-home .home-upcoming > .home-empty {
+	grid-column: 1 / -1;
+}
+
+#bookish-home .weekly-top-item {
+	display: grid !important;
+	grid-template-columns: 76px minmax(0, 1fr);
+	gap: 14px;
+	align-items: start;
+	margin: 0 !important;
+	padding: 14px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 20px !important;
+	background: var(--bookish-cream) !important;
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+#bookish-home .weekly-top-item:hover {
+	transform: translateY(-4px);
+	box-shadow: var(--home-shadow);
+}
+
+#bookish-home .weekly-top-cover {
+	width: 76px !important;
+	height: 112px !important;
+	border-radius: 10px !important;
+	object-fit: cover;
+	box-shadow: 0 10px 18px -8px rgba(0, 0, 0, 0.45);
+}
+
+#bookish-home .weekly-top-cover--empty {
+	display: grid;
+	place-items: center;
+	background: var(--bookish-soft);
+	color: var(--bookish-muted);
+	font-size: 0.7rem;
+}
+
+#bookish-home .weekly-top-title-link {
+	color: var(--bookish-ink) !important;
+	font-family: var(--home-serif);
+	font-size: 1.02rem;
+	text-decoration: none;
+}
+
+#bookish-home .weekly-top-title-link:hover {
+	color: var(--home-accent-strong) !important;
+}
+
+#bookish-home .weekly-top-meta {
+	margin-top: 6px !important;
+	font-size: 0.8rem;
+}
+
+/* Atgādinājuma poga (meklēšanā un žanros) */
+#bookish-home .book-reminder-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 0;
+	margin: 10px 0 0 !important;
+	padding: 6px 12px !important;
+	border: 1px solid var(--home-accent) !important;
+	border-radius: 999px !important;
+	background: transparent !important;
+	color: var(--home-accent-strong) !important;
+	font-size: 0.78rem;
+	font-weight: 800;
+}
+
+#bookish-home .book-reminder-button::before {
+	content: "🔔";
+	font-size: 0.8rem;
+}
+
+#bookish-home .book-reminder-button:hover,
+#bookish-home .book-reminder-button--saved {
+	background: var(--home-accent) !important;
+	color: #fff !important;
+}
+
+/* ---------------- ŽANRI ---------------- */
+#bookish-home .home-year-filter {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px 6px 14px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 999px;
+	background: var(--bookish-cream);
+	color: var(--bookish-muted);
+	font-size: 0.82rem;
+	font-weight: 700;
+}
+
+#bookish-home .home-select {
+	margin: 0 !important;
+	padding: 6px 28px 6px 12px !important;
+	border: 0 !important;
+	border-radius: 999px !important;
+	background-color: var(--bookish-soft) !important;
+	color: var(--bookish-ink) !important;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+#bookish-home .home-genre-tabs {
+	display: flex;
+	gap: 8px;
+	margin: 0 -4px 24px;
+	padding: 4px;
+	overflow-x: auto;
+	scrollbar-width: none;
+}
+
+#bookish-home .home-genre-tabs::-webkit-scrollbar {
+	display: none;
+}
+
+#bookish-home .book-genre-filter-button {
+	flex: 0 0 auto;
+	min-height: 40px;
+	margin: 0 !important;
+	padding: 8px 18px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 999px !important;
+	background: var(--bookish-cream) !important;
+	color: var(--bookish-muted) !important;
+	font-weight: 700;
+	white-space: nowrap;
+	transition: all 0.2s ease;
+}
+
+#bookish-home .book-genre-filter-button:hover {
+	border-color: var(--home-accent) !important;
+	background: var(--bookish-soft) !important;
+	color: var(--bookish-ink) !important;
+}
+
+#bookish-home .book-genre-filter-button.is-active {
+	border-color: transparent !important;
+	background: linear-gradient(135deg, var(--home-accent-strong), var(--home-accent)) !important;
+	color: #fff !important;
+	box-shadow: 0 8px 18px -10px rgba(162, 90, 116, 0.9) !important;
+}
+
+#bookish-home .book-genre-sections {
+	display: grid;
+	gap: 30px;
+}
+
+#bookish-home .home-genre {
+	padding: 0 !important;
+	border: 0 !important;
+}
+
+#bookish-home .home-genre[hidden] {
+	display: none;
+}
+
+#bookish-home .home-genre-head {
+	display: block;
+	margin-bottom: 14px;
+	padding-left: 14px;
+	border-left: 4px solid var(--home-accent);
+	text-align: left;
+}
+
+#bookish-home .home-genre-head > div {
+	text-align: left;
+}
+
+#bookish-home .home-genre-head h3 {
+	margin: 0;
+	color: var(--bookish-ink) !important;
+	font-family: var(--home-serif);
+	font-size: 1.35rem;
+	font-weight: 600;
+}
+
+#bookish-home .home-genre-head h3 span {
+	color: var(--bookish-muted) !important;
+	font-family: var(--home-sans);
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+#bookish-home .home-genre-head p {
+	margin: 2px 0 0;
+	color: var(--bookish-muted) !important;
+	font-size: 0.88rem;
+}
+
+/* Žanru grāmatas: kartītes ar izpludinātu vāka fonu */
+#bookish-home .home-books {
+	display: grid !important;
+	grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+	gap: 16px;
+}
+
+#bookish-home .home-books > .welcome-card-text {
+	grid-column: 1 / -1;
+}
+
+/* --- Kopīgais visām kartītēm --- */
+#bookish-home .home-books .book-recommendation-card {
+	position: relative;
+	display: grid !important;
+	grid-column: span 2;
+	grid-template-columns: 64px minmax(0, 1fr);
+	align-items: center;
+	gap: 14px;
+	min-width: 0;
+	margin: 0 !important;
+	padding: 10px !important;
+	overflow: hidden;
+	border: 1px solid transparent !important;
+	border-radius: 18px !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	transition: background 0.2s ease, border-color 0.2s ease, transform 0.25s ease;
+}
+
+#bookish-home .home-books .book-recommendation-card > a:first-child,
+#bookish-home .home-books .book-recommendation-card > img,
+#bookish-home .home-books .book-recommendation-card > .book-recommendation-cover {
+	position: relative;
+	z-index: 1;
+	display: block;
+	width: 64px;
+	height: 96px;
+	overflow: hidden;
+	border-radius: 8px;
+	box-shadow: 0 10px 18px -8px rgba(0, 0, 0, 0.5);
+}
+
+#bookish-home .home-books .book-recommendation-card img,
+#bookish-home .home-books .book-recommendation-cover {
+	width: 100% !important;
+	height: 100% !important;
+	border-radius: 0 !important;
+	object-fit: cover;
+}
+
+#bookish-home .home-books .book-recommendation-cover--empty {
+	display: grid;
+	place-items: center;
+	background: linear-gradient(160deg, var(--bookish-soft), var(--bookish-cream)) !important;
+	color: var(--bookish-muted);
+	font-size: 0.65rem;
+	text-align: center;
+}
+
+#bookish-home .home-books .book-recommendation-card > div {
+	position: relative;
+	z-index: 1;
+	min-width: 0;
+	text-align: left;
+}
+
+#bookish-home .home-books .book-recommendation-card h3 {
+	display: -webkit-box;
+	margin: 0;
+	overflow: hidden;
+	font-size: 0.95rem;
+	font-weight: 700;
+	line-height: 1.25;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+#bookish-home .home-books .book-recommendation-card h3 a {
+	color: var(--bookish-ink) !important;
+	text-decoration: none;
+}
+
+#bookish-home .home-books .book-recommendation-card h3 a:hover {
+	color: var(--home-accent-strong) !important;
+}
+
+#bookish-home .home-books .book-recommendation-card p,
+#bookish-home .home-books .book-recommendation-card span {
+	display: block;
+	margin: 4px 0 0;
+	overflow: hidden;
+	color: var(--bookish-muted) !important;
+	font-size: 0.78rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* --- Visas kartītes: izpludināts vāka fons --- */
+#bookish-home .home-books .book-recommendation-card {
+	grid-template-columns: 96px minmax(0, 1fr);
+	gap: 16px;
+	min-height: 170px;
+	padding: 18px !important;
+	border: 0 !important;
+	border-radius: 22px !important;
+	background: linear-gradient(135deg, var(--home-accent-strong), var(--bookish-rose)) !important;
+	box-shadow: 0 18px 32px -18px rgba(122, 66, 85, 0.7) !important;
+}
+
+#bookish-home .home-books .book-recommendation-card::before {
+	content: "";
+	position: absolute;
+	inset: -30px;
+	background-image: var(--cover, none);
+	background-position: center;
+	background-size: cover;
+	filter: blur(22px) saturate(1.3);
+	transform: scale(1.1);
+}
+
+#bookish-home .home-books .book-recommendation-card::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(90deg, rgba(40, 18, 28, 0.15), rgba(40, 18, 28, 0.55));
+}
+
+#bookish-home .home-books .book-recommendation-card:hover {
+	transform: translateY(-4px);
+}
+
+#bookish-home .home-books .book-recommendation-card > a:first-child,
+#bookish-home .home-books .book-recommendation-card > img,
+#bookish-home .home-books .book-recommendation-card > .book-recommendation-cover {
+	width: 96px;
+	height: 140px;
+	border-radius: 10px;
+	box-shadow: 0 16px 26px -10px rgba(0, 0, 0, 0.6);
+}
+
+#bookish-home .home-books .book-recommendation-card h3 {
+	font-family: var(--home-serif);
+	font-size: 1.12rem;
+	-webkit-line-clamp: 3;
+}
+
+#bookish-home .home-books .book-recommendation-card h3 a,
+#bookish-home .home-books .book-recommendation-card h3 a:hover {
+	color: #fff !important;
+	text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+#bookish-home .home-books .book-recommendation-card p {
+	color: rgba(255, 255, 255, 0.85) !important;
+}
+
+#bookish-home .home-books .book-recommendation-card span {
+	display: inline-block;
+	margin-top: 10px;
+	padding: 3px 10px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.22);
+	color: #fff !important;
+	font-size: 0.72rem;
+	font-weight: 700;
+	backdrop-filter: blur(4px);
+}
+
+/* ---------------- POPULĀRI ŠONEDĒĻ (NYT) ---------------- */
+#bookish-home .home-trending-tabs {
+	display: flex;
+	gap: 6px;
+	padding: 5px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 999px;
+	background: var(--bookish-cream);
+	overflow-x: auto;
+	scrollbar-width: none;
+}
+
+#bookish-home .home-trending-tab {
+	flex: 0 0 auto;
+	min-height: 0;
+	margin: 0 !important;
+	padding: 8px 16px;
+	border: 0;
+	border-radius: 999px;
+	background: transparent;
+	color: var(--bookish-muted);
+	font-family: var(--home-sans);
+	font-size: 0.85rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+#bookish-home .home-trending-tab:hover {
+	color: var(--bookish-ink);
+}
+
+#bookish-home .home-trending-tab.is-active {
+	background: linear-gradient(135deg, var(--home-accent-strong), var(--home-accent));
+	color: #fff;
+	box-shadow: 0 8px 16px -10px rgba(162, 90, 116, 0.9);
+}
+
+#bookish-home .home-trending-list {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-auto-flow: row;
+	gap: 6px 28px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	animation: homeFadeIn 0.35s ease;
+}
+
+#bookish-home .home-trending-list[hidden] {
+	display: none;
+}
+
+@keyframes homeFadeIn {
+	from { opacity: 0; transform: translateY(6px); }
+}
+
+#bookish-home .home-trending-item {
+	display: grid;
+	grid-template-columns: 44px 58px minmax(0, 1fr);
+	align-items: center;
+	gap: 14px;
+	padding: 12px;
+	border-radius: 20px;
+	transition: background 0.2s ease;
+}
+
+#bookish-home .home-trending-item:hover {
+	background: var(--bookish-cream);
+}
+
+#bookish-home .home-trending-rank {
+	color: var(--bookish-line);
+	font-family: var(--home-serif);
+	font-size: 2rem;
+	font-weight: 700;
+	line-height: 1;
+	text-align: center;
+	font-variant-numeric: lining-nums;
+}
+
+#bookish-home .home-trending-item.is-top .home-trending-rank {
+	font-size: 2.6rem;
+	background: linear-gradient(180deg, var(--home-accent), var(--home-accent-strong));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+#bookish-home .home-trending-cover {
+	display: grid;
+	place-items: center;
+	width: 58px;
+	height: 86px;
+	overflow: hidden;
+	border-radius: 8px;
+	background: var(--bookish-soft);
+	box-shadow: 0 10px 18px -8px rgba(0, 0, 0, 0.5);
+	transition: transform 0.25s ease;
+}
+
+#bookish-home .home-trending-item:hover .home-trending-cover {
+	transform: rotate(-3deg) scale(1.05);
+}
+
+#bookish-home .home-trending-cover img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+#bookish-home .home-trending-body {
+	min-width: 0;
+}
+
+#bookish-home .home-trending-body h3 {
+	margin: 0;
+	overflow: hidden;
+	color: var(--bookish-ink) !important;
+	font-family: var(--home-serif);
+	font-size: 1.02rem;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#bookish-home .home-trending-author {
+	margin: 2px 0 6px;
+	overflow: hidden;
+	color: var(--bookish-muted) !important;
+	font-size: 0.82rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#bookish-home .home-trending-meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	color: var(--bookish-muted);
+	font-size: 0.74rem;
+	font-weight: 600;
+}
+
+#bookish-home .home-trend {
+	color: var(--bookish-muted);
+	font-size: 0.7rem;
+}
+
+#bookish-home .home-trend--up { color: #3f9d6b; }
+#bookish-home .home-trend--down { color: #c0566f; }
+
+#bookish-home .home-trend--new {
+	padding: 2px 8px;
+	border-radius: 999px;
+	background: linear-gradient(135deg, var(--home-accent-strong), var(--home-accent));
+	color: #fff;
+	font-size: 0.68rem;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+#bookish-home .home-trending-form {
+	margin: 8px 0 0;
+}
+
+#bookish-home .home-trending-add {
+	min-height: 0;
+	margin: 0 !important;
+	padding: 5px 12px;
+	border: 1px solid var(--home-accent);
+	border-radius: 999px;
+	background: transparent;
+	color: var(--home-accent-strong);
+	font-family: var(--home-sans);
+	font-size: 0.75rem;
+	font-weight: 800;
+	cursor: pointer;
+	opacity: 0.85;
+	transition: all 0.2s ease;
+}
+
+#bookish-home .home-trending-add:hover {
+	background: var(--home-accent);
+	color: #fff;
+	opacity: 1;
+}
+
+#bookish-home .home-trending-source {
+	margin: 16px 0 0;
+	color: var(--bookish-muted) !important;
+	font-size: 0.75rem;
+	text-align: right;
+}
+
+@media (max-width: 760px) {
+	#bookish-home .home-trending-list {
+		grid-template-columns: 1fr;
+	}
+
+	#bookish-home .home-trending-tabs {
+		width: 100%;
+	}
+}
+
+/* ---------------- Responsīvi ---------------- */
+
+@media (max-width: 900px) {
+	#bookish-home .home-hero {
+		grid-template-columns: 1fr;
+		gap: 28px;
+	}
+
+	#bookish-home .home-continue {
+		transform: none;
+	}
+
+	#bookish-home .home-books .book-recommendation-card,
+	#bookish-home .home-books .book-recommendation-card {
+		grid-column: span 3;
+	}
+}
+
+@media (max-width: 560px) {
+	#bookish-home {
+		gap: 18px;
+	}
+
+	#bookish-home .home-hero,
+	#bookish-home .home-panel {
+		border-radius: 24px;
+	}
+
+	#bookish-home .home-search-button {
+		padding: 0 16px;
+	}
+
+	#bookish-home .home-stack {
+		transform: scale(0.85);
+		height: 260px;
+	}
+
+	#bookish-home .home-books .book-recommendation-card,
+	#bookish-home .home-books .book-recommendation-card {
+		grid-column: 1 / -1;
+	}
+
+	#bookish-home .home-year-filter {
+		width: 100%;
+		justify-content: center;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#bookish-home *,
+	#bookish-home *::before {
+		animation: none !important;
+		transition: none !important;
+	}
+}

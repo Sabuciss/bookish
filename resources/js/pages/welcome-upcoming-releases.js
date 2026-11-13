@@ -6,7 +6,7 @@ const recommendationYearTo = document.getElementById('recommendation-year-to');
 const genreSections = document.querySelectorAll('[data-genre]');
 const genreFilterButtons = document.querySelectorAll('[data-genre-filter]');
 const GENRE_ROTATION_INTERVAL_MS = 5 * 60 * 1000;
-const BOOK_RESULTS_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+const BOOK_RESULTS_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const genreBookCollections = new Map();
 
 const parsePublishedDate = (rawDate) => {
@@ -80,12 +80,15 @@ const renderBookCards = (container, items, emptyText, allowReminders = false) =>
             ? `<button type="button" class="book-reminder-button" data-volume-id="${escapeBookHtml(book.volumeId)}" data-title="${escapeBookHtml(book.title)}" data-author="${escapeBookHtml(book.author)}" data-release-date="${book.parsedDate.toISOString().slice(0, 10)}" data-info-link="${escapeBookHtml(book.infoLink)}" data-cover-url="${escapeBookHtml(book.thumbnail)}">Atgādināt</button>`
             : '';
 
-        return `<article class="book-recommendation-card">${link ? `<a href="${escapeBookHtml(link)}">${cover}</a>` : cover}<div><h3>${link ? `<a href="${escapeBookHtml(link)}">${escapeBookHtml(book.title)}</a>` : escapeBookHtml(book.title)}</h3><p>${escapeBookHtml(book.author)}</p>${book.publishedDate ? `<span>${escapeBookHtml(book.publishedDate)}</span>` : ''}${reminderButton}</div></article>`;
+        const coverStyle = book.thumbnail ? ` style="--cover: url(&quot;${escapeBookHtml(book.thumbnail)}&quot;)"` : '';
+
+        return `<article class="book-recommendation-card"${coverStyle}>${link ? `<a href="${escapeBookHtml(link)}">${cover}</a>` : cover}<div><h3>${link ? `<a href="${escapeBookHtml(link)}">${escapeBookHtml(book.title)}</a>` : escapeBookHtml(book.title)}</h3><p>${escapeBookHtml(book.author)}</p>${book.publishedDate ? `<span>${escapeBookHtml(book.publishedDate)}</span>` : ''}${reminderButton}</div></article>`;
     }).join('');
 };
 
-const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12) => {
-    const cacheKey = `book-results-cache-v4-${query}-${orderBy}-${maxResults}`;
+const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12, extraParams = {}) => {
+    const extraKey = Object.entries(extraParams).map(([key, value]) => `${key}=${value}`).join('&');
+    const cacheKey = `book-results-cache-v5-${query}-${orderBy}-${maxResults}-${extraKey}`;
     const cached = localStorage.getItem(cacheKey);
 
     if (cached) {
@@ -104,6 +107,7 @@ const fetchBookResults = async (query, orderBy = 'relevance', maxResults = 12) =
         maxResults: String(maxResults),
         orderBy,
         remote: '1',
+        ...Object.fromEntries(Object.entries(extraParams).map(([key, value]) => [key, String(value)])),
     });
 
     const url = `/api/google-books/top?${params}`;
@@ -171,16 +175,38 @@ const initializeYearFilter = () => {
     recommendationYearTo.addEventListener('change', handleYearChange);
 };
 
-const loadGenreSections = async () => {
+// Mainot gadus: jau ielādētos žanrus ielādē no jauna jaunajam diapazonam.
+const loadGenreSections = () => {
     genreSections.forEach((section) => {
-        const genreBooks = section.querySelector('.book-genre-books');
-        const books = genreBookCollections.get(genreBooks);
-
-        if (books) {
-            renderBookCards(genreBooks, selectBooksForYearRange(books), 'Šajā gadu diapazonā žanra grāmatas netika atrastas.');
+        if (section.dataset.loaded !== 'true') {
+            return;
         }
+
+        const genreBooks = section.querySelector('.book-genre-books');
+        genreBookCollections.delete(genreBooks);
+        section.dataset.loaded = 'false';
+        if (genreBooks) {
+            genreBooks.innerHTML = '<p class="welcome-card-text">Ielādējam grāmatas izvēlētajiem gadiem...</p>';
+        }
+        enqueueGenreLoad(section);
     });
 };
+
+const currentYearRange = () => {
+    const currentYear = new Date().getFullYear();
+    const from = Number(recommendationYearFrom?.value) || currentYear - 5;
+    const to = Number(recommendationYearTo?.value) || currentYear;
+
+    return { firstPublishedFrom: Math.min(from, to), firstPublishedTo: Math.max(from, to) };
+};
+
+/**
+ * Žanra grāmatas jau izvēlētajā gadu diapazonā.
+ * Serveris pats filtrē Google Books pēc gadiem un papildina ar Open Library.
+ * Agrāk filtrēja tikai pārlūkā no 20 "populārākajām" grāmatām, kas lielākoties
+ * bija vecas, tāpēc daudzi žanri palika tukši.
+ */
+const fetchGenrePool = (query) => fetchBookResults(query, 'relevance', 18, currentYearRange());
 
 const genreLoadQueue = [];
 let isLoadingGenre = false;
@@ -204,7 +230,7 @@ const enqueueGenreLoad = (section) => {
             const genreBooks = queuedSection.querySelector('.book-genre-books');
 
             try {
-                const books = await fetchBookResults(queuedSection.dataset.query, 'relevance', 20);
+                const books = await fetchGenrePool(queuedSection.dataset.query);
                 genreBookCollections.set(genreBooks, books);
                 renderBookCards(genreBooks, selectBooksForYearRange(books), 'Šajā gadu diapazonā žanra grāmatas netika atrastas.');
             } catch {
@@ -462,3 +488,35 @@ if (upcomingBookSearchInput && upcomingBookSearch && upcomingBookSearchResults) 
         handleLoad();
     });
 }
+
+// Ātrie meklējumi sākumlapas hero sadaļā.
+document.querySelectorAll('[data-search-suggestion]').forEach((chip) => {
+    chip.addEventListener('click', () => {
+        if (!upcomingBookSearchInput || !upcomingBookSearch) return;
+        upcomingBookSearchInput.value = chip.dataset.searchSuggestion || '';
+        upcomingBookSearch.click();
+        upcomingBookSearchResults?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+});
+
+// "Populāri šonedēļ" cilnes (NYT saraksti).
+document.querySelectorAll('[data-trending]').forEach((section) => {
+    const tabs = section.querySelectorAll('[data-trending-tab]');
+    const panels = section.querySelectorAll('[data-trending-panel]');
+
+    tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+            const key = tab.dataset.trendingTab;
+
+            tabs.forEach((other) => {
+                const isActive = other === tab;
+                other.classList.toggle('is-active', isActive);
+                other.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+
+            panels.forEach((panel) => {
+                panel.hidden = panel.dataset.trendingPanel !== key;
+            });
+        });
+    });
+});

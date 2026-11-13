@@ -38,6 +38,7 @@ The checked-in `.env.example` uses SQLite, file sessions, database cache and que
 - `DB_CONNECTION` defaults to `sqlite`. For MySQL, configure `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`.
 - `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`, and `MAIL_FROM_NAME` configure outbound mail. For Railway, set `MAIL_MAILER=resend-api`, `RESEND_API_KEY`, and a verified `MAIL_FROM_ADDRESS`; keep API keys private.
 - `GOOGLE_BOOKS_API_KEY` is optional. It can improve Google Books API quota availability for book metadata and search; keep the value private.
+- `NYT_BOOKS_API_KEY` is optional. It enables the "Populāri šonedēļ" section on the home page (New York Times Best Sellers). Get a free key at https://developer.nytimes.com (enable the Books API). The list is fetched once a day and cached; without a key the section is hidden.
 - `SESSION_DRIVER`, `CACHE_STORE`, and `QUEUE_CONNECTION` control session, cache, and queue backends. The default database cache and queue require the included migrations.
 
 After changing environment values on a cached deployment, run `php artisan config:clear` before rebuilding the config cache.

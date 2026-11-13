@@ -1,0 +1,664 @@
+/* =========================================================
+   Profila statistikas panelis (bento stils)
+   Krāsas: projekta --bookish-* mainīgie (gaišais + tumšais režīms)
+   ========================================================= */
+
+.pd {
+	--pd-accent: #d599ae;
+	--pd-accent-strong: #a25a74;
+	--pd-radius: 24px;
+	--pd-gap: 16px;
+	--pd-shadow: 0 14px 34px -18px rgba(122, 66, 85, 0.35);
+
+	display: grid;
+	grid-template-columns: repeat(12, minmax(0, 1fr));
+	gap: var(--pd-gap);
+	margin-bottom: 24px;
+}
+
+html.dark .pd {
+	--pd-accent: #e3a6bb;
+	--pd-accent-strong: #f0bfd0;
+	--pd-shadow: 0 16px 36px -18px rgba(0, 0, 0, 0.55);
+}
+
+.pd-card {
+	position: relative;
+	min-width: 0;
+	padding: 20px;
+	border: 1px solid var(--bookish-line);
+	border-radius: var(--pd-radius);
+	background: var(--bookish-paper);
+	box-shadow: var(--pd-shadow);
+	color: var(--bookish-ink);
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.pd-card:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 22px 40px -20px rgba(122, 66, 85, 0.45);
+}
+
+.pd-eyebrow {
+	margin: 0 0 4px;
+	color: var(--bookish-muted);
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.pd-card-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.pd-card-head h3 {
+	margin: 0;
+	color: var(--bookish-ink);
+	font-size: 1.1rem;
+	font-weight: 800;
+}
+
+.pd-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border-radius: 999px;
+	background: var(--bookish-soft);
+	color: var(--bookish-ink);
+	font-size: 0.8rem;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.pd-pill--accent {
+	background: rgba(255, 255, 255, 0.22);
+	color: #fff;
+	backdrop-filter: blur(6px);
+}
+
+.pd-empty {
+	margin: 0;
+	color: var(--bookish-muted);
+	font-size: 0.9rem;
+}
+
+.pd-empty a,
+.pd-head-link {
+	color: var(--pd-accent-strong);
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.pd-head-link {
+	padding: 6px 12px;
+	border-radius: 999px;
+	background: var(--bookish-soft);
+	font-size: 0.8rem;
+}
+
+/* ---------- Hero ---------- */
+.pd-hero {
+	grid-column: 1 / -1;
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	padding: 26px 28px;
+	overflow: hidden;
+	border: 0;
+	background:
+		radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.28) 0, transparent 38%),
+		radial-gradient(circle at 10% 110%, rgba(255, 255, 255, 0.18) 0, transparent 40%),
+		linear-gradient(135deg, var(--pd-accent) 0%, var(--bookish-rose) 45%, var(--bookish-plum) 100%);
+	color: #fff;
+}
+
+.pd-hero::after {
+	content: "";
+	position: absolute;
+	right: -40px;
+	bottom: -60px;
+	width: 220px;
+	height: 220px;
+	border-radius: 50%;
+	border: 26px solid rgba(255, 255, 255, 0.12);
+	pointer-events: none;
+}
+
+.pd-hero-avatar {
+	flex: 0 0 auto;
+	display: grid;
+	place-items: center;
+	width: 76px;
+	height: 76px;
+	border-radius: 50%;
+	border: 3px solid rgba(255, 255, 255, 0.7);
+	background: rgba(255, 255, 255, 0.2);
+	font-size: 2rem;
+	font-weight: 800;
+	box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+}
+
+.pd-hero-body {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.pd-hero .pd-eyebrow {
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.pd-hero-name {
+	margin: 0 0 10px;
+	color: #fff !important;
+	font-size: clamp(1.6rem, 3vw, 2.2rem);
+	font-weight: 800;
+	line-height: 1.1;
+	overflow-wrap: anywhere;
+}
+
+.pd-hero-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.pd-hero-tags .pd-pill:not(.pd-pill--accent) {
+	background: rgba(255, 255, 255, 0.9);
+	color: var(--pd-accent-strong);
+}
+
+html.dark .pd-hero-tags .pd-pill:not(.pd-pill--accent) {
+	color: #7a3550;
+}
+
+.pd-hero-link {
+	position: relative;
+	z-index: 1;
+	flex: 0 0 auto;
+	padding: 10px 18px;
+	border-radius: 999px;
+	background: #fff;
+	color: #7a3550 !important;
+	font-weight: 800;
+	text-decoration: none;
+	box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+	transition: transform 0.2s ease;
+}
+
+.pd-hero-link:hover {
+	transform: translateX(3px);
+}
+
+/* ---------- KPI ---------- */
+.pd-kpis {
+	grid-column: 1 / -1;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: var(--pd-gap);
+}
+
+.pd-kpi {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.pd-kpi-icon {
+	display: grid;
+	place-items: center;
+	width: 42px;
+	height: 42px;
+	margin-bottom: 8px;
+	border-radius: 14px;
+	background: linear-gradient(135deg, var(--bookish-soft), var(--bookish-cream));
+	font-size: 1.25rem;
+}
+
+.pd-kpi strong {
+	color: var(--bookish-ink);
+	font-size: 2rem;
+	font-weight: 800;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.pd-kpi strong small {
+	margin-left: 2px;
+	color: var(--bookish-muted);
+	font-size: 0.95rem;
+	font-weight: 700;
+}
+
+.pd-kpi > span:last-child {
+	color: var(--bookish-muted);
+	font-size: 0.88rem;
+	font-weight: 600;
+}
+
+/* ---------- Nedēļas diagramma ---------- */
+.pd-week {
+	grid-column: span 7;
+}
+
+.pd-bars {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	gap: 10px;
+	height: 190px;
+	align-items: end;
+}
+
+.pd-bar {
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	height: 100%;
+	text-align: center;
+	gap: 6px;
+}
+
+.pd-bar-value {
+	min-height: 1em;
+	color: var(--bookish-muted);
+	font-size: 0.72rem;
+	font-weight: 700;
+}
+
+.pd-bar-track {
+	position: relative;
+	display: block;
+	border-radius: 12px;
+	background: repeating-linear-gradient(
+		-45deg,
+		var(--bookish-cream),
+		var(--bookish-cream) 6px,
+		var(--bookish-soft) 6px,
+		var(--bookish-soft) 7px
+	);
+	overflow: hidden;
+}
+
+.pd-bar-fill {
+	position: absolute;
+	inset: auto 0 0;
+	height: var(--h, 0%);
+	border-radius: 12px;
+	background: linear-gradient(180deg, var(--pd-accent), var(--bookish-rose));
+	animation: pdGrow 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.pd-bar.is-today .pd-bar-fill {
+	background: linear-gradient(180deg, var(--pd-accent-strong), var(--pd-accent));
+	box-shadow: 0 0 18px rgba(213, 153, 174, 0.6);
+}
+
+.pd-bar-label {
+	color: var(--bookish-muted);
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.pd-bar.is-today .pd-bar-label {
+	color: var(--pd-accent-strong);
+}
+
+@keyframes pdGrow {
+	from { height: 0; }
+}
+
+.pd-streak {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	gap: 10px;
+	margin-top: 14px;
+	padding-top: 14px;
+	border-top: 1px dashed var(--bookish-line);
+}
+
+.pd-streak-dot {
+	display: grid;
+	place-items: center;
+	justify-self: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--bookish-cream);
+	border: 2px solid var(--bookish-line);
+	color: #fff;
+	font-size: 0.8rem;
+	font-weight: 800;
+}
+
+.pd-streak-dot.is-on {
+	border-color: transparent;
+	background: linear-gradient(135deg, var(--pd-accent), var(--pd-accent-strong));
+	box-shadow: 0 4px 10px rgba(162, 90, 116, 0.35);
+}
+
+/* ---------- Donut ---------- */
+.pd-shelf {
+	grid-column: span 5;
+	display: flex;
+	flex-direction: column;
+}
+
+.pd-donut {
+	--read: 0deg;
+	--progress: 0deg;
+	position: relative;
+	display: grid;
+	place-items: center;
+	width: min(180px, 70%);
+	aspect-ratio: 1;
+	margin: 4px auto 18px;
+	border-radius: 50%;
+	background: conic-gradient(
+		var(--pd-accent-strong) 0 var(--read),
+		var(--pd-accent) var(--read) var(--progress),
+		var(--bookish-soft) var(--progress) 360deg
+	);
+	animation: pdSpin 0.9s ease both;
+}
+
+.pd-donut::before {
+	content: "";
+	position: absolute;
+	inset: 18%;
+	border-radius: 50%;
+	background: var(--bookish-paper);
+	box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+@keyframes pdSpin {
+	from { transform: rotate(-90deg) scale(0.85); opacity: 0; }
+}
+
+.pd-donut-center {
+	position: relative;
+	text-align: center;
+}
+
+.pd-donut-center strong {
+	display: block;
+	font-size: 2rem;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.pd-donut-center span {
+	color: var(--bookish-muted);
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+.pd-legend {
+	display: grid;
+	gap: 8px;
+	margin: auto 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.pd-legend li {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--bookish-muted);
+	font-size: 0.88rem;
+	font-weight: 600;
+}
+
+.pd-legend b {
+	margin-left: auto;
+	color: var(--bookish-ink);
+}
+
+.pd-dot {
+	width: 12px;
+	height: 12px;
+	border-radius: 4px;
+}
+
+.pd-dot--read { background: var(--pd-accent-strong); }
+.pd-dot--progress { background: var(--pd-accent); }
+.pd-dot--want { background: var(--bookish-soft); border: 1px solid var(--bookish-line); }
+
+/* ---------- Progresa gredzens ---------- */
+.pd-ring-card {
+	grid-column: span 4;
+	display: flex;
+	flex-direction: column;
+}
+
+.pd-ring {
+	--p: 0;
+	position: relative;
+	display: grid;
+	place-items: center;
+	width: 150px;
+	aspect-ratio: 1;
+	margin: 0 auto 18px;
+	border-radius: 50%;
+	background:
+		radial-gradient(closest-side, var(--bookish-paper) 78%, transparent 79% 100%),
+		conic-gradient(var(--pd-accent-strong) calc(var(--p) * 1%), var(--bookish-soft) 0);
+}
+
+.pd-ring strong {
+	font-size: 2.2rem;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.pd-ring strong small {
+	color: var(--bookish-muted);
+	font-size: 1rem;
+}
+
+.pd-mini-stats {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+	margin-top: auto;
+}
+
+.pd-mini-stats div {
+	padding: 12px;
+	border-radius: 16px;
+	background: var(--bookish-cream);
+	text-align: center;
+}
+
+.pd-mini-stats strong {
+	display: block;
+	font-size: 1.3rem;
+	font-weight: 800;
+}
+
+.pd-mini-stats span {
+	color: var(--bookish-muted);
+	font-size: 0.78rem;
+	font-weight: 600;
+}
+
+/* ---------- Emocijas ---------- */
+.pd-emotions {
+	grid-column: span 4;
+}
+
+.pd-emotion-row {
+	display: grid;
+	grid-template-columns: 32px minmax(0, 0.9fr) minmax(0, 1fr) 24px;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 0;
+}
+
+.pd-emotion-row + .pd-emotion-row {
+	border-top: 1px solid var(--bookish-line);
+}
+
+.pd-emotion-emoji {
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 10px;
+	background: var(--bookish-soft);
+	font-size: 1.05rem;
+}
+
+.pd-emotion-name {
+	overflow: hidden;
+	font-size: 0.88rem;
+	font-weight: 700;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.pd-emotion-track,
+.pd-book-track {
+	display: block;
+	height: 8px;
+	border-radius: 999px;
+	background: var(--bookish-soft);
+	overflow: hidden;
+}
+
+.pd-emotion-track span,
+.pd-book-track span {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background: linear-gradient(90deg, var(--pd-accent), var(--pd-accent-strong));
+}
+
+.pd-emotion-row b {
+	text-align: right;
+	font-size: 0.85rem;
+}
+
+/* ---------- Pašlaik lasu ---------- */
+.pd-reading {
+	grid-column: span 4;
+}
+
+.pd-book {
+	display: grid;
+	grid-template-columns: 44px minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 12px;
+	padding: 10px;
+	margin: 0 -10px;
+	border-radius: 16px;
+	color: inherit;
+	text-decoration: none;
+	transition: background 0.2s ease;
+}
+
+.pd-book:hover {
+	background: var(--bookish-cream);
+}
+
+.pd-book-cover {
+	width: 44px;
+	height: 62px;
+	border-radius: 8px;
+	object-fit: cover;
+	box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+.pd-book-cover--empty {
+	display: grid;
+	place-items: center;
+	background: var(--bookish-soft);
+}
+
+.pd-book-body {
+	display: grid;
+	gap: 4px;
+	min-width: 0;
+}
+
+.pd-book-body strong {
+	overflow: hidden;
+	font-size: 0.92rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.pd-book-body small {
+	color: var(--bookish-muted);
+	font-size: 0.75rem;
+}
+
+.pd-book-pct {
+	color: var(--pd-accent-strong);
+	font-size: 0.9rem;
+	font-weight: 800;
+}
+
+/* ---------- Responsīvi ---------- */
+@media (max-width: 1024px) {
+	.pd-week,
+	.pd-shelf {
+		grid-column: 1 / -1;
+	}
+
+	.pd-ring-card,
+	.pd-emotions {
+		grid-column: span 6;
+	}
+
+	.pd-reading {
+		grid-column: 1 / -1;
+	}
+}
+
+@media (max-width: 680px) {
+	.pd-hero {
+		flex-wrap: wrap;
+		padding: 22px;
+	}
+
+	.pd-hero-link {
+		width: 100%;
+		text-align: center;
+	}
+
+	.pd-kpis {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.pd-kpi strong {
+		font-size: 1.6rem;
+	}
+
+	.pd-ring-card,
+	.pd-emotions {
+		grid-column: 1 / -1;
+	}
+
+	.pd-bars {
+		height: 150px;
+		gap: 6px;
+	}
+
+	.pd-streak {
+		gap: 6px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.pd-card,
+	.pd-bar-fill,
+	.pd-donut {
+		animation: none;
+		transition: none;
+	}
+}

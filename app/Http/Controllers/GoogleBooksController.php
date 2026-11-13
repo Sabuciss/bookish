@@ -44,61 +44,69 @@ class GoogleBooksController extends Controller
 
         $providerError = null;
 
-        try {
-            $params = [
-                'q' => $query,
-                'orderBy' => $orderBy,
-                'maxResults' => $maxResults,
-                'startIndex' => $startIndex,
-                'printType' => 'books',
-            ];
+        // Žanri ar gadu filtru: Google "relevance" atgriež gandrīz tikai vecas grāmatas,
+        // kuras tāpat tiek izmestas, tāpēc Google nevaicājam (ietaupa API kvotu) un
+        // grāmatas ņemam no Open Library (bez Google kvotas).
+        $skipGoogle = $isGenreQuery && $firstPublishedFrom !== null && $firstPublishedTo !== null;
+        $items = [];
 
-            $apiKey = config('services.google_books.api_key');
-            if (!empty($apiKey)) {
-                $params['key'] = $apiKey;
-            }
+        if (! $skipGoogle) {
+            try {
+                $params = [
+                    'q' => $query,
+                    'orderBy' => $orderBy,
+                    'maxResults' => $maxResults,
+                    'startIndex' => $startIndex,
+                    'printType' => 'books',
+                ];
 
-            $response = Http::connectTimeout(3)->timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
+                $apiKey = config('services.google_books.api_key');
+                if (!empty($apiKey)) {
+                    $params['key'] = $apiKey;
+                }
 
-            if (!$response->ok()) {
-                // Don't cache transient failures (e.g. Google 503s) so the next request retries instead of staying empty for hours.
-                Log::warning('Google Books top request failed', [
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                ]);
+                $response = Http::connectTimeout(3)->timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
 
-                $providerError = $response->status() === 429 ? 'rate_limited' : 'provider_unavailable';
+                if (!$response->ok()) {
+                    // Don't cache transient failures (e.g. Google 503s) so the next request retries instead of staying empty for hours.
+                    Log::warning('Google Books top request failed', [
+                        'status' => $response->status(),
+                        'body' => $response->body(),
+                    ]);
+
+                    $providerError = $response->status() === 429 ? 'rate_limited' : 'provider_unavailable';
+
+                    if ($remoteOnly && ! $isGenreQuery) {
+                        return response()->json([
+                            'items' => [],
+                            'error' => $providerError,
+                        ], $response->status() === 429 ? 429 : 503);
+                    }
+
+                    $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
+                } else {
+                    $items = $response->json('items', []);
+
+                    if (!$items) {
+                        $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
+                    } else {
+                        Cache::put($cacheKey, $items, now()->addHours(6));
+                    }
+                }
+            } catch (ConnectionException $e) {
+                Log::warning('Google Books top request threw a connection exception', ['message' => $e->getMessage()]);
+
+                $providerError = 'provider_unavailable';
 
                 if ($remoteOnly && ! $isGenreQuery) {
                     return response()->json([
                         'items' => [],
                         'error' => $providerError,
-                    ], $response->status() === 429 ? 429 : 503);
+                    ], 503);
                 }
 
                 $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
-            } else {
-                $items = $response->json('items', []);
-
-                if (!$items) {
-                    $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
-                } else {
-                    Cache::put($cacheKey, $items, now()->addHours(6));
-                }
             }
-        } catch (ConnectionException $e) {
-            Log::warning('Google Books top request threw a connection exception', ['message' => $e->getMessage()]);
-
-            $providerError = 'provider_unavailable';
-
-            if ($remoteOnly && ! $isGenreQuery) {
-                return response()->json([
-                    'items' => [],
-                    'error' => $providerError,
-                ], 503);
-            }
-
-            $items = $remoteOnly ? [] : $this->localBooktokItems($maxResults, $startIndex);
         }
 
         if ($isGenreQuery) {
@@ -129,7 +137,7 @@ class GoogleBooksController extends Controller
                 ->all();
 
             if ($items !== []) {
-                Cache::put($cacheKey, $items, now()->addHours(6));
+                Cache::put($cacheKey, $items, now()->addDay()); // žanri mainās lēni → 24 h kešs
             }
 
             if ($providerError && $items === []) {
