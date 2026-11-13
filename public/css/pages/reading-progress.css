@@ -24,6 +24,11 @@
 	gap: 24px;
 }
 
+.reading-progress-form {
+	overflow: visible;
+	position: relative;
+}
+
 .reading-progress-form > label {
 	display: grid;
 	gap: 8px;
@@ -240,6 +245,41 @@
 	grid-template-columns: 1.5fr 1fr 1fr;
 	gap: 12px;
 	align-items: start;
+	padding: 14px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 12px;
+	background: var(--bookish-paper);
+	overflow: visible;
+	position: relative;
+}
+
+.rp-date-input,
+.rp-time-input {
+	min-height: 44px;
+	font-variant-numeric: tabular-nums;
+}
+
+/* Style time/date input spinners and pickers */
+.rp-time-input::-webkit-calendar-picker-indicator {
+	cursor: pointer;
+	border-radius: 5px;
+	margin-right: 4px;
+	opacity: 0.6;
+	filter: invert(0.6) sepia(1) saturate(1.5) hue-rotate(340deg);
+}
+
+.rp-time-input::-webkit-calendar-picker-indicator:hover {
+	opacity: 1;
+}
+
+input[type="time"]::-webkit-outer-spin-button,
+input[type="time"]::-webkit-inner-spin-button {
+	display: none;
+}
+
+input[type="time"] {
+	-moz-appearance: none;
+	appearance: none;
 }
 
 .rp-datetime-row label {
@@ -249,21 +289,9 @@
 	min-width: 110px;
 }
 
-.rp-datetime-row {
-	padding: 14px;
-	border: 1px solid var(--bookish-line);
-	border-radius: 12px;
-	background: var(--bookish-paper);
-}
-
-.rp-date-input,
-.rp-time-input {
-	min-height: 44px;
-	font-variant-numeric: tabular-nums;
-}
-
 .rp-date-control {
 	position: relative;
+	overflow: visible;
 }
 
 .rp-date-control .rp-date-display,
@@ -437,7 +465,7 @@
 	top: auto;
 	bottom: calc(100% + 8px);
 	left: 50%;
-	z-index: 30;
+	z-index: 1000;
 	width: 280px;
 	max-width: calc(100vw - 32px);
 	box-sizing: border-box;
@@ -448,6 +476,7 @@
 	box-shadow: 0 12px 26px rgba(77, 38, 57, 0.2);
 	color: var(--bookish-ink);
 	transform: translateX(-50%);
+	pointer-events: auto;
 }
 
 .rp-calendar-header {
