@@ -1,19 +1,35 @@
 .reading-progress-page {
 	max-width: var(--content-max-width);
 	width: min(100%, var(--content-max-width));
-	margin: 40px auto;
+	margin: 50px auto;
 	font-family: Arial, sans-serif;
+	padding: 0 16px;
+}
+
+.reading-progress-page h1 {
+	font-size: 2.5rem;
+	font-weight: 900;
+	margin-bottom: 12px;
+	letter-spacing: -1px;
+	line-height: 1.1;
+}
+
+.reading-progress-page > p {
+	font-size: 1.1rem;
+	line-height: 1.6;
+	margin-bottom: 40px;
+	opacity: 0.85;
 }
 
 .rp-snapshot-actions {
 	display: flex;
-	gap: 8px;
+	gap: 12px;
 	align-items: center;
 	justify-items: center;
 	flex-wrap: wrap;
-	margin-top: 12px;
-	padding-top: 12px;
-	border-top: 1px solid var(--bookish-line);
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 2px solid rgba(185, 143, 136, 0.15);
 }
 
 .rp-snapshot-actions .login-button,
@@ -22,25 +38,26 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 8px 14px;
+	padding: 8px 18px;
 	margin: 0;
-	border: 1px solid var(--bookish-line);
-	border-radius: 8px;
+	border: 2px solid var(--bookish-line);
+	border-radius: 10px;
 	background: var(--bookish-cream);
 	color: var(--bookish-ink);
-	font-weight: 600;
+	font-weight: 700;
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all 0.25s ease;
 	text-decoration: none;
 	white-space: nowrap;
+	font-size: 0.9rem;
 }
 
 .rp-snapshot-actions .login-button:hover,
 .rp-snapshot-actions .book-listing-secondary-action:hover {
 	background: var(--bookish-soft);
 	border-color: var(--bookish-rose);
-	transform: translateY(-2px);
-	box-shadow: 0 2px 8px rgba(185, 143, 136, 0.15);
+	transform: translateY(-3px);
+	box-shadow: 0 6px 16px rgba(185, 143, 136, 0.2);
 }
 
 .reading-progress-page h1,
@@ -57,29 +74,34 @@
 
 .reading-progress-layout {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(300px, 0.95fr);
+	grid-template-columns: minmax(0, 1fr) minmax(340px, 1.1fr);
 	align-items: start;
-	gap: 24px;
+	gap: 32px;
 }
 
 .reading-progress-form {
 	overflow: visible;
 	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
 }
 
 .reading-progress-form > label {
 	display: grid;
-	gap: 8px;
+	gap: 10px;
 	color: var(--bookish-ink);
 	font-size: 0.85rem;
 	font-weight: 700;
-	margin-bottom: 8px;
+	margin-bottom: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
 }
 
 .rp-search-row {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto;
-	gap: 8px;
+	gap: 12px;
 	align-items: stretch;
 }
 
@@ -685,10 +707,10 @@ button.rp-calendar-day:focus-visible {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	gap: 12px;
-	margin-top: 24px;
-	padding-top: 20px;
-	border-top: 2px solid var(--bookish-line);
+	gap: 16px;
+	margin-top: 32px;
+	padding-top: 24px;
+	border-top: 3px solid rgba(185, 143, 136, 0.15);
 }
 
 .rp-back-button {
@@ -902,15 +924,15 @@ button.rp-calendar-day:focus-visible {
 /* Card Grid Layout for Reading Progress Entries */
 .rp-entries-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-	gap: 16px;
-	margin-bottom: 24px;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 20px;
+	margin-bottom: 32px;
 }
 
 .rp-entry-card {
 	position: relative;
-	border: 2px solid var(--bookish-line);
-	border-radius: 14px;
+	border: 2px solid var(--bookish-rose);
+	border-radius: 16px;
 	background: linear-gradient(135deg, var(--bookish-cream) 0%, rgba(252, 250, 248, 0.8) 100%);
 	overflow: hidden;
 	transition: all 0.3s ease;
@@ -918,21 +940,21 @@ button.rp-calendar-day:focus-visible {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+	box-shadow: 0 4px 12px rgba(185, 143, 136, 0.1);
 }
 
 .rp-entry-card:hover {
 	border-color: var(--bookish-rose);
 	background: linear-gradient(135deg, #fcfaf8 0%, #faf8f6 100%);
-	box-shadow: 0 12px 28px rgba(185, 143, 136, 0.22);
-	transform: translateY(-6px);
+	box-shadow: 0 16px 32px rgba(185, 143, 136, 0.25);
+	transform: translateY(-8px);
 }
 
 .rp-entry-preview {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
-	padding: 14px;
+	gap: 14px;
+	padding: 16px;
 	flex-grow: 1;
 }
 
@@ -942,8 +964,8 @@ button.rp-calendar-day:focus-visible {
 	object-fit: cover;
 	object-position: center;
 	border-radius: 12px;
-	background: linear-gradient(135deg, var(--bookish-soft) 0%, var(--bookish-line) 100%);
-	border: 2px solid var(--bookish-line);
+	background: linear-gradient(135deg, var(--bookish-soft) 0%, rgba(241, 223, 228, 0.6) 100%);
+	border: 2px solid var(--bookish-rose);
 	display: block;
 	transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -961,9 +983,9 @@ button.rp-calendar-day:focus-visible {
 	align-items: center;
 	justify-content: center;
 	font-size: 3rem;
-	background: linear-gradient(135deg, var(--bookish-soft) 0%, var(--bookish-line) 100%);
+	background: linear-gradient(135deg, var(--bookish-soft) 0%, rgba(241, 223, 228, 0.6) 100%);
 	border-radius: 12px;
-	border: 2px solid var(--bookish-line);
+	border: 2px solid var(--bookish-rose);
 	color: var(--bookish-muted);
 }
 
@@ -1148,8 +1170,9 @@ button.rp-calendar-day:focus-visible {
 .emotion-picker {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 10px;
-	margin-top: 4px;
+	gap: 12px;
+	margin-top: 8px;
+	padding: 16px 0;
 }
 
 .emotion-tag {
