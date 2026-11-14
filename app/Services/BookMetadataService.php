@@ -9,75 +9,94 @@ use Illuminate\Support\Facades\Log;
 
 class BookMetadataService
 {
+    /** Vai pēdējais pieprasījums izmantoja rezerves datus (Google kļūda / kvota). */
+    private bool $usedFallback = false;
+
     public function fetchGoogleBookData(string $title, string $author): ?array
     {
         $cacheKey = 'booktok_google_book_data_v3_' . md5($title . '|' . $author);
 
-        return Cache::remember($cacheKey, now()->addHours(12), function () use ($title, $author): ?array {
-            $params = [
-                'q' => 'intitle:"' . $title . '" inauthor:"' . $author . '"',
-                'maxResults' => 1,
-                'printType' => 'books',
-            ];
+        $cached = Cache::get($cacheKey);
+        if (is_array($cached)) {
+            return $cached;
+        }
 
-            $apiKey = config('services.google_books.api_key');
-            if (!empty($apiKey)) {
-                $params['key'] = $apiKey;
-            }
+        $this->usedFallback = false;
+        $data = $this->requestGoogleBookData($title, $author);
 
-            try {
-                $response = Http::connectTimeout(3)->timeout(10)
-                    ->get('https://www.googleapis.com/books/v1/volumes', $params);
+        if ($data !== null) {
+            // Rezerves dati (Google kļūda / kvota) ir nepilni — kešojam īsi, lai drīz mēģinātu vēlreiz
+            Cache::put($cacheKey, $data, $this->usedFallback ? now()->addMinutes(30) : now()->addHours(12));
+        }
 
-                if (!$response->ok()) {
-                    Log::warning('Google Books API request failed', [
-                        'status' => $response->status(),
-                        'body' => $response->body(),
-                    ]);
+        return $data;
+    }
 
-                    return $this->fallbackBookData($title, $author);
-                }
+    private function requestGoogleBookData(string $title, string $author): ?array
+    {
+        $params = [
+            'q' => 'intitle:"' . $title . '" inauthor:"' . $author . '"',
+            'maxResults' => 1,
+            'printType' => 'books',
+        ];
 
-                $item = $response->json('items.0');
-                if (!is_array($item)) {
-                    $fallbackResponse = Http::connectTimeout(3)->timeout(10)->get(
-                        'https://www.googleapis.com/books/v1/volumes',
-                        [...$params, 'q' => $title . ' ' . $author]
-                    );
+        $apiKey = config('services.google_books.api_key');
+        if (!empty($apiKey)) {
+            $params['key'] = $apiKey;
+        }
 
-                    $item = $fallbackResponse->ok() ? $fallbackResponse->json('items.0') : null;
-                }
+        try {
+            $response = Http::connectTimeout(3)->timeout(10)
+                ->get('https://www.googleapis.com/books/v1/volumes', $params);
 
-                if (!is_array($item)) {
-                    return $this->fallbackBookData($title, $author);
-                }
-
-                $volumeInfo = $item['volumeInfo'] ?? [];
-                $thumbnail = self::normalizeThumbnailUrl(
-                    $volumeInfo['imageLinks']['thumbnail']
-                        ?? $volumeInfo['imageLinks']['smallThumbnail']
-                        ?? null
-                ) ?: $this->fetchOpenLibraryCover($title, $author);
-
-                return [
-                    'thumbnail' => $thumbnail,
-                    'volume_id' => $item['id'] ?? null,
-                    'page_count' => $volumeInfo['pageCount'] ?? null,
-                    'published_date' => $volumeInfo['publishedDate'] ?? null,
-                    'publisher' => $volumeInfo['publisher'] ?? null,
-                    'categories' => implode(', ', $volumeInfo['categories'] ?? []),
-                    'average_rating' => $volumeInfo['averageRating'] ?? null,
-                    'ratings_count' => $volumeInfo['ratingsCount'] ?? null,
-                    'description' => $volumeInfo['description'] ?? null,
-                    'preview_link' => $volumeInfo['previewLink'] ?? null,
-                    'info_link' => $volumeInfo['infoLink'] ?? null,
-                ];
-            } catch (\Throwable $e) {
-                Log::warning('Google Books API request threw an exception', ['message' => $e->getMessage()]);
+            if (!$response->ok()) {
+                Log::warning('Google Books API request failed', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
 
                 return $this->fallbackBookData($title, $author);
             }
-        });
+
+            $item = $response->json('items.0');
+            if (!is_array($item)) {
+                $fallbackResponse = Http::connectTimeout(3)->timeout(10)->get(
+                    'https://www.googleapis.com/books/v1/volumes',
+                    [...$params, 'q' => $title . ' ' . $author]
+                );
+
+                $item = $fallbackResponse->ok() ? $fallbackResponse->json('items.0') : null;
+            }
+
+            if (!is_array($item)) {
+                return $this->fallbackBookData($title, $author);
+            }
+
+            $volumeInfo = $item['volumeInfo'] ?? [];
+            $thumbnail = self::normalizeThumbnailUrl(
+                $volumeInfo['imageLinks']['thumbnail']
+                    ?? $volumeInfo['imageLinks']['smallThumbnail']
+                    ?? null
+            ) ?: $this->fetchOpenLibraryCover($title, $author);
+
+            return [
+                'thumbnail' => $thumbnail,
+                'volume_id' => $item['id'] ?? null,
+                'page_count' => $volumeInfo['pageCount'] ?? null,
+                'published_date' => $volumeInfo['publishedDate'] ?? null,
+                'publisher' => $volumeInfo['publisher'] ?? null,
+                'categories' => implode(', ', $volumeInfo['categories'] ?? []),
+                'average_rating' => $volumeInfo['averageRating'] ?? null,
+                'ratings_count' => $volumeInfo['ratingsCount'] ?? null,
+                'description' => $volumeInfo['description'] ?? null,
+                'preview_link' => $volumeInfo['previewLink'] ?? null,
+                'info_link' => $volumeInfo['infoLink'] ?? null,
+            ];
+        } catch (\Throwable $e) {
+            Log::warning('Google Books API request threw an exception', ['message' => $e->getMessage()]);
+
+            return $this->fallbackBookData($title, $author);
+        }
     }
 
     public function storedBookData(BooktokTopBook $book): array
@@ -224,6 +243,7 @@ class BookMetadataService
 
     private function fallbackBookData(string $title, string $author): ?array
     {
+        $this->usedFallback = true;
         $thumbnail = $this->fetchOpenLibraryCover($title, $author);
 
         return $thumbnail ? ['thumbnail' => $thumbnail] : null;

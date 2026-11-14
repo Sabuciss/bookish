@@ -130,7 +130,31 @@ class BookDetailPageTest extends TestCase
 
         // otrreiz no keša — Open Library vērtējumu vairs neprasa
         $this->get(route('books.show', 'vol-777'))->assertOk();
-        Http::assertSentCount(1 + 1 + 1); // Google (kešots) + vērtējums + ieteikumi (autors)
+        Http::assertSentCount(4); // Google + vērtējums + apraksta meklēšana + ieteikumi (viss kešots)
+    }
+
+    public function test_open_library_description_is_used_when_google_has_none(): void
+    {
+        Http::fake([
+            'www.googleapis.com/books/v1/volumes/vol-888*' => Http::response([
+                'id' => 'vol-888',
+                'volumeInfo' => ['title' => 'The Book Thief', 'authors' => ['Markus Zusak'], 'averageRating' => 4.5],
+            ]),
+            'openlibrary.org/works/OL5819456W.json' => Http::response([
+                'description' => ['type' => '/type/text', 'value' => "When Death has a [story](https://x.test) to tell, you listen.\r\n\r\n----------\r\nAvoti: [1]: https://x.test"],
+            ]),
+            'openlibrary.org/search.json*' => function (Request $request) {
+                return str_contains($request->url(), 'fields=key')
+                    ? Http::response(['docs' => [['key' => '/works/OL5819456W', 'title' => 'The Book Thief']]])
+                    : Http::response(['docs' => []]);
+            },
+        ]);
+
+        $this->get(route('books.show', 'vol-888'))
+            ->assertOk()
+            ->assertSee('When Death has a story to tell, you listen.')
+            ->assertDontSee('Avoti')
+            ->assertDontSee('apraksts nav pieejams');
     }
 
     public function test_subject_mapping_from_google_categories(): void

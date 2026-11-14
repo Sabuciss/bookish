@@ -7,8 +7,8 @@ use App\Models\BooktokTopBook;
 use App\Models\BooktokFavoriteAuthor;
 use App\Models\ReadingProgress;
 use App\Services\BookMetadataService;
-use App\Services\BookRatingService;
 use App\Services\BookRecommendationService;
+use App\Services\OpenLibraryService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Schema;
@@ -209,7 +209,7 @@ class BooktokTopController extends Controller
         Request $request,
         BooktokTopBook $book,
         BookRecommendationService $recommendations,
-        BookRatingService $ratings
+        OpenLibraryService $openLibrary
     ): View
     {
         $googleBook = $book->google_data_fetched_at
@@ -227,10 +227,15 @@ class BooktokTopController extends Controller
         $book->google_preview_link = $googleBook['preview_link'] ?? null;
         $book->google_info_link = $googleBook['info_link'] ?? null;
 
+        // Ja Google nedod vērtējumu vai aprakstu (piem., beigusies kvota), ņemam no Open Library
         if (empty($book->google_average_rating)) {
-            $rating = $ratings->openLibraryRating($book->title, $book->authorName());
+            $rating = $openLibrary->rating($book->title, $book->authorName());
             $book->google_average_rating = $rating['average'] ?? null;
             $book->google_ratings_count = $rating['count'] ?? null;
+        }
+
+        if (blank($book->google_description)) {
+            $book->google_description = $openLibrary->description($book->title, $book->authorName());
         }
 
         $currentBookStatus = null;

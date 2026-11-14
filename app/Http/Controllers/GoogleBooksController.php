@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ReadingProgress;
 use App\Models\BooktokTopBook;
 use App\Services\BookMetadataService;
-use App\Services\BookRatingService;
 use App\Services\BookRecommendationService;
+use App\Services\OpenLibraryService;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -314,7 +314,7 @@ class GoogleBooksController extends Controller
         Request $request,
         string $volumeId,
         BookRecommendationService $recommendations,
-        BookRatingService $ratings
+        OpenLibraryService $openLibrary
     ): View
     {
         $cacheKey = 'google_books_volume_' . md5($volumeId);
@@ -364,10 +364,15 @@ class GoogleBooksController extends Controller
             'infoLink' => $info['infoLink'] ?? null,
         ];
 
+        // Ja Google nedod vērtējumu vai aprakstu, ņemam no Open Library
         if (empty($bookData['averageRating'])) {
-            $rating = $ratings->openLibraryRating($bookData['title'], $bookData['authors']);
+            $rating = $openLibrary->rating($bookData['title'], $bookData['authors']);
             $bookData['averageRating'] = $rating['average'] ?? null;
             $bookData['ratingsCount'] = $rating['count'] ?? null;
+        }
+
+        if (trim($bookData['description']) === '') {
+            $bookData['description'] = (string) $openLibrary->description($bookData['title'], $bookData['authors']);
         }
 
         $currentBookStatus = null;
