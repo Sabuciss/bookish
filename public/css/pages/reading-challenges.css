@@ -2,7 +2,7 @@
 	max-width: var(--content-max-width);
 	width: min(100%, var(--content-max-width));
 	margin: 40px auto;
-	font-family: Arial, sans-serif;
+	font-family: 'DM Sans', system-ui, sans-serif;
 }
 
 .reading-challenges-layout {

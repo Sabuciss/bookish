@@ -59,7 +59,7 @@
                                     @endif
                                 </p>
                                 <p>
-                                    <a href="{{ route('reading-challenges.edit', $challenge->id) }}" class="reading-progress-submit" style="text-decoration: none;">Atjaunot</a>
+                                    <a href="{{ route('reading-challenges.edit', $challenge->id) }}" class="reading-progress-submit">Atjaunot</a>
                                 </p>
                                 <form method="POST" action="{{ route('reading-challenges.destroy', $challenge->id) }}">
                                     @csrf
@@ -126,7 +126,7 @@
 
                     <button type="submit" class="login-button">{{ $isEditing ? 'Atjaunot izaicinājumu' : 'Saglabāt izaicinājumu' }}</button>
                     @if ($isEditing)
-                        <a href="{{ route('reading-challenges.index') }}" class="reading-progress-submit" style="display: inline-block; text-decoration: none; margin-top: 8px;">Atcelt rediģēšanu</a>
+                        <a href="{{ route('reading-challenges.index') }}" class="reading-progress-submit">Atcelt rediģēšanu</a>
                     @endif
                 </form>
             </section>

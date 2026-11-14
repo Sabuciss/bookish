@@ -33,7 +33,7 @@
         @endif
 
         <div class="rp-actions-row">
-            <a href="{{ route('reading-shelf.show') }}" class="reading-progress-submit" style="text-decoration: none;">Atvērt grāmatu plauktu</a>
+            <a href="{{ route('reading-shelf.show') }}" class="reading-progress-submit">Atvērt grāmatu plauktu</a>
         </div>
 
         <div class="reading-progress-layout">
@@ -161,7 +161,7 @@
 
                 <div id="edit-mode-banner" class="edit-mode-banner" style="display:{{ $isEditMode ? 'flex' : 'none' }};">
                     <span>Rediģē: <strong class="edit-banner-title">{{ old('book_title', $prefill['book_title'] ?? '') }}</strong></span>
-                    <a href="{{ route('reading-progress.index') }}" class="cancel-edit-btn" style="text-decoration:none;">✕ Atcelt</a>
+                    <a href="{{ route('reading-progress.index') }}" class="cancel-edit-btn u-no-underline">✕ Atcelt</a>
                 </div>
 
                 <form action="{{ route('reading-progress.store') }}" method="POST" class="reading-progress-form form" lang="lv">

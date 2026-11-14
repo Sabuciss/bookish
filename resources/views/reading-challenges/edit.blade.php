@@ -81,7 +81,7 @@
                 @endif
 
                 <button type="submit" class="login-button">Saglabāt izmaiņas</button>
-                <a href="{{ route('reading-challenges.index') }}" class="reading-progress-submit" style="display: inline-block; text-decoration: none; margin-top: 8px;">Atpakaļ uz izaicinājumiem</a>
+                <a href="{{ route('reading-challenges.index') }}" class="reading-progress-submit">Atpakaļ uz izaicinājumiem</a>
             </form>
         </section>
     </div>

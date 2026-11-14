@@ -20,7 +20,7 @@
         @endif
 
         <div class="u-row u-mb-16">
-            <a href="{{ route('reading-highlights.create') }}" class="reading-progress-submit" style="text-decoration: none;">Izveidot highlight</a>
+            <a href="{{ route('reading-highlights.create') }}" class="reading-progress-submit">Izveidot highlight</a>
         </div>
 
         <section class="reading-progress-history uiverse-container">

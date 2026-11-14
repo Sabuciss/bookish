@@ -1,4 +1,6 @@
 @import '../../public/style.css';
+/* Vienotais mūsdienīgais dizaina slānis — jābūt PĒC style.css */
+@import '../../public/css/modern.css';
 
 @tailwind base;
 @tailwind components;

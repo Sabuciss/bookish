@@ -24,7 +24,44 @@ class ReadingProgressController extends Controller
             'bookSnapshotsByStatus' => $data['bookSnapshotsByStatus'],
             'totalPagesRead' => $data['totalPagesRead'],
             'totalBooksRead' => $data['totalBooksRead'],
+            'shelfStats' => $this->buildShelfStats($userId),
         ]);
+    }
+
+    /**
+     * Statistika plaukta lapas panelim (aprēķināta no katras grāmatas jaunākā ieraksta).
+     */
+    private function buildShelfStats(int $userId): array
+    {
+        $entries = ReadingProgress::latestSnapshotEntriesForUser($userId);
+
+        $isRead = fn (ReadingProgress $entry): bool => $entry->total_pages && $entry->pages_read >= $entry->total_pages;
+        $isInProgress = fn (ReadingProgress $entry): bool => $entry->pages_read > 0 && ! $isRead($entry);
+
+        $read = $entries->filter($isRead);
+        $inProgress = $entries->filter($isInProgress);
+
+        $totalMinutes = (int) $entries->sum('duration_minutes');
+        $pagesRead = (int) $entries->sum('pages_read');
+
+        return [
+            'onShelf' => $entries->count(),
+            'read' => $read->count(),
+            'inProgress' => $inProgress->count(),
+            'wantToRead' => $entries->filter(fn (ReadingProgress $entry) => $entry->pages_read <= 0)->count(),
+            'pagesRead' => $pagesRead,
+            'totalMinutes' => $totalMinutes,
+            'pagesLeft' => (int) $inProgress->sum(fn (ReadingProgress $entry) => max(0, $entry->total_pages - $entry->pages_read)),
+            'averageProgress' => $inProgress->filter(fn (ReadingProgress $entry) => $entry->total_pages)->isEmpty()
+                ? 0
+                : (int) round($inProgress->filter(fn (ReadingProgress $entry) => $entry->total_pages)
+                    ->avg(fn (ReadingProgress $entry) => $entry->pages_read / $entry->total_pages * 100)),
+            // Lappuses stundā (tikai ja ir reģistrēts lasīšanas laiks)
+            'pagesPerHour' => $totalMinutes > 0 ? (int) round($pagesRead / ($totalMinutes / 60)) : null,
+            'readThisYear' => $read->filter(fn (ReadingProgress $entry) => $entry->reading_date?->year === now()->year)->count(),
+            'longestRead' => $read->sortByDesc('total_pages')->first(),
+            'averageBookLength' => $read->isEmpty() ? null : (int) round($read->avg('total_pages')),
+        ];
     }
 
     public function showProgressTracker(Request $request): View

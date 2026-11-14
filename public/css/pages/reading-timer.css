@@ -32,7 +32,7 @@
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	height: 102px;
+	height: 56px;
 	margin: 0;
 	padding: 11px 14px;
 	box-sizing: border-box;
@@ -146,4 +146,14 @@
 
 html.dark .reading-timer-display {
 	color: var(--bookish-rose);
+}
+
+/* Telefonā: 3 pogas vienā rindā, kompaktas */
+@media (max-width: 760px) {
+	.reading-timer-actions .login-button,
+	.reading-timer-actions .reading-progress-submit {
+		height: 52px;
+		padding: 8px 6px;
+		font-size: 0.92rem;
+	}
 }

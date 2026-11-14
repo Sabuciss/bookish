@@ -5,28 +5,27 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
-
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <title>{{ config('app.name', 'Bookish') }}</title>
 
         @include('components.theme-init-script')
 
-        <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="guest-auth-page min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+    <body class="bm antialiased">
+        <div class="guest-auth-page">
+            <a href="{{ url('/') }}" class="guest-auth-brand" aria-label="Bookish sākumlapa">
+                <img src="{{ asset('images/logo3.png') }}" alt="Bookish" class="bookish-brand-logo">
+            </a>
 
-            <div class="guest-auth-card w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+            <div class="guest-auth-card">
+                <p class="guest-auth-eyebrow"><span></span> Tava lasīšanas dienasgrāmata</p>
                 {{ $slot }}
             </div>
+
+            <p class="guest-auth-footer">
+                <a href="{{ route('privacy-policy') }}">Privātuma politika</a> ·
+                <a href="{{ route('terms') }}">Lietošanas noteikumi</a>
+            </p>
         </div>
     </body>
 </html>

@@ -49,7 +49,8 @@ class BooktokTopBook extends Model
 
     public function authorName(): ?string
     {
-        $relatedAuthor = $this->getRelation('author');
+        // relationLoaded() pirms getRelation(): kopš Laravel 12.7x getRelation() met kļūdu, ja relācija nav ielādēta
+        $relatedAuthor = $this->relationLoaded('author') ? $this->getRelation('author') : null;
         if ($relatedAuthor instanceof Author) {
             return $relatedAuthor->name;
         }

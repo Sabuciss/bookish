@@ -11,8 +11,10 @@
 	--bt-sans: 'DM Sans', system-ui, sans-serif;
 
 	display: grid;
+	grid-template-columns: minmax(0, 1fr);
 	gap: 24px;
 	width: min(100%, var(--content-max-width));
+	min-width: 0;
 	margin: 12px auto 48px;
 	font-family: var(--bt-sans);
 	color: var(--bookish-ink);
@@ -647,7 +649,7 @@ html.dark #bookish-booktok .bt-status--read {
 /* ---------------- AUTORI ---------------- */
 #bookish-booktok .bt-authors {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr));
 	gap: 12px;
 }
 
@@ -832,6 +834,59 @@ html.dark #bookish-booktok .bt-status--read {
 
 	#bookish-booktok .bt-fan {
 		transform: scale(0.85);
+	}
+
+	/* Cilnes: vienā rindā, vienāda platuma */
+	#bookish-booktok .bt-tabs {
+		display: flex;
+		flex-wrap: nowrap;
+		width: 100%;
+	}
+
+	#bookish-booktok .bt-tab {
+		flex: 1 1 0;
+		min-width: 0;
+		padding: 9px 6px;
+		font-size: 0.85rem;
+		text-align: center;
+		white-space: nowrap;
+	}
+}
+
+@media (max-width: 480px) {
+	/* Telefonā vēdeklis mazāks, lai saturs sāktos ātrāk */
+	#bookish-booktok .bt-hero {
+		gap: 8px;
+		padding: 24px 20px;
+	}
+
+	#bookish-booktok .bt-fan {
+		width: 220px;
+		height: 170px;
+		transform: none;
+	}
+
+	#bookish-booktok .bt-fan-cover {
+		width: 92px;
+		height: 138px;
+	}
+
+	#bookish-booktok .bt-fan-cover--2 { left: 64px; bottom: 22px; }
+	#bookish-booktok .bt-fan-cover--3 { left: 128px; }
+
+	#bookish-booktok .bt-podium-card {
+		grid-template-columns: 84px minmax(0, 1fr);
+		min-height: 0;
+		padding: 16px;
+	}
+
+	#bookish-booktok .bt-podium-cover {
+		width: 84px;
+		height: 124px;
+	}
+
+	#bookish-booktok .bt-podium-rank {
+		font-size: 1.9rem;
 	}
 }
 

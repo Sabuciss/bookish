@@ -72,7 +72,7 @@
                         </form>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" class="reading-progress-submit" style="text-decoration: none; display: inline-block;">Ielogojies</a>
+                    <a href="{{ route('login') }}" class="reading-progress-submit">Ielogojies</a>
                 @endauth
 
                 @if($book['previewLink'])

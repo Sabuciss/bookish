@@ -10,9 +10,10 @@
       @vite(['resources/css/app.css', 'resources/js/app.js'])
     @else
       <link rel="stylesheet" href="{{ asset('style.css') }}">
+      <link rel="stylesheet" href="{{ asset('css/modern.css') }}">
     @endif
 </head>
-<body>
+<body class="bm">
   <x-navigation></x-navigation>
 
   <main class="bookish-main {{ request()->routeIs('reading-progress.index') ? 'bookish-main--wide' : '' }}">

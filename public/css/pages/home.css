@@ -13,7 +13,11 @@
 	--home-sans: 'DM Sans', system-ui, sans-serif;
 
 	display: grid;
+	/* minmax(0, 1fr): kolonna nekad nekļūst platāka par ekrānu (bez tā telefonā sadaļas izpletās līdz ~970px) */
+	grid-template-columns: minmax(0, 1fr);
 	gap: 28px;
+	width: 100%;
+	min-width: 0;
 	margin: 12px auto 48px;
 	font-family: var(--home-sans);
 	color: var(--bookish-ink);
@@ -458,7 +462,7 @@ html.dark #bookish-home .home-hero-cta {
 /* ---------------- GAIDĀMIE (JS rezultāti) ---------------- */
 #bookish-home .home-upcoming {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
 	gap: 14px;
 }
 
@@ -643,11 +647,19 @@ html.dark #bookish-home .home-hero-cta {
 	font-weight: 600;
 }
 
+#bookish-home .home-genre-head h3 {
+	line-height: 1.2;
+}
+
+/* "(Science Fiction)" paliek kopā un pāriet jaunā rindā vienā gabalā */
 #bookish-home .home-genre-head h3 span {
+	display: inline-block;
 	color: var(--bookish-muted) !important;
 	font-family: var(--home-sans);
 	font-size: 0.8rem;
 	font-weight: 600;
+	line-height: 1.4;
+	white-space: nowrap;
 }
 
 #bookish-home .home-genre-head p {
@@ -1027,8 +1039,48 @@ html.dark #bookish-home .home-hero-cta {
 		grid-template-columns: 1fr;
 	}
 
-	#bookish-home .home-trending-tabs {
+	/* Cilnes telefonā: pārnes jaunā rindā, nevis nogriež */
+	#bookish-home .home-trending-tabs,
+	#bookish-home .home-genre-tabs {
+		flex-wrap: wrap;
 		width: 100%;
+		overflow: visible;
+	}
+
+	#bookish-home .home-trending-tabs {
+		justify-content: center;
+		border-radius: 22px;
+	}
+
+	#bookish-home .home-trending-tab {
+		flex: 1 1 auto;
+		padding: 8px 12px;
+		text-align: center;
+	}
+
+	#bookish-home .book-genre-filter-button {
+		min-height: 36px;
+		padding: 6px 14px !important;
+		font-size: 0.85rem;
+	}
+
+	#bookish-home .home-trending-item {
+		grid-template-columns: 34px 52px minmax(0, 1fr);
+		gap: 12px;
+		padding: 10px 6px;
+	}
+
+	#bookish-home .home-trending-rank {
+		font-size: 1.6rem;
+	}
+
+	#bookish-home .home-trending-item.is-top .home-trending-rank {
+		font-size: 2rem;
+	}
+
+	#bookish-home .home-trending-cover {
+		width: 52px;
+		height: 78px;
 	}
 }
 

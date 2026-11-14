@@ -9,6 +9,7 @@ import './pages/booktok-covers';
 
 import { initDrawerNavigation } from './ui/navigation';
 import { initThemeToggle } from './ui/theme';
+import { initConfirmForms } from './ui/confirm';
 
 import Alpine from 'alpinejs';
 
@@ -18,3 +19,4 @@ Alpine.start();
 
 initThemeToggle();
 initDrawerNavigation();
+initConfirmForms();

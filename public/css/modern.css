@@ -1,0 +1,769 @@
+/* =========================================================
+   Bookish "modern" dizaina slānis
+   ---------------------------------------------------------
+   Vienots izskats visām lapām (kā Jaunumi / BookTok / Profils):
+   serif virsraksti, apaļi paneļi, pill pogas un lauki, mīkstas ēnas.
+
+   - Ielādēts PĒC style.css (resources/css/app.css), tāpēc pārraksta
+     vecos stilus. Prefikss `html .bm .bookish-main` dod pietiekamu
+     specifiskumu pret style.css `html.dark ...` !important noteikumiem.
+   - `.bm` klase ir uz <body> (components/layout, layouts/app, layouts/guest).
+   - Lapas ar ID (#bookish-home, #bookish-booktok) paliek noteicošas.
+   ========================================================= */
+
+.bm {
+	--bm-accent: #d599ae;
+	--bm-accent-strong: #a25a74;
+	--bm-btn: linear-gradient(135deg, #a25a74, #d599ae);
+	--bm-shadow: 0 18px 40px -24px rgba(122, 66, 85, 0.45);
+	--bm-shadow-hover: 0 22px 40px -20px rgba(122, 66, 85, 0.5);
+	--bm-ring: 0 0 0 4px rgba(213, 153, 174, 0.28);
+	--bm-serif: 'Playfair Display', Georgia, serif;
+	--bm-sans: 'DM Sans', system-ui, sans-serif;
+	font-family: var(--bm-sans);
+}
+
+html.dark .bm {
+	--bm-accent: #e3a6bb;
+	--bm-accent-strong: #f0bfd0;
+	--bm-btn: linear-gradient(135deg, #a25a74, #c97b97);
+	--bm-shadow: 0 20px 44px -24px rgba(0, 0, 0, 0.6);
+	--bm-shadow-hover: 0 24px 44px -20px rgba(0, 0, 0, 0.7);
+}
+
+/* ---------------- Lapas galvene ---------------- */
+html .bm .bookish-main :is(.reading-progress-page, .reading-challenges-page) {
+	width: min(100%, var(--content-max-width));
+	margin: 12px auto 48px;
+	font-family: var(--bm-sans);
+}
+
+html .bm .bookish-main :is(.reading-progress-page, .reading-challenges-page) > h1 {
+	margin: 8px 0 10px;
+	color: var(--bookish-ink) !important;
+	font-family: var(--bm-serif);
+	font-size: clamp(2.1rem, 5vw, 3.3rem) !important;
+	font-weight: 600 !important;
+	line-height: 1.06 !important;
+	letter-spacing: -0.02em;
+}
+
+html .bm .bookish-main :is(.reading-progress-page, .reading-challenges-page) > h1::after {
+	content: "";
+	display: block;
+	width: 56px;
+	height: 4px;
+	margin-top: 14px;
+	border-radius: 999px;
+	background: var(--bm-btn);
+}
+
+html .bm .bookish-main :is(.reading-progress-page, .reading-challenges-page) > h1 + p {
+	max-width: 62ch;
+	margin: 0 0 26px;
+	color: var(--bookish-muted) !important;
+	font-size: 1.05rem;
+	line-height: 1.6;
+}
+
+html .bm .bookish-main .welcome-eyebrow,
+html .bm .bookish-main .book-detail-eyebrow {
+	color: var(--bm-accent-strong) !important;
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+/* ---------------- Paneļi ---------------- */
+html .bm .bookish-main .uiverse-container {
+	padding: clamp(20px, 3.5vw, 32px) !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 30px !important;
+	background: var(--bookish-paper) !important;
+	box-shadow: var(--bm-shadow) !important;
+}
+
+/* Atstarpe tikai paneļiem, kas ir viens zem otra lapas plūsmā (ne divu kolonnu režģos) */
+html .bm .bookish-main :is(.reading-progress-page, .reading-challenges-page) > .uiverse-container + .uiverse-container {
+	margin-top: 24px;
+}
+
+/* Formas: <label>Teksts <input></label> → teksts virs lauka ar atstarpi */
+html .bm .bookish-main .uiverse-container .form:not(.reading-progress-form) > label {
+	display: grid;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+html .bm .bookish-main .uiverse-container .form:not(.reading-progress-form) > label:first-of-type {
+	margin-top: 0;
+}
+
+/* Izvēles rūtiņa blakus savam tekstam, nevis virs tā */
+html .bm .bookish-main .uiverse-container .form > label:has(> input[type="checkbox"]),
+html .bm .bookish-main .uiverse-container label:has(> input[type="checkbox"]) {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+/* Taimera pielāgotā rūtiņa: dabiskā rūtiņa paliek paslēpta */
+html .bm .bookish-main .session-visibility-control input[type="checkbox"] {
+	width: 1px;
+	height: 1px;
+}
+
+/* Taimera cipari */
+html .bm .bookish-main .reading-timer-display {
+	color: var(--bookish-ink) !important;
+	font-family: var(--bm-serif);
+	font-size: clamp(3rem, 9vw, 4.5rem) !important;
+	font-weight: 600 !important;
+	letter-spacing: 0.02em;
+	font-variant-numeric: tabular-nums;
+}
+
+html .bm .bookish-main .uiverse-container .form:not(.reading-progress-form) > label :is(.input, input, select, textarea) {
+	margin-top: 0 !important;
+}
+
+html .bm .bookish-main .book-listings-heading h1 {
+	margin: 4px 0 8px;
+	color: var(--bookish-ink) !important;
+	font-family: var(--bm-serif);
+	font-size: clamp(2.1rem, 5vw, 3.3rem);
+	font-weight: 600;
+	line-height: 1.06;
+	letter-spacing: -0.02em;
+}
+
+html .bm .bookish-main .book-listings-heading h1 + p {
+	color: var(--bookish-muted) !important;
+}
+
+html .bm .bookish-main .book-listings-empty {
+	text-align: center;
+}
+
+html .bm .bookish-main .book-listings-empty .uiverse-heading {
+	text-align: center !important;
+}
+
+html .bm .bookish-main .uiverse-heading,
+html .bm .bookish-main .welcome-card-title,
+html .bm .bookish-main .book-detail-title,
+html .bm .bookish-main .book-detail-section-title {
+	margin: 0 0 18px !important;
+	color: var(--bookish-ink) !important;
+	font-family: var(--bm-serif);
+	font-size: clamp(1.45rem, 3vw, 2rem) !important;
+	font-weight: 600 !important;
+	line-height: 1.15;
+	letter-spacing: -0.01em;
+	text-align: left !important;
+}
+
+html .bm .bookish-main .book-detail-title {
+	font-size: clamp(1.9rem, 4.5vw, 2.8rem) !important;
+}
+
+/* ---------------- Pogas ---------------- */
+html .bm .bookish-main :is(
+	.login-button,
+	a.reading-progress-submit,
+	button[type="submit"].reading-progress-submit,
+	.book-detail-primary,
+	.weekly-top-action
+) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 46px;
+	padding: 0 22px !important;
+	border: 0 !important;
+	border-radius: 999px !important;
+	background: var(--bm-btn) !important;
+	box-shadow: 0 10px 20px -10px rgba(162, 90, 116, 0.8) !important;
+	color: #fff !important;
+	font-family: var(--bm-sans) !important;
+	font-weight: 800 !important;
+	text-decoration: none !important;
+	cursor: pointer;
+	transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+html .bm .bookish-main :is(
+	button[type="button"].reading-progress-submit,
+	.book-listing-secondary-action,
+	.rp-back-button,
+	.book-detail-secondary
+) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 46px;
+	padding: 0 20px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 999px !important;
+	background: var(--bookish-cream) !important;
+	box-shadow: none !important;
+	color: var(--bookish-ink) !important;
+	font-family: var(--bm-sans) !important;
+	font-weight: 700 !important;
+	text-decoration: none !important;
+	cursor: pointer;
+	transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+html .bm .bookish-main :is(.login-button, a.reading-progress-submit, button[type="submit"].reading-progress-submit, .book-detail-primary, .weekly-top-action):hover {
+	transform: translateY(-2px);
+	filter: brightness(1.05);
+}
+
+html .bm .bookish-main :is(button[type="button"].reading-progress-submit, .book-listing-secondary-action, .rp-back-button, .book-detail-secondary):hover {
+	transform: translateY(-2px);
+	border-color: var(--bm-accent) !important;
+	background: var(--bookish-soft) !important;
+}
+
+html .bm .bookish-main :is(.login-button, .reading-progress-submit, .book-listing-secondary-action, .rp-back-button):focus-visible {
+	outline: none;
+	box-shadow: var(--bm-ring) !important;
+}
+
+html .bm .bookish-main :is(.login-button, .reading-progress-submit):disabled {
+	cursor: not-allowed;
+	opacity: 0.6;
+	transform: none;
+}
+
+/* Breeze komponentes (x-primary-button / x-danger-button / x-secondary-button) */
+html .bm .bk-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 46px;
+	padding: 0 22px !important;
+	border-radius: 999px !important;
+	font-family: var(--bm-sans) !important;
+	font-size: 0.9rem !important;
+	font-weight: 800 !important;
+	letter-spacing: 0.01em !important;
+	text-transform: none !important;
+	cursor: pointer;
+	transition: transform 0.2s ease, filter 0.2s ease, background 0.2s ease;
+}
+
+html .bm .bk-btn:hover {
+	transform: translateY(-2px);
+}
+
+html .bm .bk-btn--primary {
+	border: 0 !important;
+	background: var(--bm-btn) !important;
+	box-shadow: 0 10px 20px -10px rgba(162, 90, 116, 0.8) !important;
+	color: #fff !important;
+}
+
+html .bm .bk-btn--danger {
+	border: 0 !important;
+	background: linear-gradient(135deg, #b23a55, #d9607a) !important;
+	box-shadow: 0 10px 20px -10px rgba(178, 58, 85, 0.8) !important;
+	color: #fff !important;
+}
+
+html .bm .bk-btn--secondary {
+	border: 1px solid var(--bookish-line) !important;
+	background: var(--bookish-cream) !important;
+	box-shadow: none !important;
+	color: var(--bookish-ink) !important;
+}
+
+/* Profila iestatījumu kartīšu virsraksti (Breeze h2) */
+html .bm .bookish-main .profile-card header h2 {
+	color: var(--bookish-ink) !important;
+	font-family: var(--bm-serif);
+	font-size: 1.5rem;
+	font-weight: 600;
+}
+
+html .bm .bookish-main .profile-card header p {
+	color: var(--bookish-muted) !important;
+}
+
+/* ---------------- Lauki ---------------- */
+html .bm .bookish-main :is(
+	input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="range"]):not([type="file"]):not([type="color"]):not(.rp-date-display):not(.rp-time-display),
+	select
+) {
+	min-height: 46px;
+	padding: 10px 18px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 999px !important;
+	background-color: var(--bookish-cream) !important;
+	box-shadow: none !important;
+	color: var(--bookish-ink) !important;
+	font-family: var(--bm-sans);
+	font-size: 0.95rem;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+html .bm .bookish-main select {
+	padding-right: 40px !important;
+}
+
+html .bm .bookish-main textarea {
+	padding: 14px 18px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 20px !important;
+	background-color: var(--bookish-cream) !important;
+	box-shadow: none !important;
+	color: var(--bookish-ink) !important;
+	font-family: var(--bm-sans);
+	font-size: 0.95rem;
+	line-height: 1.5;
+}
+
+html .bm .bookish-main :is(input, select, textarea):focus {
+	border-color: var(--bm-accent) !important;
+	box-shadow: var(--bm-ring) !important;
+	outline: none;
+}
+
+html .bm .bookish-main :is(input[type="checkbox"], input[type="radio"]) {
+	width: 18px;
+	height: 18px;
+	accent-color: var(--bm-accent-strong);
+	cursor: pointer;
+}
+
+html .bm .bookish-main .uiverse-container label {
+	color: var(--bookish-ink);
+	font-weight: 700;
+}
+
+/* ---------------- Kartītes ---------------- */
+html .bm .bookish-main :is(
+	.highlight-card,
+	.reading-challenge-card,
+	.rp-snapshot-article,
+	.weekly-top-item,
+	.book-listing-card
+) {
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 22px !important;
+	background: var(--bookish-cream) !important;
+	box-shadow: none !important;
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+html .bm .bookish-main :is(.highlight-card, .reading-challenge-card, .rp-snapshot-article, .book-listing-card):hover {
+	transform: translateY(-3px);
+	box-shadow: var(--bm-shadow-hover) !important;
+}
+
+/* Plaukta kolonnas (Gribu izlasīt / Lasu / Izlasītas) */
+html .bm .bookish-main .rp-snapshot-col {
+	padding: 16px !important;
+	border: 1px dashed var(--bookish-line) !important;
+	border-radius: 24px !important;
+	background: transparent !important;
+}
+
+html .bm .bookish-main .rp-snapshot-col > h3,
+html .bm .bookish-main .rp-snapshot-col > h2,
+html .bm .bookish-main .rp-snapshot-col > strong {
+	font-family: var(--bm-serif);
+	font-size: 1.2rem;
+	font-weight: 600;
+}
+
+html .bm .bookish-main .rp-snapshot-article {
+	background: var(--bookish-paper) !important;
+}
+
+/* Vāki */
+html .bm .bookish-main :is(.rp-snapshot-cover, .weekly-top-cover, .book-detail-cover) {
+	border-radius: 10px !important;
+	box-shadow: 0 12px 22px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Progresa joslas */
+html .bm .bookish-main .rp-mini-track {
+	background: var(--bookish-soft);
+}
+
+html .bm .bookish-main .rp-mini-fill {
+	border-radius: inherit;
+	background: linear-gradient(90deg, var(--bm-accent), var(--bm-accent-strong));
+}
+
+/* Citāti */
+html .bm .bookish-main .highlight-card blockquote {
+	border-left-color: var(--bm-accent) !important;
+	font-family: var(--bm-serif);
+	font-size: 1.05rem;
+}
+
+/* ---------------- Birkas un paziņojumi ---------------- */
+html .bm .bookish-main :is(.reading-progress-status-badge, .rp-read-badge, .book-detail-status) {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 12px !important;
+	border: 0 !important;
+	border-radius: 999px !important;
+	background: var(--bm-btn) !important;
+	color: #fff !important;
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.02em;
+}
+
+html .bm .bookish-main .reading-progress-alert {
+	padding: 14px 18px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 18px !important;
+	background: var(--bookish-soft) !important;
+	color: var(--bookish-ink) !important;
+	font-weight: 600;
+}
+
+html .bm .bookish-main .reading-progress-alert-success {
+	border-color: rgba(63, 157, 107, 0.45) !important;
+	background: rgba(63, 157, 107, 0.14) !important;
+}
+
+html .bm .bookish-main .reading-progress-alert-error {
+	border-color: rgba(192, 86, 111, 0.5) !important;
+	background: rgba(192, 86, 111, 0.14) !important;
+}
+
+/* ---------------- Cilnes (Laika sadaļa / rezultāti, sludinājumi) ---------------- */
+html .bm .bookish-main .book-listings-tabs {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 0 0 24px;
+	padding: 5px;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 999px;
+	background: var(--bookish-cream) !important;
+}
+
+html .bm .bookish-main .book-listings-tabs a {
+	padding: 9px 18px !important;
+	border: 0 !important;
+	border-radius: 999px !important;
+	background: transparent !important;
+	color: var(--bookish-muted) !important;
+	font-size: 0.9rem;
+	font-weight: 700;
+	text-decoration: none !important;
+	transition: color 0.2s ease;
+}
+
+html .bm .bookish-main .book-listings-tabs a:hover {
+	color: var(--bookish-ink) !important;
+}
+
+html .bm .bookish-main .book-listings-tabs a.is-active {
+	background: var(--bm-btn) !important;
+	box-shadow: 0 8px 16px -10px rgba(162, 90, 116, 0.9);
+	color: #fff !important;
+}
+
+/* ---------------- Tabulas ---------------- */
+html .bm .bookish-main table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+html .bm .bookish-main :is(th, td) {
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--bookish-line);
+	text-align: left;
+}
+
+html .bm .bookish-main th {
+	color: var(--bookish-muted);
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+/* ---------------- Saites ---------------- */
+html .bm .bookish-main .book-detail-back {
+	color: var(--bm-accent-strong) !important;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+/* ---------------- Telefons ---------------- */
+@media (max-width: 560px) {
+	html .bm .bookish-main .uiverse-container {
+		border-radius: 24px !important;
+	}
+
+	html .bm .bookish-main .book-listings-tabs {
+		display: flex;
+		width: 100%;
+	}
+
+	html .bm .bookish-main .book-listings-tabs a {
+		flex: 1 1 0;
+		padding: 9px 8px !important;
+		text-align: center;
+	}
+}
+
+/* =========================================================
+   Autentifikācijas lapas (layouts/guest)
+   ========================================================= */
+html .bm .guest-auth-page {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 22px;
+	min-height: 100vh;
+	padding: 32px 16px;
+	background:
+		radial-gradient(circle at 85% 10%, rgba(213, 153, 174, 0.3) 0, transparent 35%),
+		radial-gradient(circle at 10% 90%, rgba(185, 143, 136, 0.22) 0, transparent 40%),
+		var(--bookish-cream) !important;
+	color: var(--bookish-ink);
+}
+
+html .bm .guest-auth-brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--bookish-ink);
+	font-family: var(--bm-serif);
+	font-size: 1.8rem;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+html .bm .guest-auth-brand img {
+	width: auto;
+	height: 56px;
+	object-fit: contain;
+}
+
+html .bm .guest-auth-card {
+	width: min(100%, 440px);
+	padding: clamp(24px, 6vw, 36px) !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 30px !important;
+	background: var(--bookish-paper) !important;
+	box-shadow: var(--bm-shadow) !important;
+}
+
+html .bm .guest-auth-eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 12px;
+	color: var(--bm-accent-strong);
+	font-size: 0.72rem;
+	font-weight: 800;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+html .bm .guest-auth-eyebrow span {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--bm-accent-strong);
+	box-shadow: 0 0 0 4px rgba(213, 153, 174, 0.3);
+}
+
+html .bm .guest-auth-title {
+	margin: 0 0 8px;
+	color: var(--bookish-ink);
+	font-family: var(--bm-serif);
+	font-size: clamp(1.8rem, 6vw, 2.3rem);
+	font-weight: 600;
+	line-height: 1.1;
+}
+
+html .bm .guest-auth-text {
+	margin: 0 0 22px;
+	color: var(--bookish-muted);
+	line-height: 1.55;
+}
+
+html .bm .guest-auth-form {
+	display: grid;
+	gap: 16px;
+}
+
+html .bm .guest-auth-card label {
+	color: var(--bookish-ink) !important;
+	font-size: 0.85rem;
+	font-weight: 700;
+}
+
+html .bm .guest-auth-card :is(input[type="email"], input[type="password"], input[type="text"]) {
+	width: 100%;
+	min-height: 48px;
+	padding: 10px 18px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 999px !important;
+	background: var(--bookish-cream) !important;
+	box-shadow: none !important;
+	color: var(--bookish-ink) !important;
+}
+
+html .bm .guest-auth-card :is(input):focus {
+	border-color: var(--bm-accent) !important;
+	box-shadow: var(--bm-ring) !important;
+	outline: none;
+}
+
+html .bm .guest-auth-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	font-size: 0.88rem;
+}
+
+html .bm .guest-auth-check {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+}
+
+html .bm .guest-auth-check input {
+	width: 18px;
+	height: 18px;
+	border-radius: 5px;
+	accent-color: var(--bm-accent-strong);
+}
+
+html .bm .guest-auth-card a,
+html .bm .guest-auth-link-button {
+	border: 0;
+	background: none;
+	color: var(--bm-accent-strong) !important;
+	font-weight: 700;
+	text-decoration: none !important;
+	cursor: pointer;
+}
+
+html .bm .guest-auth-card a:hover,
+html .bm .guest-auth-link-button:hover {
+	text-decoration: underline !important;
+}
+
+html .bm .guest-auth-card .guest-auth-submit {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-height: 50px;
+	margin: 4px 0 0 !important;
+	border: 0 !important;
+	border-radius: 999px !important;
+	background: var(--bm-btn) !important;
+	box-shadow: 0 12px 22px -10px rgba(162, 90, 116, 0.85) !important;
+	color: #fff !important;
+	font-size: 0.95rem;
+	font-weight: 800;
+	letter-spacing: 0.02em;
+	text-transform: none;
+	transition: transform 0.2s ease;
+}
+
+html .bm .guest-auth-card .guest-auth-submit:hover {
+	transform: translateY(-2px);
+}
+
+html .bm .guest-auth-switch {
+	margin: 4px 0 0;
+	color: var(--bookish-muted);
+	font-size: 0.9rem;
+	text-align: center;
+}
+
+html .bm .guest-auth-alert {
+	margin-bottom: 16px;
+	padding: 12px 16px;
+	border-radius: 16px;
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
+html .bm .guest-auth-alert--success {
+	background: rgba(63, 157, 107, 0.15);
+	color: var(--bookish-ink);
+}
+
+html .bm .guest-auth-alert--error {
+	background: rgba(192, 86, 111, 0.15);
+	color: var(--bookish-ink);
+}
+
+html .bm .guest-auth-footer {
+	margin: 0;
+	color: var(--bookish-muted);
+	font-size: 0.8rem;
+}
+
+html .bm .guest-auth-footer a {
+	color: var(--bookish-muted);
+	text-decoration: none;
+}
+
+html .bm .guest-auth-footer a:hover {
+	color: var(--bm-accent-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html .bm * {
+		transition: none !important;
+	}
+}
+
+/* Breeze modālais logs (piem., konta dzēšanas apstiprinājums) */
+html .bm .bk-modal {
+	padding: 4px;
+	border: 1px solid var(--bookish-line);
+	border-radius: 28px !important;
+	background: var(--bookish-paper) !important;
+	box-shadow: var(--bm-shadow) !important;
+	color: var(--bookish-ink);
+}
+
+html .bm .bk-modal h2 {
+	color: var(--bookish-ink) !important;
+	font-family: var(--bm-serif);
+	font-size: 1.4rem;
+	font-weight: 600;
+}
+
+html .bm .bk-modal p {
+	color: var(--bookish-muted) !important;
+}
+
+html .bm .bk-modal input {
+	min-height: 46px;
+	padding: 10px 18px !important;
+	border: 1px solid var(--bookish-line) !important;
+	border-radius: 999px !important;
+	background: var(--bookish-cream) !important;
+	color: var(--bookish-ink) !important;
+}

@@ -11,20 +11,16 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Direct CSS Links -->
-        <link rel="stylesheet" href="{{ asset('style.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/base.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/pages/reading-progress.css') }}">
-
         @include('components.theme-init-script')
 
-        <!-- Scripts -->
         @if (app()->environment('local') || file_exists(public_path('build/manifest.json')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @else
+            <link rel="stylesheet" href="{{ asset('style.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/modern.css') }}">
         @endif
     </head>
-    <body class="font-sans antialiased {{ request()->routeIs('admin.*') ? 'admin-shell' : '' }} {{ request()->routeIs('profile.*') ? 'profile-shell' : '' }}">
+    <body class="bm font-sans antialiased {{ request()->routeIs('admin.*') ? 'admin-shell' : '' }} {{ request()->routeIs('profile.*') ? 'profile-shell' : '' }}">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
 

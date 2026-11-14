@@ -5,6 +5,7 @@
 @import url("./css/pages/reading-challenges.css");
 @import url("./css/pages/reading-timer.css");
 @import url("./css/pages/profile.css");
+@import url("./css/pages/shelf.css");
 @import url("./css/pages/home.css");
 @import url("./css/pages/booktok.css");
 @import url("./css/responsive.css");
@@ -223,7 +224,7 @@ nav.app-surface-opaque form button:hover {
 
 .book-listing-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
 	gap: 14px;
 }
 

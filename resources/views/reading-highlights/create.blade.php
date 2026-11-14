@@ -14,7 +14,7 @@
         @endif
 
         <div class="u-row u-mb-16">
-            <a href="{{ route('reading-highlights.index') }}" class="reading-progress-submit" style="text-decoration: none;">Skatīt visus highlights</a>
+            <a href="{{ route('reading-highlights.index') }}" class="reading-progress-submit">Skatīt visus highlights</a>
         </div>
 
         <section class="reading-progress-editor uiverse-container">
