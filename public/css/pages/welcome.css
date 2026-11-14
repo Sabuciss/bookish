@@ -407,61 +407,15 @@ html.dark .book-reminder-button--saved {
 	text-decoration: underline;
 }
 
-.book-detail,
-.book-detail-description {
-	background: #ffffff;
-	border: 1px solid #dbe4ef;
-	border-radius: 16px;
-	box-shadow: 0 12px 30px rgba(30, 64, 175, 0.08);
-}
-
-.book-detail-back,
-.book-detail-link {
+.book-detail-back {
 	color: #2563eb;
 	font-size: 0.85rem;
 	font-weight: 700;
 	text-decoration: none;
 }
 
-.book-detail-back:hover,
-.book-detail-link:hover {
+.book-detail-back:hover {
 	text-decoration: underline;
-}
-
-.book-detail-hero {
-	display: grid;
-	grid-template-columns: minmax(190px, 250px) minmax(0, 1fr);
-	gap: clamp(28px, 6vw, 76px);
-	align-items: center;
-	max-width: 980px;
-	margin: 34px auto 0;
-}
-
-.book-detail-cover-wrap {
-	text-align: center;
-}
-
-.book-detail-cover {
-	display: inline-flex;
-	width: min(100%, 230px);
-	aspect-ratio: 2 / 3;
-	object-fit: cover;
-	border-radius: 4px;
-	box-shadow: 12px 16px 24px rgba(15, 23, 42, 0.22);
-}
-
-.book-detail-cover--empty {
-	align-items: center;
-	justify-content: center;
-	padding: 16px;
-	background: var(--bookish-soft);
-	color: var(--bookish-muted);
-	font-size: 0.85rem;
-	text-align: center;
-}
-
-.book-detail-content {
-	min-width: 0;
 }
 
 .book-detail-eyebrow {
@@ -471,135 +425,6 @@ html.dark .book-reminder-button--saved {
 	font-weight: 800;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
-}
-
-.book-detail-title {
-	margin: 0;
-	color: #172554;
-	font-size: clamp(1.8rem, 4vw, 3rem);
-	line-height: 1.08;
-}
-
-.book-detail-author {
-	margin: 10px 0 18px;
-	color: var(--bookish-muted);
-	font-size: 1.05rem;
-}
-
-.book-detail-rating,
-.book-detail-meta {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px 18px;
-	align-items: center;
-	color: var(--bookish-muted);
-	font-size: 0.86rem;
-}
-
-.book-detail-stars {
-	color: #f59e0b;
-	letter-spacing: 0.08em;
-}
-
-.book-detail-meta {
-	margin-top: 20px;
-	padding: 16px 0;
-	border-top: 1px solid var(--bookish-line);
-	border-bottom: 1px solid var(--bookish-line);
-}
-
-.book-detail-meta span {
-	display: grid;
-	gap: 3px;
-}
-
-.book-detail-meta strong {
-	color: #172554;
-	font-size: 0.7rem;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-}
-
-.book-detail-categories {
-	margin: 14px 0 0;
-	color: var(--bookish-muted);
-	font-size: 0.82rem;
-}
-
-.book-detail-actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-	align-items: center;
-	margin-top: 22px;
-}
-
-.book-detail-primary,
-.book-detail-secondary {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-height: 42px;
-	padding: 10px 18px;
-	border-radius: 8px;
-	font-size: 0.85rem;
-	font-weight: 800;
-	text-decoration: none;
-}
-
-.book-detail-primary {
-	border: 0;
-	background: #14b8a6;
-	color: #ffffff;
-	cursor: pointer;
-}
-
-.book-detail-secondary {
-	border: 1px solid var(--bookish-line);
-	color: var(--bookish-ink);
-}
-
-.book-detail-status {
-	padding: 10px 14px;
-	border-radius: 8px;
-	font-size: 0.85rem;
-	font-weight: 800;
-}
-
-.book-detail-status--read,
-.book-detail-status--progress,
-.book-detail-status--want {
-	background: #9a5b6d;
-	color: #ffffff;
-}
-
-.book-detail-description {
-	max-width: 980px;
-	margin: 24px auto 0;
-}
-
-.book-detail-description-heading {
-	margin-bottom: 18px;
-}
-
-.book-detail-section-title {
-	margin: 0;
-	color: #172554;
-	font-size: 1.35rem;
-}
-
-.book-detail-description-text {
-	max-width: 760px;
-	margin: 0;
-	color: var(--bookish-muted);
-	font-size: 0.96rem;
-	line-height: 1.8;
-	white-space: pre-line;
-}
-
-.book-detail-description .book-detail-link {
-	display: inline-block;
-	margin-top: 20px;
 }
 
 html.dark .weekly-top-item {
@@ -647,35 +472,6 @@ html.dark .weekly-top-title-link {
 
 html.dark .weekly-top-action {
 	color: #ffe9f0;
-}
-
-html.dark .book-detail,
-html.dark .book-detail-description {
-	background: var(--bookish-cream);
-	border-color: var(--bookish-line);
-}
-
-html.dark .book-detail-title,
-html.dark .book-detail-section-title,
-html.dark .book-detail-meta strong {
-	color: var(--bookish-plum);
-}
-
-html.dark .book-detail-author,
-html.dark .book-detail-rating,
-html.dark .book-detail-meta,
-html.dark .book-detail-description-text,
-html.dark .book-detail-categories {
-	color: var(--bookish-muted);
-}
-
-html.dark .book-detail-meta {
-	border-color: var(--bookish-line);
-}
-
-html.dark .book-detail-secondary {
-	border-color: var(--bookish-line);
-	color: var(--bookish-ink);
 }
 
 html.dark .weekly-top-cover {

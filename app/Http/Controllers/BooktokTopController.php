@@ -7,6 +7,8 @@ use App\Models\BooktokTopBook;
 use App\Models\BooktokFavoriteAuthor;
 use App\Models\ReadingProgress;
 use App\Services\BookMetadataService;
+use App\Services\BookRatingService;
+use App\Services\BookRecommendationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Schema;
@@ -203,7 +205,12 @@ class BooktokTopController extends Controller
         return back()->with('status', 'Autors noņemts no favorītiem.');
     }
 
-    public function show(Request $request, BooktokTopBook $book): View
+    public function show(
+        Request $request,
+        BooktokTopBook $book,
+        BookRecommendationService $recommendations,
+        BookRatingService $ratings
+    ): View
     {
         $googleBook = $book->google_data_fetched_at
             ? $this->bookMetadata->storedBookData($book)
@@ -219,6 +226,13 @@ class BooktokTopController extends Controller
         $book->google_description = $googleBook['description'] ?? null;
         $book->google_preview_link = $googleBook['preview_link'] ?? null;
         $book->google_info_link = $googleBook['info_link'] ?? null;
+
+        if (empty($book->google_average_rating)) {
+            $rating = $ratings->openLibraryRating($book->title, $book->authorName());
+            $book->google_average_rating = $rating['average'] ?? null;
+            $book->google_ratings_count = $rating['count'] ?? null;
+        }
+
         $currentBookStatus = null;
 
         if ($request->user()) {
@@ -241,6 +255,7 @@ class BooktokTopController extends Controller
             'book' => $book,
             'googleBook' => $googleBook,
             'currentBookStatus' => $currentBookStatus,
+            'recommendations' => $recommendations->recommend($book->title, $book->authorName(), $book->google_categories),
         ]);
     }
 

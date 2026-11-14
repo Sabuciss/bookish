@@ -1,88 +1,24 @@
 <x-layout>
-    <div class="reading-progress-page">
-        @if (session('status'))
-            <div class="reading-progress-alert reading-progress-alert-success">
-                {{ session('status') }}
-            </div>
-        @endif
-
-        <div class="reading-progress-history">
-            <a href="{{ $backUrl }}" class="weekly-top-action">← Atpakaļ</a>
-
-            <div class="weekly-top-item u-mt-12">
-                @if($book['thumbnail'])
-                    <img
-                        class="weekly-top-cover"
-                        src="{{ $book['thumbnail'] }}"
-                        alt="{{ $book['title'] }} vāks"
-                    >
-                @else
-                    <div class="weekly-top-cover weekly-top-cover--empty">Nav vāka</div>
-                @endif
-
-                <div class="weekly-top-content">
-                    <h1 class="welcome-card-title" style="margin-bottom: 8px;">{{ $book['title'] }}</h1>
-                    <p class="welcome-card-text"><strong>Autors:</strong> {{ $book['authors'] }}</p>
-                    <p class="welcome-card-text weekly-top-meta u-mt-6">
-                        <strong>Izdošana:</strong> {{ $book['publishedDate'] }} ·
-                        <strong>Izdevējs:</strong> {{ $book['publisher'] }}
-                    </p>
-                    <p class="welcome-card-text weekly-top-meta u-mt-6">
-                        <strong>Lapas:</strong> {{ $book['pageCount'] ?? 'Nav norādīts' }} ·
-                        <strong>Valoda:</strong> {{ $book['language'] }}
-                    </p>
-                    <p class="welcome-card-text weekly-top-meta u-mt-6">
-                        <strong>Kategorijas:</strong> {{ $book['categories'] }}
-                    </p>
-
-                    @if($book['averageRating'])
-                        <p class="welcome-card-text weekly-top-meta u-mt-6">
-                            <strong>Reitings:</strong> {{ $book['averageRating'] }}/5
-                            @if($book['ratingsCount'])
-                                ({{ $book['ratingsCount'] }} vērtējumi)
-                            @endif
-                        </p>
-                    @endif
-                </div>
-            </div>
-
-            @if($book['description'])
-                <div class="u-mt-16">
-                    <h2 class="welcome-card-title">Apraksts</h2>
-                    <p class="welcome-card-text" style="line-height: 1.6; white-space: pre-line;">{{ $book['description'] }}</p>
-                </div>
-            @endif
-
-            <div class="u-row u-mt-16">
-                @auth
-                    @if ($currentBookStatus === 'read')
-                        <span class="reading-progress-status-badge">IZLASĪTA</span>
-                    @elseif ($currentBookStatus === 'in_progress')
-                        <span class="reading-progress-status-badge">Lasu</span>
-                    @elseif ($currentBookStatus === 'want_to_read')
-                        <span class="reading-progress-status-badge">Pievienota: Gribu izlasīt</span>
-                    @else
-                        <form action="{{ route('reading-progress.want-to-read.store') }}" method="POST" style="display: inline-block;">
-                            @csrf
-                            <input type="hidden" name="book_title" value="{{ $book['title'] }}">
-                            <input type="hidden" name="google_volume_id" value="{{ $book['id'] ?? '' }}">
-                            <input type="hidden" name="book_cover_url" value="{{ $book['thumbnail'] ?? '' }}">
-                            <input type="hidden" name="total_pages" value="{{ $book['pageCount'] ?? '' }}">
-                            <button type="submit" class="reading-progress-submit">Pievienot: Gribu izlasīt</button>
-                        </form>
-                    @endif
-                @else
-                    <a href="{{ route('login') }}" class="reading-progress-submit">Ielogojies</a>
-                @endauth
-
-                @if($book['previewLink'])
-                    <a class="weekly-top-action" href="{{ $book['previewLink'] }}" target="_blank" rel="noopener noreferrer">Skatīt priekšskatījumu</a>
-                @endif
-
-                @if($book['infoLink'])
-                    <a class="weekly-top-action" href="{{ $book['infoLink'] }}" target="_blank" rel="noopener noreferrer">Google Books lapa</a>
-                @endif
-            </div>
-        </div>
-    </div>
+    @include('books.partials.detail', [
+        'detail' => [
+            'backUrl' => $backUrl,
+            'backLabel' => 'Atpakaļ',
+            'eyebrow' => 'Grāmata',
+            'title' => $book['title'],
+            'author' => $book['authors'],
+            'cover' => $book['thumbnail'],
+            'categories' => $book['categories'],
+            'year' => preg_match('/^\d{4}/', (string) $book['publishedDate'], $year) ? $year[0] : null,
+            'pages' => $book['pageCount'],
+            'publisher' => $book['publisher'],
+            'language' => $book['language'],
+            'rating' => $book['averageRating'],
+            'ratingsCount' => $book['ratingsCount'],
+            'description' => $book['description'],
+            'infoLink' => $book['infoLink'],
+            'volumeId' => $book['id'],
+            'status' => $currentBookStatus,
+        ],
+        'recommendations' => $recommendations,
+    ])
 </x-layout>

@@ -153,9 +153,7 @@ html .bm .bookish-main .book-listings-empty .uiverse-heading {
 }
 
 html .bm .bookish-main .uiverse-heading,
-html .bm .bookish-main .welcome-card-title,
-html .bm .bookish-main .book-detail-title,
-html .bm .bookish-main .book-detail-section-title {
+html .bm .bookish-main .welcome-card-title {
 	margin: 0 0 18px !important;
 	color: var(--bookish-ink) !important;
 	font-family: var(--bm-serif);
@@ -166,16 +164,11 @@ html .bm .bookish-main .book-detail-section-title {
 	text-align: left !important;
 }
 
-html .bm .bookish-main .book-detail-title {
-	font-size: clamp(1.9rem, 4.5vw, 2.8rem) !important;
-}
-
 /* ---------------- Pogas ---------------- */
 html .bm .bookish-main :is(
 	.login-button,
 	a.reading-progress-submit,
 	button[type="submit"].reading-progress-submit,
-	.book-detail-primary,
 	.weekly-top-action
 ) {
 	display: inline-flex;
@@ -199,8 +192,7 @@ html .bm .bookish-main :is(
 html .bm .bookish-main :is(
 	button[type="button"].reading-progress-submit,
 	.book-listing-secondary-action,
-	.rp-back-button,
-	.book-detail-secondary
+	.rp-back-button
 ) {
 	display: inline-flex;
 	align-items: center;
@@ -220,12 +212,12 @@ html .bm .bookish-main :is(
 	transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
-html .bm .bookish-main :is(.login-button, a.reading-progress-submit, button[type="submit"].reading-progress-submit, .book-detail-primary, .weekly-top-action):hover {
+html .bm .bookish-main :is(.login-button, a.reading-progress-submit, button[type="submit"].reading-progress-submit, .weekly-top-action):hover {
 	transform: translateY(-2px);
 	filter: brightness(1.05);
 }
 
-html .bm .bookish-main :is(button[type="button"].reading-progress-submit, .book-listing-secondary-action, .rp-back-button, .book-detail-secondary):hover {
+html .bm .bookish-main :is(button[type="button"].reading-progress-submit, .book-listing-secondary-action, .rp-back-button):hover {
 	transform: translateY(-2px);
 	border-color: var(--bm-accent) !important;
 	background: var(--bookish-soft) !important;
@@ -389,7 +381,7 @@ html .bm .bookish-main .rp-snapshot-article {
 }
 
 /* Vāki */
-html .bm .bookish-main :is(.rp-snapshot-cover, .weekly-top-cover, .book-detail-cover) {
+html .bm .bookish-main :is(.rp-snapshot-cover, .weekly-top-cover) {
 	border-radius: 10px !important;
 	box-shadow: 0 12px 22px -10px rgba(0, 0, 0, 0.5);
 }
@@ -412,7 +404,7 @@ html .bm .bookish-main .highlight-card blockquote {
 }
 
 /* ---------------- Birkas un paziņojumi ---------------- */
-html .bm .bookish-main :is(.reading-progress-status-badge, .rp-read-badge, .book-detail-status) {
+html .bm .bookish-main :is(.reading-progress-status-badge, .rp-read-badge) {
 	display: inline-flex;
 	align-items: center;
 	padding: 4px 12px !important;

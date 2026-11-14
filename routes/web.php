@@ -31,6 +31,9 @@ Route::get('/booktok/{book}', [BooktokTopController::class, 'show'])
 Route::get('/api/google-books/top', [GoogleBooksController::class, 'top'])
     ->middleware('throttle:120,1')
     ->name('google-books.top');
+Route::get('/books/find', [GoogleBooksController::class, 'find'])
+    ->middleware('throttle:30,1')
+    ->name('books.find');
 Route::get('/books/{volumeId}', [GoogleBooksController::class, 'show'])
     ->middleware('throttle:120,1')
     ->name('books.show');

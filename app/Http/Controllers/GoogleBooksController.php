@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\ReadingProgress;
 use App\Models\BooktokTopBook;
 use App\Services\BookMetadataService;
+use App\Services\BookRatingService;
+use App\Services\BookRecommendationService;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -235,7 +238,84 @@ class GoogleBooksController extends Controller
             ->all();
     }
 
-    public function show(Request $request, string $volumeId): View
+    /**
+     * Ieteikumu saite (grāmata no Open Library, kurai nav Google ID).
+     * Google meklējam tikai tad, kad lietotājs tiešām uzklikšķina, un rezultātu kešojam.
+     */
+    public function find(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:200'],
+            'author' => ['nullable', 'string', 'max:120'],
+        ]);
+
+        $title = trim($validated['title']);
+        $author = trim((string) ($validated['author'] ?? ''));
+
+        $booktokBook = BooktokTopBook::query()->whereRaw('LOWER(title) = ?', [mb_strtolower($title)])->first();
+        if ($booktokBook) {
+            return redirect()->route('booktok.show', $booktokBook);
+        }
+
+        $cacheKey = 'google_books_find_v1_' . md5(mb_strtolower($title . '|' . $author));
+        $volumeId = Cache::get($cacheKey);
+
+        if ($volumeId === null) {
+            $volumeId = $this->findGoogleVolumeId($title, $author);
+
+            if ($volumeId !== null) {
+                // '' = nav atrasta; to arī kešojam, lai atkārtoti netērētu kvotu
+                Cache::put($cacheKey, $volumeId, $volumeId === '' ? now()->addDay() : now()->addDays(30));
+            }
+        }
+
+        if (!$volumeId) {
+            return redirect()->back()->with('status', 'Šīs grāmatas informācija pašlaik nav pieejama.');
+        }
+
+        return redirect()->route('books.show', $volumeId);
+    }
+
+    /** null = API kļūda (nekešot), '' = grāmata nav atrasta. */
+    private function findGoogleVolumeId(string $title, string $author): ?string
+    {
+        $query = 'intitle:"' . str_replace('"', '', $title) . '"';
+        if ($author !== '') {
+            $query .= ' inauthor:"' . str_replace('"', '', $author) . '"';
+        }
+
+        $params = ['q' => $query, 'maxResults' => 5, 'printType' => 'books'];
+        $apiKey = config('services.google_books.api_key');
+        if (!empty($apiKey)) {
+            $params['key'] = $apiKey;
+        }
+
+        try {
+            $response = Http::connectTimeout(3)->timeout(10)->get('https://www.googleapis.com/books/v1/volumes', $params);
+        } catch (ConnectionException) {
+            return null;
+        }
+
+        if (!$response->ok()) {
+            return null;
+        }
+
+        $items = collect($response->json('items', []));
+
+        // Priekšroka precīzam nosaukumam (nevis, piem., "The Little Prince (ESL Version)")
+        $exact = $items->first(
+            fn (array $item): bool => mb_strtolower(trim((string) ($item['volumeInfo']['title'] ?? ''))) === mb_strtolower($title)
+        );
+
+        return (string) (($exact ?? $items->first())['id'] ?? '');
+    }
+
+    public function show(
+        Request $request,
+        string $volumeId,
+        BookRecommendationService $recommendations,
+        BookRatingService $ratings
+    ): View
     {
         $cacheKey = 'google_books_volume_' . md5($volumeId);
 
@@ -281,9 +361,14 @@ class GoogleBooksController extends Controller
             'thumbnail' => BookMetadataService::normalizeThumbnailUrl(
                 $info['imageLinks']['thumbnail'] ?? ($info['imageLinks']['smallThumbnail'] ?? null)
             ),
-            'previewLink' => $info['previewLink'] ?? null,
             'infoLink' => $info['infoLink'] ?? null,
         ];
+
+        if (empty($bookData['averageRating'])) {
+            $rating = $ratings->openLibraryRating($bookData['title'], $bookData['authors']);
+            $bookData['averageRating'] = $rating['average'] ?? null;
+            $bookData['ratingsCount'] = $rating['count'] ?? null;
+        }
 
         $currentBookStatus = null;
         if ($request->user()) {
@@ -302,6 +387,7 @@ class GoogleBooksController extends Controller
         return view('books.show', [
             'book' => $bookData,
             'currentBookStatus' => $currentBookStatus,
+            'recommendations' => $recommendations->recommend($bookData['title'], $bookData['authors'], $bookData['categories']),
             'backUrl' => $request->query('back') === 'booktok'
                 ? route('booktok.index', array_filter([
                     'view' => $request->query('view', 'books'),

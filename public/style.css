@@ -8,6 +8,7 @@
 @import url("./css/pages/shelf.css");
 @import url("./css/pages/home.css");
 @import url("./css/pages/booktok.css");
+@import url("./css/pages/book.css");
 @import url("./css/responsive.css");
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap');
@@ -768,14 +769,6 @@ nav.app-surface-opaque form button:hover {
 	margin-top: 20px;
 }
 
-.book-detail-section-title {
-	color: var(--bookish-plum) !important;
-}
-
-.book-detail-link {
-	color: var(--bookish-plum) !important;
-}
-
 input,
 select,
 textarea {
@@ -952,8 +945,6 @@ html.dark #drawer-navigation .bg-neutral-tertiary-soft {
 }
 
 html.dark .reading-progress-page > h1,
-html.dark .book-detail-section-title,
-html.dark .book-detail-title,
 html.dark .uiverse-heading,
 html.dark .book-notification-heading,
 html.dark .book-notification-item strong {
@@ -989,10 +980,6 @@ html.dark input::placeholder,
 html.dark textarea::placeholder,
 html.dark .uiverse-container .form .input::placeholder {
 	color: var(--bookish-muted) !important;
-}
-
-html.dark .book-detail-link {
-	color: var(--bookish-plum) !important;
 }
 
 html.dark .book-recommendation-card:nth-child(3n + 2),
@@ -1299,27 +1286,10 @@ html.dark .reading-progress-alert-success {
 	color: var(--bookish-success-text) !important;
 }
 
-html.dark .book-detail-status--read {
-	background: #9a5b6d !important;
-	color: #ffffff !important;
-}
-
-html.dark .book-detail-status--progress {
-	background: #9a5b6d !important;
-	color: #ffffff !important;
-}
-
-html.dark .book-detail-status--want {
-	background: var(--bookish-rose) !important;
-	color: var(--bookish-paper) !important;
-}
-
 /* Keep every legacy page component on the shared Bookish palette. */
 body,
 .uiverse-container,
 .weekly-top-item,
-.book-detail,
-.book-detail-description,
 .book-recommendation-card,
 .highlight-card,
 .reading-challenge-card,
@@ -1341,31 +1311,22 @@ body {
 	box-shadow: 0 12px 28px rgba(77, 38, 57, 0.08);
 }
 
-.uiverse-heading,
-.book-detail-title,
-.book-detail-section-title {
+.uiverse-heading {
 	color: var(--bookish-plum) !important;
 }
 
 .book-detail-back,
-.book-detail-link,
 .weekly-top-title-link,
 .weekly-top-action {
 	color: var(--bookish-plum-deep) !important;
 }
 
 .book-detail-back:hover,
-.book-detail-link:hover,
 .weekly-top-title-link:hover,
 .weekly-top-action:hover {
 	color: var(--bookish-rose) !important;
 }
 
-.book-detail-author,
-.book-detail-rating,
-.book-detail-meta,
-.book-detail-categories,
-.book-detail-description-text,
 .weekly-top-meta,
 .book-recommendation-card p,
 .book-recommendation-card span,
@@ -1373,20 +1334,11 @@ body {
 	color: var(--bookish-muted) !important;
 }
 
-.book-detail-meta {
-	border-color: var(--bookish-line) !important;
-}
-
-.book-detail-meta strong,
 .book-detail-eyebrow,
 .welcome-eyebrow {
 	color: var(--bookish-plum-deep) !important;
 }
 
-.book-detail-primary,
-.book-detail-status--read,
-.book-detail-status--progress,
-.book-detail-status--want,
 .reading-progress-status-badge,
 .rp-read-badge,
 .book-genre-filter-button.is-active,
@@ -1396,7 +1348,6 @@ body {
 	color: var(--bookish-paper) !important;
 }
 
-.book-detail-secondary,
 .book-genre-filter-button,
 .book-reminder-button,
 .theme-toggle-nav,
@@ -1407,7 +1358,6 @@ body {
 	color: var(--bookish-plum-deep) !important;
 }
 
-.book-detail-secondary:hover,
 .book-genre-filter-button:hover,
 .book-reminder-button:hover,
 .theme-toggle-nav:hover {
